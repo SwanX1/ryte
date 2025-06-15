@@ -1,0 +1,22 @@
+<div>
+  <h2>Login</h2>
+  {{#if error}}
+    <div>{{error}}</div>
+  {{/if}}
+  <form action="/auth/login" method="POST">
+    <div>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <div>
+      <button type="submit">Login</button>
+    </div>
+  </form>
+  <div>
+    <p>Don't have an account? <a href="/auth/signup">Sign up here</a></p>
+  </div>
+</div>

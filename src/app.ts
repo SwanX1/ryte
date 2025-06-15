@@ -1,18 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import { engine } from 'express-handlebars';
+import session from 'express-session';
+import type { Request, Response, NextFunction } from 'express';
 import { config } from './config';
 import { routes } from './routes';
+import { createAuthRouter } from './routes/auth';
+import { createAuthMiddleware } from './middleware/auth';
+import { viewDataMiddleware } from './middleware/viewData';
+import { UserModel } from './models/User';
 import path from 'path';
 
 const app = express();
 
 // View engine setup
 app.engine('hbs', engine({
-    extname: '.hbs',
-    defaultLayout: 'main',
-    layoutsDir: path.join(__dirname, 'views/layouts'),
-    partialsDir: path.join(__dirname, 'views/partials')
+  extname: '.hbs',
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir: path.join(__dirname, 'views/partials')
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -23,38 +29,61 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session middleware
+app.use(session({
+  secret: config.sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// View data middleware (must be after session middleware)
+app.use(viewDataMiddleware);
+
 // Routes
 app.use('/api', routes);
+app.use('/auth', createAuthRouter());
+
+// Protected routes
+const authMiddleware = createAuthMiddleware();
+app.use('/dashboard', authMiddleware);
 
 // View routes
-app.get('/', (req, res) => {
-    res.render('home/index', {
-        title: 'Home - Ryte',
-        layout: 'main'
-    });
+app.get('/', (req: Request, res: Response) => {
+  res.render('home/index', {
+    title: 'Home - Ryte'
+  });
 });
 
 // Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error(err.stack);
-    res.status(500).render('error', {
-        title: 'Error - Ryte',
-        message: 'Something went wrong!',
-        layout: 'main'
-    });
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).render('error', {
+    title: 'Error - Ryte',
+    message: 'Something went wrong!'
+  });
 });
 
 // Custom 404 handler
-app.use((req, res) => {
-    res.status(404).render('error', {
-        title: '404 - Not Found',
-        message: 'The page you are looking for does not exist.',
-        layout: 'main'
-    });
+app.use((req: Request, res: Response) => {
+  res.status(404).render('error', {
+    title: '404 - Not Found',
+    message: 'The page you are looking for does not exist.'
+  });
+});
+
+// Initialize database tables
+const userModel = new UserModel();
+userModel.initTable().catch(error => {
+  console.error('Failed to initialize users table:', error);
+  process.exit(1);
 });
 
 export const startServer = () => {
-    app.listen(config.port, () => {
-        console.log(`Server is running on port ${config.port}`);
-    });
+  app.listen(config.port, () => {
+    console.log(`Server is running on port ${config.port}`);
+  });
 };

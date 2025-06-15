@@ -9,9 +9,11 @@
     "test": "bun test"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
     "@types/express-handlebars": "^6.0.2",
+    "@types/express-session": "^1.17.10",
     "@types/node": "^20.11.19",
     "typescript": "^5.3.3"
   },
@@ -20,6 +22,7 @@
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "express-handlebars": "8.0.3",
+    "express-session": "^1.18.0",
     "mysql2": "^3.9.1"
   }
 }

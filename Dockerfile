@@ -1,4 +1,4 @@
-FROM oven/bun:1 as base
+FROM oven/bun:1 AS base
 
 WORKDIR /app
 
@@ -7,14 +7,14 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 # Development stage
-FROM base as development
+FROM base AS development
 COPY . .
 RUN mkdir -p src/views/layouts src/views/partials src/views/home
 RUN bun install
 CMD ["bun", "run", "dev"]
 
 # Production stage
-FROM base as production
+FROM base AS production
 COPY . .
 RUN mkdir -p src/views/layouts src/views/partials src/views/home
 RUN bun install

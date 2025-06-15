@@ -1,0 +1,16 @@
+<header>
+  <nav>
+    <div>
+      <a href="/">Home</a>
+    </div>
+    <div>
+      {{#if user}}
+        <a href="/dashboard">Dashboard (DOES NOT EXIST)</a>
+        <a href="/auth/logout">Logout</a>
+      {{else}}
+        <a href="/auth/login">Login</a>
+        <a href="/auth/signup">Sign Up</a>
+      {{/if}}
+    </div>
+  </nav>
+</header> 

@@ -8,27 +8,13 @@
 </head>
 
 <body>
-  <nav>
-    <div>
-      <a href="/">
-        <span>Ryte</span>
-      </a>
-    </div>
-    <div>
-      <a href="/">Home</a>
-      <a href="/about">About</a>
-    </div>
-  </nav>
+  {{> header}}
 
   <main>
     {{{body}}}
   </main>
 
-  <footer>
-    <div>
-      <p>Some footer here</p>
-    </div>
-  </footer>
+  {{> footer}}
 </body>
 
 </html>
