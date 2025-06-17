@@ -1,15 +1,11 @@
-import { Router } from 'express';
 import { AuthController } from '../controllers/authController';
 
-export function createAuthRouter() {
-  const router = Router();
-  const authController = new AuthController();
+const controller = new AuthController();
 
-  router.get('/signup', authController.getSignupPage.bind(authController));
-  router.post('/signup', authController.signup.bind(authController));
-  router.get('/login', authController.getLoginPage.bind(authController));
-  router.post('/login', authController.login.bind(authController));
-  router.get('/logout', authController.logout.bind(authController));
-
-  return router;
-} 
+export const authRouter = controller.router()
+  .get('/signup', controller.getSignupPage)
+  .post('/signup', controller.signup)
+  .get('/login', controller.getLoginPage)
+  .post('/login', controller.login)
+  .get('/logout', controller.logout)
+  .build();

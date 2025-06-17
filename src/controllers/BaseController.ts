@@ -1,63 +1,91 @@
-import type { Request, Response } from 'express';
+import { Router as CreateRouter, type Request, type Response } from 'express';
 import { BaseModel } from '../models/BaseModel';
+import type { RequestHandler } from 'express';
+import type { RouteParameters, Router } from 'express-serve-static-core';
 
 export abstract class BaseController {
-  protected model: BaseModel;
+  public router(): RouterFactory<this> {
+    return new RouterFactory(this);
+  }
+}
 
-  constructor(model: BaseModel) {
-    this.model = model;
+export class RouterFactory<T extends BaseController = BaseController> {
+  private router = CreateRouter();
+  public constructor(private controller: T) {}
+
+  public all<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.all(route, handler.bind(this.controller));
+    return this;
   }
 
-  async getAll(req: Request, res: Response) {
-    try {
-      const items = await this.model.findAll();
-      res.json(items);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch items' });
-    }
+  public get<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.get(route, handler.bind(this.controller));
+    return this;
   }
 
-  async getById(req: Request, res: Response) {
-    try {
-      const id = parseInt(req.params.id ?? '0');
-      const item = await this.model.findById(id);
-
-      if (!item) {
-        return res.status(404).json({ error: 'Item not found' });
-      }
-
-      res.json(item);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch item' });
-    }
+  public post<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.post(route, handler.bind(this.controller));
+    return this;
   }
 
-  async create(req: Request, res: Response) {
-    try {
-      const result = await this.model.create(req.body);
-      res.status(201).json(result);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to create item' });
-    }
+  public put<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.put(route, handler.bind(this.controller));
+    return this;
   }
 
-  async update(req: Request, res: Response) {
-    try {
-      const id = parseInt(req.params.id ?? '0');
-      const result = await this.model.update(id, req.body);
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to update item' });
-    }
+  public delete<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.delete(route, handler.bind(this.controller));
+    return this;
   }
 
-  async delete(req: Request, res: Response) {
-    try {
-      const id = parseInt(req.params.id ?? '0');
-      await this.model.delete(id);
-      res.status(204).send();
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to delete item' });
-    }
+  public patch<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.patch(route, handler.bind(this.controller));
+    return this;
+  }
+
+  public options<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.options(route, handler.bind(this.controller));
+    return this;
+  }
+
+  public head<
+    Route extends string,
+    Handler extends RequestHandler<P>,
+    P = RouteParameters<Route>,
+  >(route: Route, handler: Handler): this {
+    this.router.head(route, handler.bind(this.controller));
+    return this;
+  }
+
+  public build(): Router {
+    return this.router;
   }
 }

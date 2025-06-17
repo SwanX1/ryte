@@ -4,12 +4,10 @@ import { engine } from 'express-handlebars';
 import session from 'express-session';
 import type { Request, Response, NextFunction } from 'express';
 import { config } from './config';
-import { routes } from './routes';
-import { createAuthRouter } from './routes/auth';
-import { createAuthMiddleware } from './middleware/auth';
 import { viewDataMiddleware } from './middleware/viewData';
 import { UserModel } from './models/User';
 import path from 'path';
+import routes from './routes';
 
 const app = express();
 
@@ -44,12 +42,7 @@ app.use(session({
 app.use(viewDataMiddleware);
 
 // Routes
-app.use('/api', routes);
-app.use('/auth', createAuthRouter());
-
-// Protected routes
-const authMiddleware = createAuthMiddleware();
-app.use('/dashboard', authMiddleware);
+app.use(routes);
 
 // View routes
 app.get('/', (req: Request, res: Response) => {
@@ -76,14 +69,11 @@ app.use((req: Request, res: Response) => {
 });
 
 // Initialize database tables
-const userModel = new UserModel();
-userModel.initTable().catch(error => {
+UserModel.initTable().catch(error => {
   console.error('Failed to initialize users table:', error);
   process.exit(1);
 });
 
-export const startServer = () => {
-  app.listen(config.port, () => {
-    console.log(`Server is running on port ${config.port}`);
-  });
-};
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`);
+});

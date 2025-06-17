@@ -59,7 +59,7 @@ export class UserModel {
     return verifyPassword(password, user.password);
   }
 
-  async initTable(): Promise<void> {
+  static async initTable(): Promise<void> {
     try {
       await query(`
         CREATE TABLE IF NOT EXISTS users (

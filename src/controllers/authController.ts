@@ -1,12 +1,9 @@
 import type { Request, Response } from 'express';
 import { UserModel } from '../models/User';
+import { BaseController } from './BaseController';
 
-export class AuthController {
-  private userModel: UserModel;
-
-  constructor() {
-    this.userModel = new UserModel();
-  }
+export class AuthController extends BaseController {
+  private userModel = new UserModel();
 
   async signup(req: Request, res: Response) {
     try {

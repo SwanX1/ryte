@@ -4,7 +4,7 @@
       <a href="/">Home</a>
     </div>
     <div>
-      {{#if user}}
+      {{#if session_user}}
         <a href="/dashboard">Dashboard (DOES NOT EXIST)</a>
         <a href="/auth/logout">Logout</a>
       {{else}}

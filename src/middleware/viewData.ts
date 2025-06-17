@@ -8,7 +8,7 @@ export function viewDataMiddleware(req: Request, res: Response, next: NextFuncti
     res.render = function(view: string, options?: any, callback?: (err: Error, html: string) => void) {
         // Merge default data with provided options
         const defaultData = {
-            user: req.session?.userId ? { id: req.session.userId } : null,
+            session_user: req.session?.userId ? { id: req.session.userId } : null,
             layout: 'main'
         };
 

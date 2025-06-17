@@ -1,7 +1,10 @@
 import { Router } from 'express';
+import { authRouter } from './auth';
+import { profileRouter } from './profile';
 
-const router = Router();
+const routes = Router();
 
-// Add routes here
+routes.use('/auth', authRouter);
+routes.use('/profile', profileRouter);
 
-export { router as routes };
+export default routes;
