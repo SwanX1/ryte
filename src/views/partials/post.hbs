@@ -1,0 +1,8 @@
+<div class="post">
+  <p>{{post.content}}</p>
+  <p><small>Posted on: {{post.createdAt}}
+    {{#if (post.createdAt !== post.updatedAt)}}
+      (edited)
+    {{/if}}
+  </small></p>
+</div>

@@ -8,6 +8,7 @@ import { viewDataMiddleware } from './middleware/viewData';
 import { UserModel } from './models/User';
 import path from 'path';
 import routes from './routes';
+import { PostModel } from './models/Post';
 
 const app = express();
 
@@ -69,10 +70,13 @@ app.use((req: Request, res: Response) => {
 });
 
 // Initialize database tables
-UserModel.initTable().catch(error => {
+[
+  UserModel.initTable(),
+  PostModel.initTable(),
+].forEach(p => p.catch(error => {
   console.error('Failed to initialize users table:', error);
   process.exit(1);
-});
+}));
 
 app.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`);

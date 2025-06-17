@@ -1,4 +1,16 @@
 <div>
-  <p>Viewing profile for: {{user.username}}</p>
-  <p>THIS PAGE WILL CONTAIN THEIR POSTS IN THE FUTURE</p>
+  {{#if posts.length}}
+    <h2>Posts by {{user.username}}</h2>
+  {{else}}
+    <h2>{{user.username}} has no posts.</h2>
+  {{/if}}
+  <div>
+    {{#each posts}}
+      {{>post post=this}}
+    {{/each}}
+
+    {{#unless posts.length}}
+      <p>No posts available.</p>
+    {{/unless}}
+  </div>
 </div>

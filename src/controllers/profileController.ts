@@ -1,9 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
 import { UserModel } from '../models/User';
 import { BaseController } from './BaseController';
+import { PostModel } from '../models/Post';
 
 export class ProfileController extends BaseController {
   private userModel = new UserModel();
+  private postModel = new PostModel();
 
   async view(req: Request<{ id: string }>, res: Response, next: NextFunction) {
     // console.log(`Fetching profile for user ID: ${req.params.id}`);
@@ -17,10 +19,13 @@ export class ProfileController extends BaseController {
     if (user === null) {
       return next();
     }
+
+    const posts = await this.postModel.listByUser(user.id);
     
     return res.render('profile/view', {
       title: `${user.username} - Profile`,
       user: user,
+      posts: posts,
     });
   }
 } 
