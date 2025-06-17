@@ -1,7 +1,7 @@
-<div>
+<div class="card">
   <h2>Create Post</h2>
   {{#if error}}
-    <div>{{error}}</div>
+    <div class="error">{{error}}</div>
   {{/if}}
   <form action="/post/create" method="POST">
     <input type="text" id="type" name="type" value="text" hidden>
@@ -10,7 +10,7 @@
       <textarea id="content" name="content" required></textarea>
     </div>
     <div>
-      <button type="submit">Create Post</button>
+      <button type="submit" class="btn">Create Post</button>
     </div>
   </form>
 </div>

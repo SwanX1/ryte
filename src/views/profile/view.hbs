@@ -1,10 +1,10 @@
-<div>
+<div class="card">
   {{#if posts.length}}
     <h2>Posts by {{user.username}}</h2>
   {{else}}
     <h2>{{user.username}} has no posts.</h2>
   {{/if}}
-  <div>
+  <div class="posts-container">
     {{#each posts}}
       {{>post post=this}}
     {{/each}}

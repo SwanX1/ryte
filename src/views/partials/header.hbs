@@ -1,14 +1,18 @@
 <header>
   <nav>
-    <div>
-      <a href="/">Home</a>
+    <div class="nav-left">
+      <a href="/" class="btn">Home</a>
     </div>
-    <div>
+    <div class="nav-right">
       {{#if session_user}}
-        <a href="/auth/logout">Logout</a>
+        <div class="user-profile">
+          <img src="{{session_user.avatar_url}}" alt="{{session_user.username}}'s avatar" class="avatar">
+          <span class="username">{{session_user.username}}</span>
+        </div>
+        <a href="/auth/logout" class="btn btn-logout">Logout</a>
       {{else}}
-        <a href="/auth/login">Login</a>
-        <a href="/auth/signup">Sign Up</a>
+        <a href="/auth/login" class="btn btn-login">Login</a>
+        <a href="/auth/signup" class="btn btn-signup">Sign Up</a>
       {{/if}}
     </div>
   </nav>

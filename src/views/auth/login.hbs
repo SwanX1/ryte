@@ -1,19 +1,23 @@
-<div>
+<div class="card">
   <h2>Login</h2>
   {{#if error}}
-    <div>{{error}}</div>
+    <div class="error">{{error}}</div>
   {{/if}}
   <form action="/auth/login" method="POST">
     <div>
       <label for="username">Username</label>
-      <input type="text" id="username" name="username" required>
+      {{#if prefilled_username}}
+        <input type="text" id="username" name="username" value="{{prefilled_username}}" required>
+      {{else}}
+        <input type="text" id="username" name="username" required>
+      {{/if}}
     </div>
     <div>
       <label for="password">Password</label>
       <input type="password" id="password" name="password" required>
     </div>
     <div>
-      <button type="submit">Login</button>
+      <button type="submit" class="btn">Login</button>
     </div>
   </form>
   <div>

@@ -1,7 +1,7 @@
-<div class="post">
+<div class="card post">
   <p>{{post.content}}</p>
-  <p><small>Posted on: {{post.createdAt}}
-    {{#if (eq post.createdAt post.updatedAt)}}
+  <p><small>Posted on: {{localDate post.created_at}}
+    {{#if (neq post.created_at post.updated_at)}}
       (edited)
     {{/if}}
   </small></p>

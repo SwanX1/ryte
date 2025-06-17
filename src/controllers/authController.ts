@@ -7,11 +7,19 @@ export class AuthController extends BaseController {
 
   async signup(req: Request, res: Response) {
     try {
-      const { username, password } = req.body;
+      const { username, email, password } = req.body;
 
-      if (!username || !password) {
+      if (!username || !email || !password) {
         return res.status(400).render('auth/signup', {
-          error: 'Username and password are required'
+          error: 'Username, email and password are required'
+        });
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).render('auth/signup', {
+          error: 'Please enter a valid email address'
         });
       }
 
@@ -22,7 +30,14 @@ export class AuthController extends BaseController {
         });
       }
 
-      const user = await this.userModel.create(username, password);
+      const existingEmail = await this.userModel.findByEmail(email);
+      if (existingEmail) {
+        return res.status(400).render('auth/signup', {
+          error: 'Email already registered'
+        });
+      }
+
+      const user = await this.userModel.create(username, email, password);
       if (!user) {
         return res.status(500).render('auth/signup', {
           error: 'Error creating user'
@@ -33,6 +48,8 @@ export class AuthController extends BaseController {
       if (req.session) {
         req.session.userId = user.id;
       }
+
+      // TODO: Send verification email here
       res.redirect('/');
     } catch (error) {
       console.error('Signup error:', error);

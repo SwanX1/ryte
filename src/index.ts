@@ -19,8 +19,13 @@ app.engine('hbs', engine({
   layoutsDir: path.join(__dirname, 'views/layouts'),
   partialsDir: path.join(__dirname, 'views/partials'),
   helpers: {
-    'eq': (a, b) => a === b,
-    'neq': (a, b) => a !== b,
+    'eq': (a: any, b: any) => a === b,
+    'neq': (a: any, b: any) => a !== b,
+    'localDate': (date: number) => new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }),
   }
 }));
 app.set('view engine', 'hbs');

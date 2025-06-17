@@ -1,4 +1,9 @@
-<div>
-  <h1>Main page</h1>
-  <p>Some text here</p>
+<div class="card">
+  <h1 style="line-height: 1.2;">RYTE</h1>
+  <p style="margin-bottom: 20px;">write right</p>
+  {{#if session_user}}
+    <a href="/post/create" class="btn">Create New Post</a>
+  {{else}}
+    <p>Please <a href="/auth/login">login</a> or <a href="/auth/signup">sign up</a> to start posting.</p>
+  {{/if}}
 </div>
