@@ -16,7 +16,8 @@ services:
       - DB_PASSWORD=root
       - DB_NAME=app_db
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql:8.0
@@ -27,6 +28,11 @@ services:
       - MYSQL_DATABASE=app_db
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 1s
+      timeout: 1s
+      retries: 15
 
 volumes:
   mysql_data:
