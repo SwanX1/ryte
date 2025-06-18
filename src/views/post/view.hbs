@@ -1,1 +1,123 @@
-{{>post post=post}}
+<div class="card post">
+  <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+    <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 0.75rem;">
+    <a href="/@{{post.username}}" style="font-weight: bold; color: #333; text-decoration: none;">{{post.username}}</a>
+  </div>
+  {{#if (eq post.type 'images')}}
+    {{#with (splitLines post.content) as |lines|}}
+      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        {{#each lines}}
+          {{#unless @first}}
+            <img src="{{this}}" alt="Image" style="max-width: 200px; max-height: 200px; border-radius: 6px;">
+          {{/unless}}
+        {{/each}}
+      </div>
+    {{/with}}
+  {{else if (eq post.type 'video')}}
+    {{#with (splitLines post.content) as |lines|}}
+      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+      <video src="{{lines.[1]}}" controls style="max-width: 100%; border-radius: 6px;"></video>
+    {{/with}}
+  {{else}}
+    {{#with (splitLines post.content) as |lines|}}
+      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+      <div>{{joinLines lines 1}}</div>
+    {{/with}}
+  {{/if}}
+  <p><small>Posted on: {{localDate post.created_at}}
+    {{#if (neq post.created_at post.updated_at)}}
+      (edited)
+    {{/if}}
+  </small></p>
+  <div class="post-actions" style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+    <span class="like-count" data-post-id="{{post.id}}">{{post.likeCount}}</span>
+    {{#if post.liked}}
+      <button class="like-btn" data-post-id="{{post.id}}" data-liked="true">Unlike</button>
+    {{else}}
+      <button class="like-btn" data-post-id="{{post.id}}" data-liked="false">Like</button>
+    {{/if}}
+  </div>
+</div>
+
+<div class="card" style="margin-top:2rem;">
+  <h3>Comments</h3>
+  <div id="comments-list">
+    {{#if comments.length}}
+      <ul id="comments-ul">
+        {{#each comments}}
+          {{> comment comment=this}}
+        {{/each}}
+      </ul>
+    {{else}}
+      <p id="no-comments">No comments yet.</p>
+    {{/if}}
+  </div>
+  {{#if session_user}}
+    <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST" style="margin-top:1rem;">
+      <div id="comment-error" class="error" style="display:none;"></div>
+      <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required style="width:100%;"></textarea>
+      <button type="submit" class="btn">Post Comment</button>
+    </form>
+  {{else}}
+    <p style="margin-top:1rem;">Please <a href="/auth/login">login</a> to comment.</p>
+  {{/if}}
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('add-comment-form');
+  const errorDiv = document.getElementById('comment-error');
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+      }
+      const textarea = document.getElementById('comment-content');
+      const content = textarea.value.trim();
+      if (!content) return;
+      const postId = {{post.id}};
+      try {
+        const res = await fetch(`/api/comment/${postId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content }),
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const commentId = data.comment.id;
+          // Fetch the rendered partial
+          const partialRes = await fetch(`/partials/comment/${commentId}`);
+          if (partialRes.ok) {
+            const html = await partialRes.text();
+            let ul = document.getElementById('comments-ul');
+            if (!ul) {
+              ul = document.createElement('ul');
+              ul.id = 'comments-ul';
+              document.getElementById('comments-list').innerHTML = '';
+              document.getElementById('comments-list').appendChild(ul);
+            }
+            ul.insertAdjacentHTML('afterbegin', html);
+            textarea.value = '';
+            const noComments = document.getElementById('no-comments');
+            if (noComments) noComments.remove();
+          }
+        } else {
+          const data = await res.json().catch(() => ({}));
+          if (errorDiv) {
+            errorDiv.textContent = data.error || 'Failed to add comment.';
+            errorDiv.style.display = 'block';
+          }
+        }
+      } catch (err) {
+        if (errorDiv) {
+          errorDiv.textContent = 'Network error. Please try again.';
+          errorDiv.style.display = 'block';
+        }
+      }
+    });
+  }
+});
+</script>

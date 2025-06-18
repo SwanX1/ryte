@@ -3,6 +3,7 @@ import { PostCommentModel } from '../models/PostComment';
 import z from 'zod';
 import { prettifyZodError } from '../util/zod';
 import { AuditLogModel } from '../models/AuditLog';
+import { UserModel } from '../models/User';
 
 export class CommentController {
   static async add(req: Request<{ postId: string }>, res: Response) {
@@ -58,5 +59,22 @@ export class CommentController {
     if (isNaN(postId)) return res.status(400).json({ error: 'Invalid postId' });
     const comments = await PostCommentModel.getCommentsForPost(postId);
     res.json({ comments });
+  }
+
+  static async getCommentPartial(req: Request<{ commentId: string }>, res: Response) {
+    const commentIdParam = req.params.commentId;
+    if (typeof commentIdParam !== 'string') return res.status(400).json({ error: 'Invalid commentId' });
+    const commentId = parseInt(commentIdParam);
+    if (isNaN(commentId)) return res.status(400).json({ error: 'Invalid commentId' });
+    const comment = await PostCommentModel.findById(commentId);
+    if (!comment) return res.status(404).json({ error: 'Comment not found' });
+    const user = await UserModel.findById(comment.user_id);
+    res.render('partials/comment', {
+      comment: {
+        ...comment,
+        username: user?.username || 'Unknown',
+      },
+      layout: 'raw'
+    });
   }
 } 

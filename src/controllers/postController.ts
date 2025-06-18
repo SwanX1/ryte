@@ -5,6 +5,7 @@ import { PostLikeModel } from '../models/PostLike';
 import z from 'zod';
 import { prettifyZodError } from '../util/zod';
 import { AuditLogModel } from '../models/AuditLog';
+import { PostCommentModel } from '../models/PostComment';
 
 export class PostController {
   static async getPostPage(req: Request<{ id: string }>, res: Response, next: NextFunction) {
@@ -20,13 +21,26 @@ export class PostController {
     if (sessionUserId) {
       liked = !!(await PostLikeModel.find(sessionUserId, post_id));
     }
-    return res.render('post/view', { post: {
-      ...post,
-      username: author?.username || 'Unknown',
-      avatar_url: author?.avatar_url || '/assets/default_avatar.png',
-      likeCount: (await PostLikeModel.getLikesForPost(post_id)).length,
-      liked,
-    } });
+
+    const comments = await PostCommentModel.getCommentsForPost(post_id);
+    const commentsWithUser = await Promise.all(comments.map(async (comment) => {
+      const user = await UserModel.findById(comment.user_id);
+      return {
+        ...comment,
+        username: user?.username || 'Unknown',
+      };
+    }));
+
+    return res.render('post/view', {
+      post: {
+        ...post,
+        username: author?.username || 'Unknown',
+        avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+        likeCount: (await PostLikeModel.getLikesForPost(post_id)).length,
+        liked,
+      },
+      comments: commentsWithUser,
+    });
   }
 
   static async create(req: Request, res: Response) {
