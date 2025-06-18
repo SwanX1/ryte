@@ -2,7 +2,7 @@ import { Store, type SessionData } from "express-session";
 import { query } from "../database/connection";
 
 const TABLE_NAME = 'sessions';
-query(`CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (sid VARCHAR(255) PRIMARY KEY, session TEXT)`);
+await query(`CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (sid VARCHAR(255) PRIMARY KEY, session TEXT)`);
 
 export class SessionStore extends Store {
   async get(sid: string, callback: (err: any, session?: SessionData | null) => void): Promise<void> {
