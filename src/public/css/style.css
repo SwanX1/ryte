@@ -670,7 +670,13 @@ nav {
 
 /* Email Verification */
 
+.auth-form h1 {
+  padding: 10px 0px;
+}
 
+.auth-form p {
+  padding-bottom: 30px;
+}
 
 /* Footer */
 footer {
@@ -678,6 +684,10 @@ footer {
   padding: 1rem 2rem;
   text-align: center;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-verify {
+  margin-bottom: 20px;
 }
 
 /* Common Components */

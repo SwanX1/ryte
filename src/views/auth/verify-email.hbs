@@ -1,28 +1,30 @@
 <div class="auth-container">
   <div class="auth-form">
-    <h1>Verify Your Email</h1>
-    <p>Please enter the verification code sent to your email address.</p>
-    
-    {{#if error}}
-      <div class="error-message">{{error}}</div>
-    {{/if}}
-    
-    {{#if success}}
-      <div class="success-message">{{success}}</div>
-    {{/if}}
-    
-    <form method="POST" action="/auth/verify-email">
-      <div class="form-group">
-        <label for="code">Verification Code:</label>
-        <input type="text" id="code" name="code" required placeholder="Enter verification code">
-      </div>
+    <div class="card">
+      <h1>Verify Your Email</h1>
+      <p>Please enter the verification code sent to your email address.</p>
       
-      <button type="submit" class="btn btn-primary">Verify Email</button>
-    </form>
-    
-    <div class="auth-links">
-      <a href="/auth/resend-verification" class="btn btn-secondary">Resend Code</a>
-      <a href="/" class="btn btn-link">Back to Home</a>
+      {{#if error}}
+        <div class="error-message">{{error}}</div>
+      {{/if}}
+      
+      {{#if success}}
+        <div class="success-message">{{success}}</div>
+      {{/if}}
+      
+      <form method="POST" action="/auth/verify-email">
+        <div class="form-group">
+          <label for="code">Verification Code:</label>
+          <input type="text" id="code" name="code" required placeholder="Enter verification code">
+        </div>
+        
+        <button type="submit" class="btn btn-verify">Verify Email</button>
+      </form>
+      
+      <div class="auth-links">
+        <a href="/auth/resend-verification" class="btn btn-secondary">Resend Code</a>
+        <a href="/" class="btn btn-link">Back to Home</a>
+      </div>
     </div>
   </div>
 </div> 
