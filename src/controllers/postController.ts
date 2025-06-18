@@ -4,6 +4,7 @@ import { PostModel } from '../models/Post';
 import { PostLikeModel } from '../models/PostLike';
 import z from 'zod';
 import { prettifyZodError } from '../util/zod';
+import { AuditLogModel } from '../models/AuditLog';
 
 export class PostController {
   static async getPostPage(req: Request<{ id: string }>, res: Response, next: NextFunction) {
@@ -91,6 +92,12 @@ export class PostController {
           error: 'Error creating post'
         });
       }
+
+      AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created post ${post.id}` + (
+        type === 'images' ? ` with ${content.split('\n').length - 1} images` :
+        type === 'video' ? ` with video` :
+        ''
+      ));
 
       return res.redirect(`/post/${post.id}`);
     } catch (error) {

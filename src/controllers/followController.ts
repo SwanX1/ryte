@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { UserFollowModel } from '../models/UserFollow';
 import { UserModel } from '../models/User';
+import { AuditLogModel } from '../models/AuditLog';
 
 export class FollowController {
   static async follow(req: Request<{ userId: string }>, res: Response) {
@@ -14,6 +15,7 @@ export class FollowController {
     if (alreadyFollowing) return res.status(400).json({ error: 'Already following' });
     const result = await UserFollowModel.create(followerId, followingId);
     if (!result) return res.status(500).json({ error: 'Error following user' });
+    AuditLogModel.create('follow', 'user', followerId, followingId, `User ${followerId} followed user ${followingId}`);
     res.json({ success: true });
   }
 
@@ -24,6 +26,7 @@ export class FollowController {
     const followingId = parseInt(userIdParam);
     if (isNaN(followingId)) return res.status(400).json({ error: 'Invalid userId' });
     const result = await UserFollowModel.delete(followerId, followingId);
+    AuditLogModel.create('unfollow', 'user', followerId, followingId, `User ${followerId} unfollowed user ${followingId}`);
     res.json({ success: result });
   }
 

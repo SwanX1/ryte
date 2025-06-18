@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { UserModel } from '../models/User';
 import z from 'zod';
 import { prettifyZodError } from '../util/zod';
+import { AuditLogModel } from '../models/AuditLog';
 
 export class AuthController {
   static async signup(req: Request, res: Response) {
@@ -30,12 +31,15 @@ export class AuthController {
           error: 'Error creating user'
         });
       }
-
+      
       // Set user session
       if (req.session) {
         req.session.userId = user.id;
       }
 
+      AuditLogModel.create('signup', 'user', user.id, null, `User ${user.username} registered`);
+      AuditLogModel.create('login', 'user', user.id, null, `User ${user.username} logged in`);
+      
       // TODO: Send verification email here
       res.redirect('/');
     } catch (error) {
@@ -83,6 +87,7 @@ export class AuthController {
       if (req.session) {
         req.session.userId = user.id;
       }
+      AuditLogModel.create('login', 'user', user.id, null, `User ${user.username} logged in`);
       res.redirect('/');
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -100,6 +105,7 @@ export class AuthController {
 
   static logout(req: Request, res: Response) {
     if (req.session) {
+      AuditLogModel.create('logout', 'user', req.session.userId, null, `User ${req.session.userId} logged out`);
       req.session.destroy((err: Error | null) => {
         if (err) {
           console.error('Logout error:', err);

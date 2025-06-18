@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { PostCommentModel } from '../models/PostComment';
 import z from 'zod';
 import { prettifyZodError } from '../util/zod';
+import { AuditLogModel } from '../models/AuditLog';
 
 export class CommentController {
   static async add(req: Request<{ postId: string }>, res: Response) {
@@ -17,6 +18,7 @@ export class CommentController {
       if (isNaN(postId)) return res.status(400).json({ error: 'Invalid postId' });
       const comment = await PostCommentModel.create(userId, postId, content);
       if (!comment) return res.status(400).json({ error: 'Error creating comment' });
+      AuditLogModel.create('comment', 'post', userId, postId, `User ${userId} commented on post ${postId}`);
       res.json({ comment });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -38,6 +40,7 @@ export class CommentController {
       const comment = await PostCommentModel.findById(commentId);
       if (!comment || comment.user_id !== userId) return res.status(403).json({ error: 'Forbidden' });
       const result = await PostCommentModel.delete(commentId);
+      AuditLogModel.create('comment', 'post', userId, commentId, `User ${userId} deleted comment ${commentId}`);
       res.json({ success: result });
     } catch (error) {
       if (error instanceof z.ZodError) {
