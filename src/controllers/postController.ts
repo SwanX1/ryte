@@ -6,6 +6,7 @@ import z from 'zod';
 import { prettifyZodError } from '../util/zod';
 import { AuditLogModel } from '../models/AuditLog';
 import { PostCommentModel } from '../models/PostComment';
+import { MediaProcessor } from '../util/mediaProcessor';
 
 export class PostController {
   static async getPostPage(req: Request<{ id: string }>, res: Response, next: NextFunction) {
@@ -43,75 +44,33 @@ export class PostController {
     });
   }
 
-  static async create(req: Request, res: Response) {
+  static async createText(req: Request, res: Response) {
     try {
       const userId = req.session?.userId;
       if (!userId) {
         return res.redirect('/auth/login');
       }
 
-      let { type, content } = z.object({
-        type: z.enum(['text', 'images', 'video']),
-        content: z.string().min(1).trim()
-      }).parse(req.body);
-
-      if (type === 'images') {
-        // Content is: first line is the caption, then the image URLs. Uploading is done beforehand, so URLs are already valid.
-        let [caption, ...imageUrls] = content.split('\n');
-        if (imageUrls.length === 0) {
-          return res.status(400).render('post/create', {
-            error: 'At least one image URL is required, this may be a bug'
-          });
-        }
-
-        caption = z.string().min(1).max(100).trim().parse(caption);
-        imageUrls = z.array(z.string().url().trim()).parse(imageUrls);
-
-        content = `${caption}\n${imageUrls.join('\n')}`; // Make sure that everything is valid, justīns vāciņš
+      const { 'text-caption': caption, 'text-content': text } = req.body;
+      
+      if (!caption || !text) {
+        return res.status(400).render('post/create', {
+          error: 'Caption and text are required'
+        });
       }
 
-      if (type === 'video') {
-        // Content is: first line is the caption, then the video URL (only one is allowed). Uploading is done beforehand, so URL is already valid.
-        let [caption, videoUrl] = content.split('\n');
-        if (!videoUrl) {
-          return res.status(400).render('post/create', {
-            error: 'Video URL is required, this may be a bug'
-          });
-        }
+      const validatedCaption = z.string().min(1).max(100).trim().parse(caption);
+      const validatedText = z.string().min(1).trim().parse(text);
+      const content = `${validatedCaption}\n${validatedText}`;
 
-        caption = z.string().min(1).max(100).trim().parse(caption);
-        videoUrl = z.string().url().trim().parse(videoUrl);
-
-        content = `${caption}\n${videoUrl}`;
-      }
-
-      if (type === 'text') {
-        // Content is: first line is the caption, then the text.
-        let [caption, text] = content.split('\n');
-        if (!text) {
-          return res.status(400).render('post/create', {
-            error: 'Text is required, this may be a bug'
-          });
-        }
-
-        caption = z.string().min(1).max(100).trim().parse(caption);
-        text = z.string().min(1).trim().parse(text);
-
-        content = `${caption}\n${text}`;
-      }
-
-      const post = await PostModel.create(type, content, userId);
+      const post = await PostModel.create('text', content, userId);
       if (!post) {
         return res.status(500).render('post/create', {
           error: 'Error creating post'
         });
       }
 
-      AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created post ${post.id}` + (
-        type === 'images' ? ` with ${content.split('\n').length - 1} images` :
-        type === 'video' ? ` with video` :
-        ''
-      ));
+      AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created text post ${post.id}`);
 
       return res.redirect(`/post/${post.id}`);
     } catch (error) {
@@ -120,7 +79,99 @@ export class PostController {
           error: prettifyZodError(error)
         });
       }
-      console.error('Error creating post:', error);
+      console.error('Error creating text post:', error);
+      res.status(500).render('post/create', {
+        error: 'An error occurred while creating the post'
+      });
+    }
+  }
+
+  static async createImages(req: Request, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.redirect('/auth/login');
+      }
+
+      const { 'images-caption': caption } = req.body;
+      const files = req.files as Express.Multer.File[];
+      
+      if (!caption || !files || files.length === 0) {
+        return res.status(400).render('post/create', {
+          error: 'Caption and at least one image are required'
+        });
+      }
+
+      const validatedCaption = z.string().min(1).max(100).trim().parse(caption);
+      
+      // Process images and convert to WebM
+      const processedFilenames = await MediaProcessor.processFiles(files);
+      const imageUrls = processedFilenames.map(filename => `/uploads/${filename}`);
+      const content = `${validatedCaption}\n${imageUrls.join('\n')}`;
+
+      const post = await PostModel.create('images', content, userId);
+      if (!post) {
+        return res.status(500).render('post/create', {
+          error: 'Error creating post'
+        });
+      }
+
+      AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created image post ${post.id} with ${files.length} images`);
+
+      return res.redirect(`/post/${post.id}`);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).render('post/create', {
+          error: prettifyZodError(error)
+        });
+      }
+      console.error('Error creating image post:', error);
+      res.status(500).render('post/create', {
+        error: 'An error occurred while creating the post'
+      });
+    }
+  }
+
+  static async createVideo(req: Request, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.redirect('/auth/login');
+      }
+
+      const { 'video-caption': caption } = req.body;
+      const file = req.file as Express.Multer.File;
+      
+      if (!caption || !file) {
+        return res.status(400).render('post/create', {
+          error: 'Caption and video are required'
+        });
+      }
+
+      const validatedCaption = z.string().min(1).max(100).trim().parse(caption);
+      
+      // Process video and convert to WebM
+      const processedFilename = await MediaProcessor.processFile(file);
+      const videoUrl = `/uploads/${processedFilename}`;
+      const content = `${validatedCaption}\n${videoUrl}`;
+
+      const post = await PostModel.create('video', content, userId);
+      if (!post) {
+        return res.status(500).render('post/create', {
+          error: 'Error creating post'
+        });
+      }
+
+      AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created video post ${post.id}`);
+
+      return res.redirect(`/post/${post.id}`);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).render('post/create', {
+          error: prettifyZodError(error)
+        });
+      }
+      console.error('Error creating video post:', error);
       res.status(500).render('post/create', {
         error: 'An error occurred while creating the post'
       });
