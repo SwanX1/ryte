@@ -14,12 +14,31 @@
   {{> banner}}
 
   <main>
+    {{#> modal modal_id="test-modal"}}
+      TEST MODAL HERE
+    {{/modal}}
+    <button class="btn btn-open-modal">Open Modal</button>
     {{{body}}}
   </main>
 
   {{> footer}}
   <script src="/js/post-like.js"></script>
   <script src="/js/email-verification.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('test-modal');
+      const openModalBtn = document.querySelector('.btn-open-modal');
+      if (modal && openModalBtn) {
+        openModalBtn.addEventListener('click', function () {
+          if (modal.classList.contains('active')) {
+            modal.classList.remove('active');
+          } else {
+            modal.classList.add('active');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>
