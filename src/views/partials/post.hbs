@@ -3,7 +3,31 @@
     <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 0.75rem;">
     <a href="/@{{post.username}}" style="font-weight: bold; color: #333; text-decoration: none;">{{post.username}}</a>
   </div>
-  <p>{{post.content}}</p>
+  {{#if (eq post.type 'images')}}
+    {{!-- Images: first line is caption, rest are image URLs --}}
+    {{#with (splitLines post.content) as |lines|}}
+      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        {{#each lines}}
+          {{#unless @first}}
+            <img src="{{this}}" alt="Image" style="max-width: 200px; max-height: 200px; border-radius: 6px;">
+          {{/unless}}
+        {{/each}}
+      </div>
+    {{/with}}
+  {{else if (eq post.type 'video')}}
+    {{!-- Video: first line is caption, second is video URL --}}
+    {{#with (splitLines post.content) as |lines|}}
+      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+      <video src="{{lines.[1]}}" controls style="max-width: 100%; border-radius: 6px;"></video>
+    {{/with}}
+  {{else}}
+    {{!-- Text: first line is caption, rest is text --}}
+    {{#with (splitLines post.content) as |lines|}}
+      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+      <div>{{joinLines lines 1}}</div>
+    {{/with}}
+  {{/if}}
   <p><small>Posted on: {{localDate post.created_at}}
     {{#if (neq post.created_at post.updated_at)}}
       (edited)

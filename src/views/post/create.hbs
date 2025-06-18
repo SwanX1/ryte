@@ -3,14 +3,75 @@
   {{#if error}}
     <div class="error">{{error}}</div>
   {{/if}}
-  <form action="/post/create" method="POST">
-    <input type="text" id="type" name="type" value="text" hidden>
+  <form id="create-post-form" action="/post/create" method="POST">
     <div>
-      <label for="content">Content</label>
-      <textarea id="content" name="content" required></textarea>
+      <label for="type">Type</label>
+      <select id="type" name="type">
+        <option value="text">Text</option>
+        <option value="images">Images</option>
+        <option value="video">Video</option>
+      </select>
     </div>
+    <div id="text-fields" class="type-fields">
+      <label for="text-caption">Caption</label>
+      <input type="text" id="text-caption" placeholder="Caption" maxlength="100">
+      <label for="text-content">Text</label>
+      <textarea id="text-content" placeholder="Text"></textarea>
+    </div>
+    <div id="images-fields" class="type-fields" style="display:none">
+      <label for="images-caption">Caption</label>
+      <input type="text" id="images-caption" placeholder="Caption" maxlength="100">
+      <label for="images-urls">Image URLs (one per line)</label>
+      <textarea id="images-urls" placeholder="https://example.com/image1.jpg\nhttps://example.com/image2.jpg"></textarea>
+      {{!-- TODO: Make images-urls a file input, so that the user can upload images (multiple) --}}
+    </div>
+    <div id="video-fields" class="type-fields" style="display:none">
+      <label for="video-caption">Caption</label>
+      <input type="text" id="video-caption" placeholder="Caption" maxlength="100">
+      <label for="video-url">Video URL</label>
+      <input type="text" id="video-url" placeholder="https://example.com/video.mp4">
+      {{!-- TODO: Make video-url a file input, so that the user can upload a video --}}
+    </div>
+    <input type="hidden" id="content" name="content">
     <div>
       <button type="submit" class="btn">Create Post</button>
     </div>
   </form>
 </div>
+<script>
+  const typeSelect = document.getElementById('type');
+  const textFields = document.getElementById('text-fields');
+  const imagesFields = document.getElementById('images-fields');
+  const videoFields = document.getElementById('video-fields');
+  const contentInput = document.getElementById('content');
+  
+  function showFields() {
+    const type = typeSelect.value;
+    textFields.style.display = type === 'text' ? '' : 'none';
+    imagesFields.style.display = type === 'images' ? '' : 'none';
+    videoFields.style.display = type === 'video' ? '' : 'none';
+  }
+  typeSelect.addEventListener('change', showFields);
+  showFields();
+
+  document.getElementById('create-post-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const type = typeSelect.value;
+    let content = '';
+    if (type === 'text') {
+      const caption = document.getElementById('text-caption').value.trim();
+      const text = document.getElementById('text-content').value.trim();
+      content = `${caption}\n${text}`;
+    } else if (type === 'images') {
+      const caption = document.getElementById('images-caption').value.trim();
+      const urls = document.getElementById('images-urls').value.trim();
+      content = `${caption}\n${urls}`;
+    } else if (type === 'video') {
+      const caption = document.getElementById('video-caption').value.trim();
+      const url = document.getElementById('video-url').value.trim();
+      content = `${caption}\n${url}`;
+    }
+    contentInput.value = content;
+    e.target.submit();
+  });
+</script>

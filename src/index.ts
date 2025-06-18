@@ -32,6 +32,8 @@ app.engine('hbs', engine({
       month: 'long',
       day: 'numeric'
     }),
+    'splitLines': (str: string) => (typeof str === 'string' ? str.split('\n') : []),
+    'joinLines': (arr: any[], start: number) => Array.isArray(arr) ? arr.slice(start).join('\n') : ''
   }
 }));
 app.set('view engine', 'hbs');

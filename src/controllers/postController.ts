@@ -35,15 +35,54 @@ export class PostController {
         return res.redirect('/auth/login');
       }
 
-      const { type, content } = z.object({
+      let { type, content } = z.object({
         type: z.enum(['text', 'images', 'video']),
-        content: z.string().min(1).max(1000).trim()
+        content: z.string().min(1).trim()
       }).parse(req.body);
 
-      if (!type || !content) {
-        return res.status(400).render('post/create', {
-          error: 'Type and content are required'
-        });
+      if (type === 'images') {
+        // Content is: first line is the caption, then the image URLs. Uploading is done beforehand, so URLs are already valid.
+        let [caption, ...imageUrls] = content.split('\n');
+        if (imageUrls.length === 0) {
+          return res.status(400).render('post/create', {
+            error: 'At least one image URL is required, this may be a bug'
+          });
+        }
+
+        caption = z.string().min(1).max(100).trim().parse(caption);
+        imageUrls = z.array(z.string().url().trim()).parse(imageUrls);
+
+        content = `${caption}\n${imageUrls.join('\n')}`; // Make sure that everything is valid, justīns vāciņš
+      }
+
+      if (type === 'video') {
+        // Content is: first line is the caption, then the video URL (only one is allowed). Uploading is done beforehand, so URL is already valid.
+        let [caption, videoUrl] = content.split('\n');
+        if (!videoUrl) {
+          return res.status(400).render('post/create', {
+            error: 'Video URL is required, this may be a bug'
+          });
+        }
+
+        caption = z.string().min(1).max(100).trim().parse(caption);
+        videoUrl = z.string().url().trim().parse(videoUrl);
+
+        content = `${caption}\n${videoUrl}`;
+      }
+
+      if (type === 'text') {
+        // Content is: first line is the caption, then the text.
+        let [caption, text] = content.split('\n');
+        if (!text) {
+          return res.status(400).render('post/create', {
+            error: 'Text is required, this may be a bug'
+          });
+        }
+
+        caption = z.string().min(1).max(100).trim().parse(caption);
+        text = z.string().min(1).trim().parse(text);
+
+        content = `${caption}\n${text}`;
       }
 
       const post = await PostModel.create(type, content, userId);
