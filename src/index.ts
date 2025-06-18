@@ -82,6 +82,10 @@ app.use((req: Request, res: Response) => {
 [
   UserModel.initTable(),
   PostModel.initTable(),
+  UserFollowModel.initTable(),
+  PostLikeModel.initTable(),
+  PostCommentModel.initTable(),
+  AuditLogModel.initTable()
 ].forEach(p => p.catch(error => {
   console.error('Failed to initialize users table:', error);
   process.exit(1);
