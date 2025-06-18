@@ -1,10 +1,10 @@
-<div class="post" style="padding:1rem;">
-  <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-    <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 0.5rem;">
-    <a href="/@{{post.username}}" style="font-weight: bold; color: #333; text-decoration: none;">{{post.username}}</a>
+<div class="post">
+  <div class="post-header-inline">
+    <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" class="post-avatar-inline">
+    <a href="/@{{post.username}}" class="post-username-link-inline">{{post.username}}</a>
   </div>
   {{#with (splitLines post.content) as |lines|}}
-    <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
+    <div class="post-title-inline">{{lines.[0]}}</div>
   {{/with}}
-  <a href="/post/{{post.id}}" class="btn" style="margin-top:0.5rem;">View Post</a>
+  <a href="/post/{{post.id}}" class="btn btn-view-post">View Post</a>
 </div>

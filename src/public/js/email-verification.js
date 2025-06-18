@@ -10,18 +10,22 @@ document.addEventListener('DOMContentLoaded', function () {
           headers: { 'Content-Type': 'application/json' },
         });
         if (res.ok) {
-          resentMsg.style.display = '';
+          resentMsg.classList.remove('verification-resent-msg');
+          resentMsg.classList.add('verification-resent-msg-visible');
         } else {
           resentMsg.textContent = 'Failed to resend email.';
-          resentMsg.style.display = '';
+          resentMsg.classList.remove('verification-resent-msg');
+          resentMsg.classList.add('verification-resent-msg-visible');
         }
       } catch (e) {
         resentMsg.textContent = 'Failed to resend email.';
-        resentMsg.style.display = '';
+        resentMsg.classList.remove('verification-resent-msg');
+        resentMsg.classList.add('verification-resent-msg-visible');
       }
       setTimeout(() => {
         resendBtn.disabled = false;
-        resentMsg.style.display = 'none';
+        resentMsg.classList.remove('verification-resent-msg-visible');
+        resentMsg.classList.add('verification-resent-msg');
         resentMsg.textContent = 'Email verification resent!';
       }, 3000);
     });

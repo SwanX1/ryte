@@ -71,7 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       if (errorDiv) {
-        errorDiv.style.display = 'none';
+        errorDiv.classList.remove('error-visible');
+        errorDiv.classList.add('error-hidden');
         errorDiv.textContent = '';
       }
       const textarea = document.getElementById('comment-content');
@@ -108,13 +109,15 @@ document.addEventListener('DOMContentLoaded', function () {
           const data = await res.json().catch(() => ({}));
           if (errorDiv) {
             errorDiv.textContent = data.error || 'Failed to add comment.';
-            errorDiv.style.display = 'block';
+            errorDiv.classList.remove('error-hidden');
+            errorDiv.classList.add('error-visible');
           }
         }
       } catch (err) {
         if (errorDiv) {
           errorDiv.textContent = 'Network error. Please try again.';
-          errorDiv.style.display = 'block';
+          errorDiv.classList.remove('error-hidden');
+          errorDiv.classList.add('error-visible');
         }
       }
     });

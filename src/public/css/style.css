@@ -200,6 +200,130 @@ nav {
   background-color: #5a6268;
 }
 
+/* Post styles */
+.post {
+  padding: 1rem;
+}
+
+.post-header-inline {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.post-avatar-inline {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+
+.post-username-link-inline {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.post-title-inline {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.btn-view-post {
+  margin-top: 0.5rem;
+}
+
+/* Comment styles */
+.comment-meta-inline {
+  color: #888;
+  font-size: 0.9em;
+}
+
+/* Search styles */
+.search-results-section {
+  margin-top: 2rem;
+}
+
+/* Banner styles */
+.verification-resent-msg {
+  display: none;
+  margin-left: 10px;
+}
+
+.verification-resent-msg-visible {
+  display: inline;
+  margin-left: 10px;
+}
+
+/* Post creation styles */
+.type-fields-hidden {
+  display: none;
+}
+
+.post-type-tabs {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.tab-button.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.preview-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-container img,
+.preview-container video {
+  max-width: 150px;
+  max-height: 150px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.preview-item {
+  position: relative;
+}
+
+.remove-file {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
 /* Banner */
 .notification-bar {
   background-color: #fff3cd;
@@ -255,8 +379,6 @@ nav {
   font-weight: 500;
   font-size: 0.875rem;
 }
-
-/* Body */
 
 /* Post-view */
 
@@ -516,4 +638,13 @@ input, textarea {
   border: 1px solid #28a745;
   border-radius: 4px;
   background-color: #d4edda;
+}
+
+/* Error display states */
+.error-hidden {
+  display: none;
+}
+
+.error-visible {
+  display: block;
 } 
