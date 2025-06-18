@@ -258,7 +258,222 @@ nav {
 
 /* Body */
 
+/* Post-view */
 
+/* Post Header Section */
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.75rem;
+    flex-shrink: 0; /* Prevent avatar from shrinking if space is tight */
+}
+
+.post-username-link {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+    /* You might want a hover state for this link */
+}
+.post-username-link:hover {
+    text-decoration: underline;
+    color: #007bff; /* Example hover color */
+}
+
+
+/* Post Content: Title and Text */
+.post-title {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 30px;
+    word-wrap: break-word; /* Ensure long words break onto the next line */
+    overflow-wrap: break-word; /* Modern alias for word-wrap */
+    line-height: 1.2; /* Adjust line height for larger titles */
+}
+
+.post-content-text {
+    padding: 20px 0; /* Adds top/bottom padding to the text content */
+    color: #555; /* A slightly softer text color */
+    line-height: 1.6; /* Improve readability of body text */
+    word-wrap: break-word; /* Crucial for long, unbroken strings */
+    overflow-wrap: break-word; /* Modern alias */
+    white-space: pre-wrap; /* Preserve actual line breaks and spaces if they exist in `joinLines` output */
+}
+
+
+/* Image Post Type */
+.post-images-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem; /* Add spacing below the images grid */
+}
+
+.post-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 6px;
+    object-fit: cover; /* Ensures images fill their space without distortion */
+}
+
+/* Video Post Type */
+.post-video {
+    max-width: 100%;
+    border-radius: 6px;
+    margin-bottom: 1rem; /* Add spacing below the video */
+}
+
+/* Post Actions Section (Like count and button) */
+.post-actions {
+    margin-top: 1rem; /* Space between content and actions */
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Space between like count and button */
+}
+
+.like-count {
+    font-weight: bold;
+    color: #333;
+}
+
+.like-btn {
+    padding: 8px 15px;
+    background-color: #007bff; /* Example blue */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+}
+
+.like-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Post Date (Metadata) */
+.post-date {
+    font-size: 0.85em; /* Smaller font for metadata */
+    color: #777;
+    margin-top: 0.5rem; /* Space between actions and date */
+    margin-bottom: 0; /* Remove default paragraph margin */
+}
+
+/* --- Comments Section Styles --- */
+.comments-section {
+    margin-top: 2rem;
+}
+
+.comments-section h3 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+#comments-list {
+    margin-bottom: 1.5rem;
+}
+
+#comments-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Style for each individual comment item */
+.comment-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px; /* Space between comments */
+    word-wrap: break-word; /* Crucial for long, unbroken strings */
+    overflow-wrap: break-word; /* Modern alias */
+}
+
+.comment-item:last-child {
+    margin-bottom: 0; /* No margin after the last comment */
+}
+
+/* --- Comment Header (User Info including Avatar) --- */
+.comment-header {
+    display: flex;          /* Makes avatar and username align horizontally */
+    align-items: center;    /* Vertically centers avatar and text */
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;            /* Space between avatar and username */
+}
+
+.comment-avatar {
+    width: 30px;            /* Smaller avatar for comments */
+    height: 30px;
+    border-radius: 50%;     /* Make it round */
+    object-fit: cover;      /* Ensures image fills the circle without distortion */
+    flex-shrink: 0;         /* Prevents avatar from shrinking */
+}
+
+.comment-username-link {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.95em;
+}
+
+.comment-username-link:hover {
+    text-decoration: underline;
+    color: #007bff;
+}
+
+.comment-content-text {
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.comment-meta {
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#no-comments {
+    color: #777;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+#add-comment-form {
+    margin-top: 1rem;
+}
+
+#comment-error-block {
+    color: red;
+    margin-bottom: 0.5rem;
+    font-size: 0.9em;
+}
+
+.comment-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 1em;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
 
 /* Footer */
 footer {

@@ -1,36 +1,31 @@
 <div class="card post">
-  <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-    <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 0.75rem;">
-    <a href="/@{{post.username}}" style="font-weight: bold; color: #333; text-decoration: none;">{{post.username}}</a>
+  <div class="post-header">
+    <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" class="post-avatar">
+    <a href="/@{{post.username}}" class="post-username-link">{{post.username}}</a>
   </div>
   {{#if (eq post.type 'images')}}
     {{#with (splitLines post.content) as |lines|}}
-      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+      <div class="post-title">{{lines.[0]}}</div>
+      <div class="post-images-grid">
         {{#each lines}}
           {{#unless @first}}
-            <img src="{{this}}" alt="Image" style="max-width: 200px; max-height: 200px; border-radius: 6px;">
+            <img src="{{this}}" alt="Image" class="post-image">
           {{/unless}}
         {{/each}}
       </div>
     {{/with}}
   {{else if (eq post.type 'video')}}
     {{#with (splitLines post.content) as |lines|}}
-      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
-      <video src="{{lines.[1]}}" controls style="max-width: 100%; border-radius: 6px;"></video>
+      <div class="post-title">{{lines.[0]}}</div>
+      <video src="{{lines.[1]}}" controls class="post-video"></video>
     {{/with}}
   {{else}}
     {{#with (splitLines post.content) as |lines|}}
-      <div style="margin-bottom: 0.5rem; font-weight: bold;">{{lines.[0]}}</div>
-      <div>{{joinLines lines 1}}</div>
+      <div class="post-title">{{lines.[0]}}</div>
+      <div class="post-content-text">{{joinLines lines 1}}</div>
     {{/with}}
   {{/if}}
-  <p><small>Posted on: {{localDate post.created_at}}
-    {{#if (neq post.created_at post.updated_at)}}
-      (edited)
-    {{/if}}
-  </small></p>
-  <div class="post-actions" style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+  <div class="post-actions">
     <span class="like-count" data-post-id="{{post.id}}">{{post.likeCount}}</span>
     {{#if post.liked}}
       <button class="like-btn" data-post-id="{{post.id}}" data-liked="true">Unlike</button>
@@ -38,9 +33,14 @@
       <button class="like-btn" data-post-id="{{post.id}}" data-liked="false">Like</button>
     {{/if}}
   </div>
+  <p class="post-date"><small>Posted on: {{localDate post.created_at}}
+    {{#if (neq post.created_at post.updated_at)}}
+      (edited)
+    {{/if}}
+  </small></p>
 </div>
 
-<div class="card" style="margin-top:2rem;">
+<div class="card comments-section">
   <h3>Comments</h3>
   <div id="comments-list">
     {{#if comments.length}}
@@ -54,13 +54,13 @@
     {{/if}}
   </div>
   {{#if session_user}}
-    <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST" style="margin-top:1rem;">
+    <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST">
       <div id="comment-error-block">{{> error error=null}}</div>
-      <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required style="width:100%;"></textarea>
+      <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required class="comment-textarea"></textarea>
       <button type="submit" class="btn">Post Comment</button>
     </form>
   {{else}}
-    <p style="margin-top:1rem;">Please <a href="/auth/login">login</a> to comment.</p>
+    <p class="login-prompt">Please <a href="/auth/login">login</a> to comment.</p>
   {{/if}}
 </div>
 <script>
