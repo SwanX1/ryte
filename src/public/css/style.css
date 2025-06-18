@@ -200,6 +200,62 @@ nav {
   background-color: #5a6268;
 }
 
+/* Banner */
+.notification-bar {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-left: 4px solid #f39c12;
+  padding: 1rem 2rem;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.banner-message {
+  font-weight: 500;
+  color: #856404;
+  flex: 1;
+}
+
+.banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: #f39c12;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-sm:hover {
+  background-color: #e67e22;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#verification-resent-msg {
+  color: #155724;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
 /* Body */
 
 

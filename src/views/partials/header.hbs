@@ -1,14 +1,4 @@
 <header>
-  {{#if session_user}}
-    {{#unless session_user.email_verified}}
-      <div id="email-verification-notice" class="notification-bar">
-        Your email is not verified.
-        <button id="resend-verification-btn" class="btn btn-sm">Resend verification email</button>
-        <a href="/auth/verify-email" class="btn btn-sm">Verify Email</a>
-        <span id="verification-resent-msg" style="display:none; margin-left:10px;">Email verification resent!</span>
-      </div>
-    {{/unless}}
-  {{/if}}
   <nav>
     <div class="nav-left">
       <div class="logo">
