@@ -12,11 +12,17 @@ export class PostController {
     const post = await PostModel.findById(post_id);
     if (!post) return next();
     const author = await UserModel.findById(post.user);
-    
-    return res.render('post/view', { likeCount: (await PostLikeModel.getLikesForPost(post_id)).length, post: {
+    const sessionUserId = req.session?.userId;
+    let liked = false;
+    if (sessionUserId) {
+      liked = !!(await PostLikeModel.find(sessionUserId, post_id));
+    }
+    return res.render('post/view', { post: {
       ...post,
       username: author?.username || 'Unknown',
       avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+      likeCount: (await PostLikeModel.getLikesForPost(post_id)).length,
+      liked,
     } });
   }
 

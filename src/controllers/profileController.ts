@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { UserModel } from '../models/User';
 import { PostModel } from '../models/Post';
 import { UserFollowModel } from '../models/UserFollow';
+import { PostLikeModel } from '../models/PostLike';
 
 export class ProfileController {
   static async usernameRedirect(req: Request<{ username: string }>, res: Response, next: NextFunction) {
@@ -28,6 +29,7 @@ export class ProfileController {
     }
 
     const posts = await PostModel.listByUser(user.id);
+    const sessionUserId = req.session?.userId;
     // Fetch follower and following counts
     const followerIds = await UserFollowModel.getFollowerIds(user.id);
     const followingIds = await UserFollowModel.getFollowingIds(user.id);
@@ -36,10 +38,17 @@ export class ProfileController {
       user: user,
       posts: await Promise.all(posts.map(async (post) => {
         const author = await UserModel.findById(post.user);
+        const likeCount = (await PostLikeModel.getLikesForPost(post.id)).length;
+        let liked = false;
+        if (sessionUserId) {
+          liked = !!(await PostLikeModel.find(sessionUserId, post.id));
+        }
         return {
           ...post,
           username: author?.username || 'Unknown',
           avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+          likeCount,
+          liked,
         };
       })),
       followerCount: followerIds.length,

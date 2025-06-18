@@ -9,4 +9,12 @@
       (edited)
     {{/if}}
   </small></p>
+  <div class="post-actions" style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+    <span class="like-count" data-post-id="{{post.id}}">{{post.likeCount}}</span>
+    {{#if post.liked}}
+      <button class="like-btn" data-post-id="{{post.id}}" data-liked="true">Unlike</button>
+    {{else}}
+      <button class="like-btn" data-post-id="{{post.id}}" data-liked="false">Like</button>
+    {{/if}}
+  </div>
 </div>
