@@ -13,6 +13,8 @@ import { UserFollowModel } from './models/UserFollow';
 import { AuditLogModel } from './models/AuditLog';
 import { PostLikeModel } from './models/PostLike';
 import { PostCommentModel } from './models/PostComment';
+import { getConnection } from './database/connection';
+import { SessionStore } from './util/sessionStore';
 
 const app = express();
 
@@ -46,6 +48,7 @@ app.use(session({
   secret: config.sessionSecret,
   resave: false,
   saveUninitialized: false,
+  store: new SessionStore(),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours

@@ -7,5 +7,5 @@ export const config = {
     database: process.env.DB_NAME || 'ryte',
   },
   env: process.env.NODE_ENV || 'development',
-  sessionSecret: process.env.SESSION_SECRET || 'your-secret-key'
+  sessionSecret: process.env.SESSION_SECRET || 'your-secret-key' // This can be anything, it's just used to sign the session cookie
 };
