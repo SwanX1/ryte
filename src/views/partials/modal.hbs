@@ -1,6 +1,38 @@
-<div class="modal" {{#if modal_id}}id="{{modal_id}}"{{/if}}>
-    <div class="modal-content">
-        <span class="modal-close-btn">&times;</span> 
-        {{> @partial-block }} 
-    </div>
+<div class="modal" {{#if modal_id}}id="{{modal_id}}" {{/if}}>
+  <div class="modal-content">
+    {{#if modal_id}}
+      <span class="modal-close-btn">&times;</span>
+    {{/if}}
+    {{> @partial-block }}
+  </div>
 </div>
+
+{{#if modal_id}}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById("{{modal_id}}"); // Syntax highlighting is broken, but handlebars still inserts modal_id correctly
+    const closeModalBtn = modal.querySelector('.modal-close-btn');
+
+    const closeModal = () => {
+      modal.classList.remove('active');
+    };
+
+    // close the modal via the close button
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // close the modal when clicking outside its content
+    window.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    // close the modal when esc key is pressed
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+  });
+</script>
+{{/if}}
