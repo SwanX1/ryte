@@ -13,3 +13,9 @@ authRouter.route('/login')
 
 authRouter
   .get('/logout', AuthController.logout);
+
+authRouter.post('/resend-verification', AuthController.resendVerificationEmail);
+
+authRouter.route('/verify-email')
+  .get(AuthController.getVerifyEmailPage)
+  .post(AuthController.verifyEmail);

@@ -9,6 +9,7 @@ services:
       - .:/app
       - /app/node_modules
       - ./src/views:/app/src/views
+      - ./.env:/app/.env
     environment:
       - NODE_ENV=development
       - DB_HOST=mysql
