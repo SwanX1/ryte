@@ -1,7 +1,8 @@
 import { Router as CreateRouter, type Request, type Response } from 'express';
-import { BaseModel } from '../models/BaseModel';
 import type { RequestHandler } from 'express';
 import type { RouteParameters, Router } from 'express-serve-static-core';
+import { UserModel } from '../models/User';
+import { PostModel } from '../models/Post';
 
 export abstract class BaseController {
   public router(): RouterFactory<this> {

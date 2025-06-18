@@ -1,0 +1,27 @@
+<div class="card">
+  <h2>Search Results for "{{q}}"</h2>
+  <div>
+    <h3>Users</h3>
+    {{#if users.length}}
+      <ul>
+        {{#each users}}
+          <li><a href="/profile/{{this.id}}">{{this.username}}</a></li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No users found.</p>
+    {{/if}}
+  </div>
+  <div style="margin-top:2rem;">
+    <h3>Posts</h3>
+    {{#if posts.length}}
+      <ul>
+        {{#each posts}}
+          <li><a href="/post/{{this.id}}">{{this.content}}</a></li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No posts found.</p>
+    {{/if}}
+  </div>
+</div> 

@@ -12,10 +12,15 @@ export class PostController extends BaseController {
     if (typeof post_id === "undefined" || isNaN(post_id)) {
       return next();  // Don't write anything, this will be picked up by the 404 handler
     }
-    
     const post = await this.postModel.findById(post_id);
+    if (!post) return next();
+    const author = await this.userModel.findById(post.user);
     
-    return res.render('post/view', { post });
+    return res.render('post/view', { post: {
+      ...post,
+      username: author?.username || 'Unknown',
+      avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+    } });
   }
 
   async create(req: Request, res: Response, next: NextFunction) {

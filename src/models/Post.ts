@@ -57,6 +57,19 @@ export class PostModel {
     }
   }
 
+  async searchByContent(partial: string): Promise<Post[]> {
+    try {
+      const posts = await query(
+        'SELECT * FROM posts WHERE content LIKE ? COLLATE utf8mb4_general_ci',
+        [`%${partial}%`]
+      ) as Post[];
+      return posts;
+    } catch (error) {
+      console.error('Error searching posts by content:', error);
+      return [];
+    }
+  }
+
   static async initTable(): Promise<void> {
     try {
       await query(`

@@ -1,4 +1,8 @@
 <div class="card post">
+  <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+    <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 0.75rem;">
+    <a href="/@{{post.username}}" style="font-weight: bold; color: #333; text-decoration: none;">{{post.username}}</a>
+  </div>
   <p>{{post.content}}</p>
   <p><small>Posted on: {{localDate post.created_at}}
     {{#if (neq post.created_at post.updated_at)}}

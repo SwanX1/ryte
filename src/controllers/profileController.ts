@@ -7,6 +7,16 @@ export class ProfileController extends BaseController {
   private userModel = new UserModel();
   private postModel = new PostModel();
 
+  async viewByUsername(req: Request<{ username: string }>, res: Response, next: NextFunction) {
+    const username = req.params.username;
+    const user = await this.userModel.findByUsername(username);
+    if (user === null) {
+      return next();
+    }
+
+    return res.redirect(`/profile/${user.id}`);
+  }
+
   async view(req: Request<{ id: string }>, res: Response, next: NextFunction) {
     // console.log(`Fetching profile for user ID: ${req.params.id}`);
     const user_id = parseInt(req.params.id);
@@ -21,11 +31,17 @@ export class ProfileController extends BaseController {
     }
 
     const posts = await this.postModel.listByUser(user.id);
-    
     return res.render('profile/view', {
       title: `${user.username} - Profile`,
       user: user,
-      posts: posts,
+      posts: await Promise.all(posts.map(async (post) => {
+        const author = await this.userModel.findById(post.user);
+        return {
+          ...post,
+          username: author?.username || 'Unknown',
+          avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+        };
+      })),
     });
   }
 } 

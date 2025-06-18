@@ -102,6 +102,19 @@ export class UserModel {
     return verifyPassword(password, user.password);
   }
 
+  async searchByUsername(partial: string): Promise<User[]> {
+    try {
+      const users = await query(
+        'SELECT * FROM users WHERE username LIKE ? COLLATE utf8mb4_general_ci',
+        [`%${partial}%`]
+      ) as User[];
+      return users;
+    } catch (error) {
+      console.error('Error searching users by username:', error);
+      return [];
+    }
+  }
+
   static async initTable(): Promise<void> {
     try {
       await query(`
