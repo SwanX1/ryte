@@ -594,6 +594,84 @@ nav {
     text-decoration: underline;
 }
 
+/* Modals */
+
+/* --- Basic Modal Styling (Hidden by default) --- */
+.modal {
+    display: none; /* Hide the modal by default */
+    position: fixed; /* Position it relative to the viewport */
+    z-index: 1000; /* Ensure it's on top of other content */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if content is too tall */
+    background-color: rgba(0,0,0,0.5); /* Black background with transparency */
+    justify-content: center; /* For centering modal content with flexbox */
+    align-items: center; /* For centering modal content with flexbox */
+}
+
+/* Modal Content Styling */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+    display: flex;            
+    flex-direction: column;    
+    justify-content: center;   
+    align-items: center;       
+    text-align: center;        
+    gap: 10px;
+}
+
+/* When the modal has the 'active' class, make it visible */
+.modal.active {
+    display: flex; /* Show the modal */
+}
+
+.modal-close-btn {
+    color: #aaa;
+    position: absolute;
+    right: 15px; /* Distance from the right edge of modal-content */
+    top: 5px; /* Distance from the top edge of modal-content */
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1; /* Helps vertically align the 'x' */
+    padding: 5px; /* Makes it easier to click */
+}
+
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+    color: black;
+    text-decoration: none;
+    outline: none; /* Remove outline on focus for better aesthetics */
+}
+
+.btn-open-modal {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-open-modal:hover {
+    background-color: #0056b3;
+}
+
+/* Email Verification */
+
+
+
 /* Footer */
 footer {
   background-color: #fff;
