@@ -27,6 +27,7 @@ app.engine('hbs', engine({
   helpers: {
     'eq': (a: any, b: any) => a === b,
     'neq': (a: any, b: any) => a !== b,
+    'or': (a: any, b: any) => a || b,
     'localDate': (date: number) => new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

@@ -1,4 +1,7 @@
-<li class="comment-item">
+<li class="comment-item" data-comment-id="{{comment.id}}">
   <a class="comment-username-link" href="/@{{comment.username}}"><strong>{{comment.username}}</strong></a>: {{comment.content}}
   <span class="comment-meta-inline">({{localDate comment.created_at}})</span>
+  {{#if (or should_show_delete_button (eq session_user.id comment.user_id))}}
+    <button class="delete-comment-btn" data-comment-id="{{comment.id}}">Delete</button>
+  {{/if}}
 </li> 

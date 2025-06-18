@@ -69,12 +69,11 @@ export class PostCommentModel {
     }
   }
 
-  static async getCommentsForPost(postId: number): Promise<(PostComment & { user: User })[]> {
+  static async getCommentsForPost(postId: number): Promise<PostComment[]> {
     try {
       return await query(
-        `SELECT c.*, u.* 
-         FROM post_comments c 
-         JOIN users u ON c.user_id = u.id 
+        `SELECT c.* 
+         FROM post_comments c
          WHERE c.post_id = ? 
          ORDER BY c.created_at DESC`,
         [postId]
@@ -85,12 +84,11 @@ export class PostCommentModel {
     }
   }
 
-  static async getCommentsByUser(userId: number): Promise<(PostComment & { post: Post })[]> {
+  static async getCommentsByUser(userId: number): Promise<PostComment[]> {
     try {
       return await query(
-        `SELECT c.*, p.* 
+        `SELECT c.*
          FROM post_comments c 
-         JOIN posts p ON c.post_id = p.id 
          WHERE c.user_id = ? 
          ORDER BY c.created_at DESC`,
         [userId]

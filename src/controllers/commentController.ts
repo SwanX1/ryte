@@ -68,11 +68,12 @@ export class CommentController {
     if (isNaN(commentId)) return res.status(400).json({ error: 'Invalid commentId' });
     const comment = await PostCommentModel.findById(commentId);
     if (!comment) return res.status(404).json({ error: 'Comment not found' });
-    const user = await UserModel.findById(comment.user_id);
+    const author = await UserModel.findById(comment.user_id);
     res.render('partials/comment', {
       comment: {
         ...comment,
-        username: user?.username || 'Unknown',
+        username: author?.username || 'Unknown',
+        user_id: author?.id,
       },
       layout: 'raw'
     });

@@ -2,6 +2,9 @@
   <div class="post-header">
     <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" class="post-avatar">
     <a href="/@{{post.username}}" class="post-username-link">{{post.username}}</a>
+    {{#if (eq session_user.id post.user_id)}}
+      <button class="delete-post-btn" data-post-id="{{post.id}}">Delete Post</button>
+    {{/if}}
   </div>
   {{#if (eq post.type 'images')}}
     {{#with (splitLines post.content) as |lines|}}
@@ -46,7 +49,7 @@
     {{#if comments.length}}
       <ul id="comments-ul">
         {{#each comments}}
-          {{> comment comment=this}}
+          {{> comment comment=this should_show_delete_button=(eq ../session_user.id user_id)}}
         {{/each}}
       </ul>
     {{else}}
@@ -67,6 +70,66 @@
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('add-comment-form');
   const errorDiv = document.getElementById('comment-error-block');
+  
+  // Post delete functionality
+  const deletePostBtn = document.querySelector('.delete-post-btn');
+  if (deletePostBtn) {
+    deletePostBtn.addEventListener('click', async function() {
+      if (!confirm('Are you sure you want to delete this post?')) return;
+      
+      const postId = this.getAttribute('data-post-id');
+      try {
+        const res = await fetch(`/api/post/${postId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        
+        if (res.ok) {
+          window.location.href = '/';
+        } else {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error || 'Failed to delete post');
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    });
+  }
+
+  // Comment delete functionality
+  document.addEventListener('click', async function(e) {
+    if (e.target.classList.contains('delete-comment-btn')) {
+      if (!confirm('Are you sure you want to delete this comment?')) return;
+      
+      const commentId = e.target.getAttribute('data-comment-id');
+      const commentItem = e.target.closest('.comment-item');
+      
+      try {
+        const res = await fetch(`/api/comment/${commentId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        
+        if (res.ok) {
+          commentItem.remove();
+          // Check if there are no more comments
+          const commentsList = document.getElementById('comments-ul');
+          if (commentsList && commentsList.children.length === 0) {
+            const noComments = document.createElement('p');
+            noComments.id = 'no-comments';
+            noComments.textContent = 'No comments yet.';
+            document.getElementById('comments-list').appendChild(noComments);
+          }
+        } else {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error || 'Failed to delete comment');
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    }
+  });
+
   if (form) {
     form.addEventListener('submit', async function (e) {
       e.preventDefault();

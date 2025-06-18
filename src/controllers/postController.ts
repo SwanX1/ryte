@@ -36,6 +36,7 @@ export class PostController {
       post: {
         ...post,
         username: author?.username || 'Unknown',
+        user_id: author?.id,
         avatar_url: author?.avatar_url || '/assets/default_avatar.png',
         likeCount: (await PostLikeModel.getLikesForPost(post_id)).length,
         liked,
@@ -187,5 +188,30 @@ export class PostController {
     return res.render('post/create', {
       error: null
     });
+  }
+
+  static async delete(req: Request<{ id: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) return res.status(401).json({ error: 'Unauthenticated' });
+      
+      const postIdParam = req.params.id;
+      if (typeof postIdParam !== 'string') return res.status(400).json({ error: 'Invalid postId' });
+      
+      const postId = parseInt(postIdParam);
+      if (isNaN(postId)) return res.status(400).json({ error: 'Invalid postId' });
+      
+      const post = await PostModel.findById(postId);
+      if (!post || post.user !== userId) return res.status(403).json({ error: 'Forbidden' });
+      
+      const result = await PostModel.delete(postId);
+      if (!result) return res.status(500).json({ error: 'Failed to delete post' });
+      
+      AuditLogModel.create('delete', 'post', userId, postId, `User ${userId} deleted post ${postId}`);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).json({ error: 'An error occurred while deleting the post' });
+    }
   }
 } 

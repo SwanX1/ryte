@@ -88,4 +88,18 @@ export class PostModel {
       throw error;
     }
   }
+
+  static async delete(id: number): Promise<boolean> {
+    try {
+      const result = await query(
+        'DELETE FROM posts WHERE id = ?',
+        [id]
+      ) as any;
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      return false;
+    }
+  }
 } 

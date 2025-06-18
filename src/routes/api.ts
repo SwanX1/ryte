@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { FollowController } from '../controllers/followController';
 import { LikeController } from '../controllers/likeController';
 import { CommentController } from '../controllers/commentController';
+import { PostController } from '../controllers/postController';
 
 export const apiRouter = Router();
 
@@ -20,3 +21,6 @@ apiRouter.get('/likes/:postId', LikeController.likes);
 apiRouter.post('/comment/:postId', CommentController.add);
 apiRouter.delete('/comment/:commentId', CommentController.delete);
 apiRouter.get('/comments/:postId', CommentController.list);
+
+// Post endpoints
+apiRouter.delete('/post/:id', PostController.delete);
