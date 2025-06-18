@@ -1,9 +1,10 @@
-<div class="card">
-  <h1 style="line-height: 1.2;">RYTE</h1>
-  <p style="margin-bottom: 20px;">write right</p>
-  {{#if session_user}}
-    <a href="/post/create" class="btn">Create New Post</a>
-  {{else}}
+{{#if session_user}}
+    <h1 class="welcome">Welcome back, {{session_user.username}}!</h1>
+    <hr><br>
+  <div class="card">
+  </div>
+{{else}}
+  <div class="card">
     <p>Please <a href="/auth/login">login</a> or <a href="/auth/signup">sign up</a> to start posting.</p>
-  {{/if}}
-</div>
+  </div>
+{{/if}}

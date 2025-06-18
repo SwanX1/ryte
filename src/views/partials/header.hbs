@@ -1,19 +1,35 @@
 <header>
   <nav>
     <div class="nav-left">
-      <a href="/" class="btn">Home</a>
-      <form action="/search" method="get" class="search-form" style="display:inline-block; margin-left: 1rem;">
-        <input type="text" name="q" placeholder="Search..." required style="padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #ddd;">
-        <button type="submit" class="btn">Search</button>
-      </form>
+      <div class="logo">
+        <a href="/">
+          <img src="/assets/ryte-logo.png" alt="Ryte logo">
+        </a>
+      </div>
+      <div class="nav-ryte">
+        <h1>RYTE</h1>
+        <p><i>write right</i></p>
+      </div>
+      <div>
+        <a href="/post/create" class="btn btn-create">Create New Post</a>
+      </div>
+    </div>
+    <div class="segmented-control">
+        <button class="segment segment-feed">Feed</button>
+        <button class="segment segment-followers">Followers</button>
     </div>
     <div class="nav-right">
+      <form action="/search" method="get" class="search-form">
+        <input type="text" name="q" placeholder="Search..." required>
+      </form>
       {{#if session_user}}
         <div class="user-profile">
           <img src="{{session_user.avatar_url}}" alt="{{session_user.username}}'s avatar" class="avatar">
           <span class="username">{{session_user.username}}</span>
         </div>
-        <a href="/auth/logout" class="btn btn-logout">Logout</a>
+        <a href="/auth/logout" class="btn-logout">
+          <img src="/assets/log-out.png">
+        </a>
       {{else}}
         <a href="/auth/login" class="btn btn-login">Login</a>
         <a href="/auth/signup" class="btn btn-signup">Sign Up</a>
