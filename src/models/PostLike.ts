@@ -78,6 +78,19 @@ export class PostLikeModel {
     }
   }
 
+  async find(userId: number, postId: number): Promise<PostLike | null> {
+    try {
+      const likes = await query(
+        'SELECT * FROM post_likes WHERE user_id = ? AND post_id = ?',
+        [userId, postId]
+      ) as PostLike[];
+      return likes[0] || null;
+    } catch (error) {
+      console.error('Error finding post like:', error);
+      return null;
+    }
+  }
+
   static async initTable(): Promise<void> {
     try {
       await query(`

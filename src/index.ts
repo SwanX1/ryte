@@ -9,6 +9,10 @@ import { UserModel } from './models/User';
 import path from 'path';
 import routes from './routes';
 import { PostModel } from './models/Post';
+import { UserFollowModel } from './models/UserFollow';
+import { AuditLogModel } from './models/AuditLog';
+import { PostLikeModel } from './models/PostLike';
+import { PostCommentModel } from './models/PostComment';
 
 const app = express();
 
@@ -87,7 +91,7 @@ app.use((req: Request, res: Response) => {
   PostCommentModel.initTable(),
   AuditLogModel.initTable()
 ].forEach(p => p.catch(error => {
-  console.error('Failed to initialize users table:', error);
+  console.error('Failed to initialize table:', error);
   process.exit(1);
 }));
 
