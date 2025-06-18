@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authRouter } from './auth';
-import { atRouter, profileRouter } from './profile';
+import { profileRouter } from './profile';
 import { postRouter } from './post';
 import { searchRouter } from './search';
 import { apiRouter } from './api';
