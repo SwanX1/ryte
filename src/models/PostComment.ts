@@ -11,7 +11,7 @@ export interface PostComment {
 }
 
 export class PostCommentModel {
-  async create(userId: number, postId: number, content: string): Promise<PostComment | null> {
+  static async create(userId: number, postId: number, content: string): Promise<PostComment | null> {
     try {
       const result = await query(
         'INSERT INTO post_comments (user_id, post_id, content) VALUES (?, ?, ?)',
@@ -28,7 +28,7 @@ export class PostCommentModel {
     }
   }
 
-  async update(id: number, content: string): Promise<PostComment | null> {
+  static async update(id: number, content: string): Promise<PostComment | null> {
     try {
       await query(
         'UPDATE post_comments SET content = ? WHERE id = ?',
@@ -41,7 +41,7 @@ export class PostCommentModel {
     }
   }
 
-  async delete(id: number): Promise<boolean> {
+  static async delete(id: number): Promise<boolean> {
     try {
       const result = await query(
         'DELETE FROM post_comments WHERE id = ?',
@@ -55,7 +55,7 @@ export class PostCommentModel {
     }
   }
 
-  async findById(id: number): Promise<PostComment | null> {
+  static async findById(id: number): Promise<PostComment | null> {
     try {
       const comments = await query(
         'SELECT * FROM post_comments WHERE id = ?',
@@ -69,7 +69,7 @@ export class PostCommentModel {
     }
   }
 
-  async getCommentsForPost(postId: number): Promise<(PostComment & { user: User })[]> {
+  static async getCommentsForPost(postId: number): Promise<(PostComment & { user: User })[]> {
     try {
       return await query(
         `SELECT c.*, u.* 
@@ -85,7 +85,7 @@ export class PostCommentModel {
     }
   }
 
-  async getCommentsByUser(userId: number): Promise<(PostComment & { post: Post })[]> {
+  static async getCommentsByUser(userId: number): Promise<(PostComment & { post: Post })[]> {
     try {
       return await query(
         `SELECT c.*, p.* 

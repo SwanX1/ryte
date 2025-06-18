@@ -9,7 +9,7 @@ export interface PostLike {
 }
 
 export class PostLikeModel {
-  async create(userId: number, postId: number): Promise<PostLike | null> {
+  static async create(userId: number, postId: number): Promise<PostLike | null> {
     try {
       const result = await query(
         'INSERT INTO post_likes (user_id, post_id) VALUES (?, ?)',
@@ -26,7 +26,7 @@ export class PostLikeModel {
     }
   }
 
-  async delete(userId: number, postId: number): Promise<boolean> {
+  static async delete(userId: number, postId: number): Promise<boolean> {
     try {
       const result = await query(
         'DELETE FROM post_likes WHERE user_id = ? AND post_id = ?',
@@ -40,7 +40,7 @@ export class PostLikeModel {
     }
   }
 
-  async findById(id: number): Promise<PostLike | null> {
+  static async findById(id: number): Promise<PostLike | null> {
     try {
       const likes = await query(
         'SELECT * FROM post_likes WHERE id = ?',
@@ -54,7 +54,7 @@ export class PostLikeModel {
     }
   }
 
-  async getLikesForPost(postId: number): Promise<User[]> {
+  static async getLikesForPost(postId: number): Promise<User[]> {
     try {
       return await query(
         'SELECT u.* FROM users u JOIN post_likes l ON u.id = l.user_id WHERE l.post_id = ?',
@@ -66,7 +66,7 @@ export class PostLikeModel {
     }
   }
 
-  async getLikedPostsByUser(userId: number): Promise<Post[]> {
+  static async getLikedPostsByUser(userId: number): Promise<Post[]> {
     try {
       return await query(
         'SELECT p.* FROM posts p JOIN post_likes l ON p.id = l.post_id WHERE l.user_id = ?',
@@ -78,7 +78,7 @@ export class PostLikeModel {
     }
   }
 
-  async find(userId: number, postId: number): Promise<PostLike | null> {
+  static async find(userId: number, postId: number): Promise<PostLike | null> {
     try {
       const likes = await query(
         'SELECT * FROM post_likes WHERE user_id = ? AND post_id = ?',

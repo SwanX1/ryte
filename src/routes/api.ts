@@ -6,38 +6,17 @@ import { CommentController } from '../controllers/commentController';
 export const apiRouter = Router();
 
 // Follow endpoints
-const followController = new FollowController();
-apiRouter.use('/follow', followController.router()
-.post('/:userId', followController.follow)
-.delete('/:userId', followController.unfollow)
-.build());
-
-apiRouter.use('/followers', followController.router()
-.get('/:userId', followController.followers)
-.build());
-
-apiRouter.use('/following', followController.router()
-.get('/:userId', followController.following)
-.build());
+apiRouter.post('/follow/:userId', FollowController.follow);
+apiRouter.delete('/follow/:userId', FollowController.unfollow);
+apiRouter.get('/followers/:userId', FollowController.followers);
+apiRouter.get('/following/:userId', FollowController.following);
 
 // Like endpoints
-const likeController = new LikeController();
-apiRouter.use('/like', likeController.router()
-.post('/:postId', likeController.like)
-.delete('/:postId', likeController.unlike)
-.build());
-
-apiRouter.use('/likes', likeController.router()
-.get('/:postId', likeController.likes)
-.build()); 
+apiRouter.post('/like/:postId', LikeController.like);
+apiRouter.delete('/like/:postId', LikeController.unlike);
+apiRouter.get('/likes/:postId', LikeController.likes);
 
 // Comment endpoints
-const commentController = new CommentController();
-apiRouter.use('/comment', commentController.router()
-.post('/:postId', commentController.add)
-  .delete('/:commentId', commentController.delete)
-  .build());
-
-apiRouter.use('/comments', commentController.router()
-  .get('/:postId', commentController.list)
-  .build());
+apiRouter.post('/comment/:postId', CommentController.add);
+apiRouter.delete('/comment/:commentId', CommentController.delete);
+apiRouter.get('/comments/:postId', CommentController.list);

@@ -1,9 +1,7 @@
 import { PostController } from '../controllers/postController';
+import { Router } from 'express';
 
-const controller = new PostController();
+export const postRouter = Router();
 
-export const postRouter = controller.router()
-  .get('/:id', controller.view)
-  .get('/create', controller.createPage)
-  .post('/create', controller.create)
-  .build();
+postRouter.route('/create').get(PostController.getCreatePage).post(PostController.create);
+postRouter.get('/:id', PostController.getPostPage);

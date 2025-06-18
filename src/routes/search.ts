@@ -1,7 +1,5 @@
 import { SearchController } from '../controllers/searchController';
+import { Router } from 'express';
 
-const controller = new SearchController();
-
-export const searchRouter = controller.router()
-  .get('/', controller.search)
-  .build(); 
+export const searchRouter = Router();
+searchRouter.get('/', SearchController.getSearchPage); 

@@ -18,7 +18,7 @@ export interface User {
 }
 
 export class UserModel {
-  async create(
+  static async create(
     username: string, 
     email: string, 
     password: string, 
@@ -43,7 +43,7 @@ export class UserModel {
     }
   }
 
-  async verifyEmail(userId: number, code: string): Promise<boolean> {
+  static async verifyEmail(userId: number, code: string): Promise<boolean> {
     try {
       const result = await query(
         'UPDATE users SET email_verified = true, verification_code = NULL WHERE id = ? AND verification_code = ?',
@@ -56,7 +56,7 @@ export class UserModel {
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  static async findByEmail(email: string): Promise<User | null> {
     try {
       const users = await query(
         'SELECT * FROM users WHERE email = ?',
@@ -70,7 +70,7 @@ export class UserModel {
     }
   }
 
-  async findByUsername(username: string): Promise<User | null> {
+  static async findByUsername(username: string): Promise<User | null> {
     try {
       const users = await query(
         'SELECT * FROM users WHERE username = ?',
@@ -84,7 +84,7 @@ export class UserModel {
     }
   }
 
-  async findById(id: number): Promise<User | null> {
+  static async findById(id: number): Promise<User | null> {
     try {
       const users = await query(
         'SELECT * FROM users WHERE id = ?',
@@ -98,11 +98,11 @@ export class UserModel {
     }
   }
 
-  async verifyPassword(user: User, password: string): Promise<boolean> {
+  static async verifyPassword(user: User, password: string): Promise<boolean> {
     return verifyPassword(password, user.password);
   }
 
-  async searchByUsername(partial: string): Promise<User[]> {
+  static async searchByUsername(partial: string): Promise<User[]> {
     try {
       const users = await query(
         'SELECT * FROM users WHERE username LIKE ? COLLATE utf8mb4_general_ci',

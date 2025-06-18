@@ -9,7 +9,7 @@ export function viewDataMiddleware(req: Request, res: Response, next: NextFuncti
     res.render = async function(view: string, options?: any, callback?: (err: Error, html: string) => void) {
         // Merge default data with provided options
         const defaultData = {
-            session_user: req.session?.userId ? await new UserModel().findById(req.session.userId) : null,
+            session_user: req.session?.userId ? await UserModel.findById(req.session.userId) : null,
             layout: 'main',
             currentYear: new Date().getFullYear()
         };

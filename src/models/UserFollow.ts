@@ -7,7 +7,7 @@ export interface UserFollow {
 }
 
 export class UserFollowModel {
-  async create(followerId: number, followingId: number): Promise<UserFollow | null> {
+  static async create(followerId: number, followingId: number): Promise<UserFollow | null> {
     try {
       await query(
         'INSERT INTO user_follows (follower_id, following_id) VALUES (?, ?)',
@@ -20,7 +20,7 @@ export class UserFollowModel {
     }
   }
 
-  async delete(followerId: number, followingId: number): Promise<boolean> {
+  static async delete(followerId: number, followingId: number): Promise<boolean> {
     try {
       const result = await query(
         'DELETE FROM user_follows WHERE follower_id = ? AND following_id = ?',
@@ -34,7 +34,7 @@ export class UserFollowModel {
     }
   }
 
-  async find(followerId: number, followingId: number): Promise<UserFollow | null> {
+  static async find(followerId: number, followingId: number): Promise<UserFollow | null> {
     try {
       const follows = await query(
         'SELECT * FROM user_follows WHERE follower_id = ? AND following_id = ?',
@@ -48,7 +48,7 @@ export class UserFollowModel {
     }
   }
 
-  async getFollowerIds(userId: number): Promise<number[]> {
+  static async getFollowerIds(userId: number): Promise<number[]> {
     try {
       const results = await query(
         'SELECT follower_id FROM user_follows WHERE following_id = ?',
@@ -62,7 +62,7 @@ export class UserFollowModel {
     }
   }
 
-  async getFollowingIds(userId: number): Promise<number[]> {
+  static async getFollowingIds(userId: number): Promise<number[]> {
     try {
       const results = await query(
         'SELECT following_id FROM user_follows WHERE follower_id = ?',

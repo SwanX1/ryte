@@ -1,11 +1,8 @@
 import type { Request, Response } from 'express';
 import { UserModel } from '../models/User';
-import { BaseController } from './BaseController';
 
-export class AuthController extends BaseController {
-  private userModel = new UserModel();
-
-  async signup(req: Request, res: Response) {
+export class AuthController {
+  static async signup(req: Request, res: Response) {
     try {
       const { username, email, password } = req.body;
 
@@ -23,21 +20,21 @@ export class AuthController extends BaseController {
         });
       }
 
-      const existingUser = await this.userModel.findByUsername(username);
+      const existingUser = await UserModel.findByUsername(username);
       if (existingUser) {
         return res.status(400).render('auth/signup', {
           error: 'Username already exists'
         });
       }
 
-      const existingEmail = await this.userModel.findByEmail(email);
+      const existingEmail = await UserModel.findByEmail(email);
       if (existingEmail) {
         return res.status(400).render('auth/signup', {
           error: 'Email already registered'
         });
       }
 
-      const user = await this.userModel.create(username, email, password);
+      const user = await UserModel.create(username, email, password);
       if (!user) {
         return res.status(500).render('auth/signup', {
           error: 'Error creating user'
@@ -59,7 +56,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  async login(req: Request, res: Response) {
+  static async login(req: Request, res: Response) {
     try {
       const { username, password } = req.body;
 
@@ -69,14 +66,14 @@ export class AuthController extends BaseController {
         });
       }
 
-      const user = await this.userModel.findByUsername(username);
+      const user = await UserModel.findByUsername(username);
       if (!user) {
         return res.status(400).render('auth/login', {
           error: 'Invalid username or password'
         });
       }
 
-      const isValidPassword = await this.userModel.verifyPassword(user, password);
+      const isValidPassword = await UserModel.verifyPassword(user, password);
       if (!isValidPassword) {
         return res.status(400).render('auth/login', {
           error: 'Invalid username or password'
@@ -96,7 +93,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  logout(req: Request, res: Response) {
+  static logout(req: Request, res: Response) {
     if (req.session) {
       req.session.destroy((err: Error | null) => {
         if (err) {
@@ -110,11 +107,11 @@ export class AuthController extends BaseController {
     }
   }
 
-  getSignupPage(req: Request, res: Response) {
+  static getSignupPage(req: Request, res: Response) {
     res.render('auth/signup', { error: null });
   }
 
-  getLoginPage(req: Request, res: Response) {
+  static getLoginPage(req: Request, res: Response) {
     res.render('auth/login', { error: null });
   }
 } 

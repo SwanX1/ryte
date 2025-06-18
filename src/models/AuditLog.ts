@@ -12,7 +12,7 @@ export interface AuditLog {
 }
 
 export class AuditLogModel {
-  async create(
+  static async create(
     action: string,
     entityType: string,
     userId: number | null = null,
@@ -35,7 +35,7 @@ export class AuditLogModel {
     }
   }
 
-  async findById(id: number): Promise<AuditLog | null> {
+  static async findById(id: number): Promise<AuditLog | null> {
     try {
       const logs = await query(
         'SELECT * FROM audit_logs WHERE id = ?',
@@ -49,7 +49,7 @@ export class AuditLogModel {
     }
   }
 
-  async getLogsByUser(userId: number): Promise<AuditLog[]> {
+  static async getLogsByUser(userId: number): Promise<AuditLog[]> {
     try {
       return await query(
         'SELECT * FROM audit_logs WHERE user_id = ? ORDER BY created_at DESC',
@@ -61,7 +61,7 @@ export class AuditLogModel {
     }
   }
 
-  async getLogsByEntity(entityType: string, entityId: number): Promise<AuditLog[]> {
+  static async getLogsByEntity(entityType: string, entityId: number): Promise<AuditLog[]> {
     try {
       return await query(
         'SELECT * FROM audit_logs WHERE entity_type = ? AND entity_id = ? ORDER BY created_at DESC',
@@ -73,7 +73,7 @@ export class AuditLogModel {
     }
   }
 
-  async getLogsByAction(action: string): Promise<AuditLog[]> {
+  static async getLogsByAction(action: string): Promise<AuditLog[]> {
     try {
       return await query(
         'SELECT * FROM audit_logs WHERE action = ? ORDER BY created_at DESC',

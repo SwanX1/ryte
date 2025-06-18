@@ -1,11 +1,15 @@
 import { AuthController } from '../controllers/authController';
+import { Router } from 'express';
 
-const controller = new AuthController();
+export const authRouter = Router();
 
-export const authRouter = controller.router()
-  .get('/signup', controller.getSignupPage)
-  .post('/signup', controller.signup)
-  .get('/login', controller.getLoginPage)
-  .post('/login', controller.login)
-  .get('/logout', controller.logout)
-  .build();
+authRouter.route('/signup')
+  .get(AuthController.getSignupPage)
+  .post(AuthController.signup);
+
+authRouter.route('/login')
+  .get(AuthController.getLoginPage)
+  .post(AuthController.login);
+
+authRouter
+  .get('/logout', AuthController.logout);

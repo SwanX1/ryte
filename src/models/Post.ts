@@ -13,7 +13,7 @@ export interface Post {
 }
 
 export class PostModel {
-  async create(type: PostType, content: string, user: number): Promise<Post | null> {
+  static async create(type: PostType, content: string, user: number): Promise<Post | null> {
     try {
       const date = Date.now();
       const result = await query(
@@ -31,7 +31,7 @@ export class PostModel {
     }
   }
 
-  async listByUser(id: number): Promise<Post[]> {
+  static async listByUser(id: number): Promise<Post[]> {
     try {
       return await query(
         'SELECT * FROM posts WHERE user = ?',
@@ -43,7 +43,7 @@ export class PostModel {
     }
   }
 
-  async findById(id: number): Promise<Post | null> {
+  static async findById(id: number): Promise<Post | null> {
     try {
       const posts = await query(
         'SELECT * FROM posts WHERE id = ?',
@@ -57,7 +57,7 @@ export class PostModel {
     }
   }
 
-  async searchByContent(partial: string): Promise<Post[]> {
+  static async searchByContent(partial: string): Promise<Post[]> {
     try {
       const posts = await query(
         'SELECT * FROM posts WHERE content LIKE ? COLLATE utf8mb4_general_ci',
