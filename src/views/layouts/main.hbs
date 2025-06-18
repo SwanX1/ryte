@@ -26,18 +26,44 @@
   <script src="/js/email-verification.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const modal = document.getElementById('test-modal');
-      const openModalBtn = document.querySelector('.btn-open-modal');
-      if (modal && openModalBtn) {
-        openModalBtn.addEventListener('click', function () {
-          if (modal.classList.contains('active')) {
-            modal.classList.remove('active');
-          } else {
+    const modal = document.getElementById('test-modal');
+    const openModalBtn = document.querySelector('.btn-open-modal');
+    const closeModalBtn = modal ? modal.querySelector('.modal-close-btn') : null; // Safe check for modal existence
+
+    // Only proceed if all required elements are found
+    if (modal && openModalBtn && closeModalBtn) {
+        // Function to open the modal
+        const openModal = () => {
             modal.classList.add('active');
-          }
+            document.body.style.overflow = 'hidden'; // Prevent body scrolling
+        };
+
+        // Function to close the modal
+        const closeModal = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable body scrolling
+        };
+
+        // Event listener for opening the modal
+        openModalBtn.addEventListener('click', openModal);
+
+        // Event listener for closing the modal via the close button
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Event listener for closing the modal when clicking outside its content
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) { // Check if the click occurred directly on the modal backdrop
+                closeModal();
+            }
         });
-      }
-    });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    }
+});
   </script>
 </body>
 
