@@ -1,75 +1,230 @@
 <div class="card">
   <h2>Create Post</h2>
   {{> error error=error}}
-  <form id="create-post-form" action="/post/create" method="POST">
-    <div>
-      <label for="type">Type</label>
-      <select id="type" name="type">
-        <option value="text">Text</option>
-        <option value="images">Images</option>
-        <option value="video">Video</option>
-      </select>
+  <form id="create-post-form" action="/post/create/text" method="POST" enctype="multipart/form-data">
+    <div class="post-type-tabs">
+      <button type="button" class="tab-button active" data-type="text">Text</button>
+      <button type="button" class="tab-button" data-type="images">Images</button>
+      <button type="button" class="tab-button" data-type="video">Video</button>
     </div>
+    
     <div id="text-fields" class="type-fields">
       <label for="text-caption">Caption</label>
-      <input type="text" id="text-caption" placeholder="Caption" maxlength="100">
+      <input type="text" id="text-caption" name="text-caption" placeholder="Caption" maxlength="100">
       <label for="text-content">Text</label>
-      <textarea id="text-content" placeholder="Text"></textarea>
+      <textarea id="text-content" name="text-content" placeholder="Text"></textarea>
     </div>
     <div id="images-fields" class="type-fields" style="display:none">
       <label for="images-caption">Caption</label>
-      <input type="text" id="images-caption" placeholder="Caption" maxlength="100">
-      <label for="images-urls">Image URLs (one per line)</label>
-      <textarea id="images-urls" placeholder="https://example.com/image1.jpg\nhttps://example.com/image2.jpg"></textarea>
-      {{!-- TODO: Make images-urls a file input, so that the user can upload images (multiple) --}}
+      <input type="text" id="images-caption" name="images-caption" placeholder="Caption" maxlength="100">
+      <label for="images">Upload Images (Max 10, 10MB each, will be converted to WebP)</label>
+      <input type="file" id="images" name="images" multiple accept="image/*">
+      <div id="image-preview" class="preview-container"></div>
     </div>
     <div id="video-fields" class="type-fields" style="display:none">
       <label for="video-caption">Caption</label>
-      <input type="text" id="video-caption" placeholder="Caption" maxlength="100">
-      <label for="video-url">Video URL</label>
-      <input type="text" id="video-url" placeholder="https://example.com/video.mp4">
-      {{!-- TODO: Make video-url a file input, so that the user can upload a video --}}
+      <input type="text" id="video-caption" name="video-caption" placeholder="Caption" maxlength="100">
+      <label for="video">Upload Video (Max 100MB, will be converted to WebM)</label>
+      <input type="file" id="video" name="video" accept="video/*">
+      <div id="video-preview" class="preview-container"></div>
     </div>
-    <input type="hidden" id="content" name="content">
     <div>
       <button type="submit" class="btn">Create Post</button>
     </div>
   </form>
 </div>
+
+<style>
+.post-type-tabs {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.tab-button.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.preview-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-container img,
+.preview-container video {
+  max-width: 150px;
+  max-height: 150px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.preview-item {
+  position: relative;
+}
+
+.remove-file {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+}
+</style>
+
 <script>
-  const typeSelect = document.getElementById('type');
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const form = document.getElementById('create-post-form');
   const textFields = document.getElementById('text-fields');
   const imagesFields = document.getElementById('images-fields');
   const videoFields = document.getElementById('video-fields');
-  const contentInput = document.getElementById('content');
+  const imagePreview = document.getElementById('image-preview');
+  const videoPreview = document.getElementById('video-preview');
   
-  function showFields() {
-    const type = typeSelect.value;
+  function showFields(type) {
+    // Update form action
+    form.action = `/post/create/${type}`;
+    
+    // Update tab buttons
+    tabButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === type);
+    });
+    
+    // Show/hide fields
     textFields.style.display = type === 'text' ? '' : 'none';
     imagesFields.style.display = type === 'images' ? '' : 'none';
     videoFields.style.display = type === 'video' ? '' : 'none';
+    
+    // Clear previews when switching types
+    if (type !== 'images') imagePreview.innerHTML = '';
+    if (type !== 'video') videoPreview.innerHTML = '';
   }
-  typeSelect.addEventListener('change', showFields);
-  showFields();
+  
+  // Add click handlers to tabs
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      showFields(this.dataset.type);
+    });
+  });
+
+  // Handle image preview
+  document.getElementById('images').addEventListener('change', function(e) {
+    const files = e.target.files;
+    imagePreview.innerHTML = '';
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const div = document.createElement('div');
+          div.className = 'preview-item';
+          div.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <button type="button" class="remove-file" onclick="removeFile(this, ${i})">×</button>
+          `;
+          imagePreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  });
+
+  // Handle video preview
+  document.getElementById('video').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    videoPreview.innerHTML = '';
+    
+    if (file && file.type.startsWith('video/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.innerHTML = `
+          <video controls src="${e.target.result}"></video>
+          <button type="button" class="remove-file" onclick="removeFile(this, 0)">×</button>
+        `;
+        videoPreview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  function removeFile(button, index) {
+    const activeTab = document.querySelector('.tab-button.active').dataset.type;
+    if (activeTab === 'images') {
+      const input = document.getElementById('images');
+      const dt = new DataTransfer();
+      const { files } = input;
+      
+      for (let i = 0; i < files.length; i++) {
+        if (i !== index) {
+          dt.items.add(files[i]);
+        }
+      }
+      input.files = dt.files;
+    } else if (activeTab === 'video') {
+      document.getElementById('video').value = '';
+    }
+    
+    button.parentElement.remove();
+  }
 
   document.getElementById('create-post-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const type = typeSelect.value;
-    let content = '';
-    if (type === 'text') {
+    const activeTab = document.querySelector('.tab-button.active').dataset.type;
+    
+    // Validate required fields
+    if (activeTab === 'text') {
       const caption = document.getElementById('text-caption').value.trim();
       const text = document.getElementById('text-content').value.trim();
-      content = `${caption}\n${text}`;
-    } else if (type === 'images') {
+      if (!caption || !text) {
+        e.preventDefault();
+        alert('Please fill in both caption and text fields');
+        return;
+      }
+    } else if (activeTab === 'images') {
       const caption = document.getElementById('images-caption').value.trim();
-      const urls = document.getElementById('images-urls').value.trim();
-      content = `${caption}\n${urls}`;
-    } else if (type === 'video') {
+      const files = document.getElementById('images').files;
+      if (!caption || files.length === 0) {
+        e.preventDefault();
+        alert('Please provide a caption and upload at least one image');
+        return;
+      }
+    } else if (activeTab === 'video') {
       const caption = document.getElementById('video-caption').value.trim();
-      const url = document.getElementById('video-url').value.trim();
-      content = `${caption}\n${url}`;
+      const file = document.getElementById('video').files[0];
+      if (!caption || !file) {
+        e.preventDefault();
+        alert('Please provide a caption and upload a video');
+        return;
+      }
     }
-    contentInput.value = content;
-    e.target.submit();
   });
 </script>
