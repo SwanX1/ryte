@@ -1,4 +1,4 @@
 <li class="comment-item">
-  <strong>{{comment.username}}</strong>: {{comment.content}}
+  <a class="comment-username-link" href="/@{{comment.username}}"><strong>{{comment.username}}</strong></a>: {{comment.content}}
   <span style="color:#888; font-size:0.9em;">({{localDate comment.created_at}})</span>
 </li> 
