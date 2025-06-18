@@ -1,8 +1,6 @@
 <div class="card">
   <h2>Create Post</h2>
-  {{#if error}}
-    <div class="error">{{error}}</div>
-  {{/if}}
+  {{> error error=error}}
   <form id="create-post-form" action="/post/create" method="POST">
     <div>
       <label for="type">Type</label>

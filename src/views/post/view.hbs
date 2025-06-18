@@ -55,7 +55,7 @@
   </div>
   {{#if session_user}}
     <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST" style="margin-top:1rem;">
-      <div id="comment-error" class="error" style="display:none;"></div>
+      <div id="comment-error-block">{{> error error=null}}</div>
       <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required style="width:100%;"></textarea>
       <button type="submit" class="btn">Post Comment</button>
     </form>
@@ -66,7 +66,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('add-comment-form');
-  const errorDiv = document.getElementById('comment-error');
+  const errorDiv = document.getElementById('comment-error-block');
   if (form) {
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
