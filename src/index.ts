@@ -73,7 +73,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).render('error', {
     title: 'Error - Ryte',
-    message: 'Something went wrong!'
+    message: '500 - Something went wrong!'
   });
 });
 
@@ -81,7 +81,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 app.use((req: Request, res: Response) => {
   res.status(404).render('error', {
     title: '404 - Not Found',
-    message: 'The page you are looking for does not exist.'
+    message: '404 - The page you are looking for does not exist.'
   });
 });
 

@@ -8,7 +8,11 @@ export class SessionStore extends Store {
   async get(sid: string, callback: (err: any, session?: SessionData | null) => void): Promise<void> {
     try {
       const results = await query(`SELECT session FROM ${TABLE_NAME} WHERE sid = ?`, [sid]);
-      callback(null, JSON.parse((results as any)[0].session));
+      if (results && (results as any)[0]) {
+        callback(null, JSON.parse((results as any)[0].session));
+      } else {
+        callback(null, null);
+      }
     } catch (err) {
       callback(err);
     }

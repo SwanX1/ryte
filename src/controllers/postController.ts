@@ -2,6 +2,8 @@ import type { NextFunction, Request, Response } from 'express';
 import { UserModel } from '../models/User';
 import { PostModel } from '../models/Post';
 import { PostLikeModel } from '../models/PostLike';
+import z from 'zod';
+import { prettifyZodError } from '../util/zod';
 
 export class PostController {
   static async getPostPage(req: Request<{ id: string }>, res: Response, next: NextFunction) {
@@ -27,27 +29,42 @@ export class PostController {
   }
 
   static async create(req: Request, res: Response) {
-    const userId = req.session?.userId;
-    if (!userId) {
-      return res.redirect('/auth/login');
-    }
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.redirect('/auth/login');
+      }
 
-    const { type, content } = req.body;
+      const { type, content } = z.object({
+        type: z.enum(['text', 'images', 'video']),
+        content: z.string().min(1).max(1000).trim()
+      }).parse(req.body);
 
-    if (!type || !content) {
-      return res.status(400).render('post/create', {
-        error: 'Type and content are required'
+      if (!type || !content) {
+        return res.status(400).render('post/create', {
+          error: 'Type and content are required'
+        });
+      }
+
+      const post = await PostModel.create(type, content, userId);
+      if (!post) {
+        return res.status(500).render('post/create', {
+          error: 'Error creating post'
+        });
+      }
+
+      return res.redirect(`/post/${post.id}`);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).render('post/create', {
+          error: prettifyZodError(error)
+        });
+      }
+      console.error('Error creating post:', error);
+      res.status(500).render('post/create', {
+        error: 'An error occurred while creating the post'
       });
     }
-
-    const post = await PostModel.create(type, content, userId);
-    if (!post) {
-      return res.status(500).render('post/create', {
-        error: 'Error creating post'
-      });
-    }
-
-    return res.redirect(`/post/${post.id}`);
   }
 
   static getCreatePage(req: Request, res: Response) {

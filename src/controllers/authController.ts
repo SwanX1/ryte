@@ -1,34 +1,24 @@
 import type { Request, Response } from 'express';
 import { UserModel } from '../models/User';
+import z from 'zod';
+import { prettifyZodError } from '../util/zod';
 
 export class AuthController {
   static async signup(req: Request, res: Response) {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password } = z.object({
+        username: z.string().min(3).max(20).trim().regex(/^[a-z0-9_.]+$/i),
+        email: z.string().email().trim(),
+        password: z.string().min(8).trim()
+      }).parse(req.body);
 
-      if (!username || !email || !password) {
-        return res.status(400).render('auth/signup', {
-          error: 'Username, email and password are required'
-        });
-      }
-
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        return res.status(400).render('auth/signup', {
-          error: 'Please enter a valid email address'
-        });
-      }
-
-      const existingUser = await UserModel.findByUsername(username);
-      if (existingUser) {
+      if (await UserModel.findByUsername(username)) {
         return res.status(400).render('auth/signup', {
           error: 'Username already exists'
         });
       }
 
-      const existingEmail = await UserModel.findByEmail(email);
-      if (existingEmail) {
+      if (await UserModel.findByEmail(email)) {
         return res.status(400).render('auth/signup', {
           error: 'Email already registered'
         });
@@ -49,6 +39,12 @@ export class AuthController {
       // TODO: Send verification email here
       res.redirect('/');
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).render('auth/signup', {
+          error: prettifyZodError(error)
+        });
+      }
+
       console.error('Signup error:', error);
       res.status(500).render('auth/signup', {
         error: 'An error occurred during signup'
@@ -58,7 +54,10 @@ export class AuthController {
 
   static async login(req: Request, res: Response) {
     try {
-      const { username, password } = req.body;
+      const { username, password } = z.object({
+        username: z.string().nonempty(),
+        password: z.string().nonempty()
+      }).parse(req.body);
 
       if (!username || !password) {
         return res.status(400).render('auth/login', {
@@ -86,6 +85,12 @@ export class AuthController {
       }
       res.redirect('/');
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).render('auth/login', {
+          error: prettifyZodError(error)
+        });
+      }
+
       console.error('Login error:', error);
       res.status(500).render('auth/login', {
         error: 'An error occurred during login'
