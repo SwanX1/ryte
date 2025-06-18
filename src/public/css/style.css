@@ -136,6 +136,13 @@ nav {
   transition: background-color 0.2s;
 }
 
+.user-profile .profile-btn {
+    text-decoration: none; 
+    display: flex;
+    align-items: center; 
+    gap: 10px; 
+}
+
 .user-profile:hover {
   background-color: #f0f0f0;
 }
