@@ -1478,4 +1478,249 @@ textarea {
   text-align: center;
   color: #dc3545;
   padding: 2rem;
+}
+
+/* Admin styles */
+.admin-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.admin-header h1 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.admin-users-card {
+  overflow-x: auto;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.admin-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.user-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-link {
+  color: #1da1f2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.user-link:hover {
+  text-decoration: underline;
+}
+
+.role-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-registered {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.role-moderator {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.role-administrator {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-verified {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-unverified {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+}
+
+.btn-view-logs {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+}
+
+.btn-view-logs:hover {
+  background-color: #138496;
+}
+
+.btn-toggle-role {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+}
+
+.btn-toggle-role:hover {
+  background-color: #5a6268;
+}
+
+/* Audit logs modal styles */
+.log-item {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.log-action {
+  background-color: #007bff;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.log-entity {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.log-date {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.log-details {
+  color: #333;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.no-logs {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.btn-admin {
+  background-color: #dc3545;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-right: 1rem;
+}
+
+.btn-admin:hover {
+  background-color: #c82333;
+}
+
+/* Audit logs modal styles */
+.log-action-badge {
+  background-color: #007bff;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.log-details-cell {
+  max-width: 300px;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.loading {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.no-logs {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.error {
+  text-align: center;
+  color: #dc3545;
+  padding: 2rem;
 } 

@@ -4,6 +4,7 @@ import { LikeController } from '../controllers/likeController';
 import { CommentController } from '../controllers/commentController';
 import { PostController } from '../controllers/postController';
 import { ProfileController } from '../controllers/profileController';
+import { AdminController } from '../controllers/adminController';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -64,3 +65,7 @@ apiRouter.delete('/post/:id', PostController.delete);
 
 // Profile endpoints
 apiRouter.put('/profile/settings', avatarUpload, ProfileController.updateSettings);
+
+// Admin endpoints
+apiRouter.get('/admin/user/:userId/logs', AdminController.getUserLogs);
+apiRouter.put('/admin/user/:userId/role', AdminController.updateUserRole); 

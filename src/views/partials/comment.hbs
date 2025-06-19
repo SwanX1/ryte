@@ -11,10 +11,15 @@
       <button class="btn btn-cancel-comment"><img src="/assets/cancel.png"></button>
     </div>
   </div>
-  {{#if (or should_show_delete_button (eq session_user.id comment.user_id))}}
+
+  {{#if (or should_show_delete_button (eq session_user.id comment.user_id) (eq session_user.role 'moderator') (eq session_user.role 'administrator'))}}
     <div class="comment-actions">
-      <button class="btn edit-comment-btn" data-comment-id="{{comment.id}}"><img src="/assets/pencil.png"></button>
-      <button class="btn delete-comment-btn" data-comment-id="{{comment.id}}"><img src="/assets/delete.png"></button>
+      {{#if should_show_edit_button}}
+          <button class="btn edit-comment-btn" data-comment-id="{{comment.id}}"><img src="/assets/pencil.png"></button>
+      {{/if}}
+      {{#if should_show_delete_button}}
+        <button class="btn delete-comment-btn" data-comment-id="{{comment.id}}"><img src="/assets/delete.png"></button>
+      {{/if}}
     </div>
   {{/if}}
 </li> 

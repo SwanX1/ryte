@@ -25,9 +25,18 @@ app.engine('hbs', engine({
   layoutsDir: path.join(__dirname, 'views/layouts'),
   partialsDir: path.join(__dirname, 'views/partials'),
   helpers: {
-    'eq': (a: any, b: any) => a === b,
+    'eq': (a: any, b: any) => {
+      console.log({ a, b });
+      return a === b
+    },
     'neq': (a: any, b: any) => a !== b,
-    'or': (a: any, b: any) => a || b,
+    'or': (...args: any[]) => {
+      // strip last arg, it's the method def
+      args = args.slice(0, -1);
+      return args.some(arg => arg);``
+    },
+    'not': (a: any) => !a,
+    'and': (...args: any[]) => args.every(arg => arg),
     'localDate': (date: number) => new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

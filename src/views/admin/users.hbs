@@ -1,0 +1,152 @@
+<div class="admin-header">
+  <h1>User Management</h1>
+  <p>Manage users and view audit logs</p>
+</div>
+
+<div class="card admin-users-card">
+  <div class="table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Avatar</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Email Verified</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each users}}
+          <tr data-user-id="{{this.id}}">
+            <td>{{this.id}}</td>
+            <td>
+              <img src="{{this.avatar_url}}" alt="{{this.username}}'s avatar" class="user-avatar-small">
+            </td>
+            <td>
+              <a href="/profile/{{this.id}}" class="user-link">{{this.username}}</a>
+            </td>
+            <td>{{this.email}}</td>
+            <td>
+              <span class="role-badge role-{{this.role}}">{{this.role}}</span>
+            </td>
+            <td>
+              {{#if this.email_verified}}
+                <span class="status-badge status-verified">✓ Verified</span>
+              {{else}}
+                <span class="status-badge status-unverified">✗ Unverified</span>
+              {{/if}}
+            </td>
+            <td>{{localDate this.created_at}}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-view-logs" onclick="viewUserLogs({{this.id}}, '{{this.username}}')">View Logs</button>
+                {{#unless (eq this.role 'administrator')}}
+                  <button class="btn btn-sm btn-toggle-role" onclick="toggleUserRole({{this.id}}, '{{this.role}}', '{{this.username}}')">
+                    {{#if (eq this.role 'moderator')}}
+                      Remove Mod
+                    {{else}}
+                      Make Mod
+                    {{/if}}
+                  </button>
+                {{/unless}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Audit Logs Modal -->
+{{#> modal modal_id="audit-logs-modal"}}
+  <h2>Audit Logs for <span id="logs-username"></span></h2>
+  <div class="table-container">
+    <table class="admin-table" id="audit-logs-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Entity Type</th>
+          <th>Entity ID</th>
+          <th>Details</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="audit-logs-list">
+        <tr>
+          <td colspan="5" class="loading">Loading audit logs...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{{/modal}}
+
+<script>
+  function viewUserLogs(userId, username) {
+    const modal = document.getElementById('audit-logs-modal');
+    const logsList = document.getElementById('audit-logs-list');
+    const usernameSpan = document.getElementById('logs-username');
+    
+    usernameSpan.textContent = username;
+    modal.classList.add('active');
+    
+    fetch(`/api/admin/user/${userId}/logs`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.logs && data.logs.length > 0) {
+          const html = data.logs.map(log => `
+            <tr>
+              <td>
+                <span class="log-action-badge">${log.action}</span>
+              </td>
+              <td>${log.entity_type}</td>
+              <td>${log.entity_id || 'N/A'}</td>
+              <td class="log-details-cell">${log.details}</td>
+              <td>${new Date(log.created_at).toLocaleString()}</td>
+            </tr>
+          `).join('');
+          logsList.innerHTML = html;
+        } else {
+          logsList.innerHTML = '<tr><td colspan="5" class="no-logs">No audit logs found for this user.</td></tr>';
+        }
+      })
+      .catch(err => {
+        console.error('Error loading audit logs:', err);
+        logsList.innerHTML = '<tr><td colspan="5" class="error">Error loading audit logs.</td></tr>';
+      });
+  }
+
+  function toggleUserRole(userId, currentRole, username) {
+    const newRole = currentRole === 'moderator' ? 'registered' : 'moderator';
+    const action = currentRole === 'moderator' ? 'remove moderator privileges from' : 'make moderator';
+    
+    if (!confirm(`Are you sure you want to ${action} ${username}?`)) {
+      return;
+    }
+    
+    fetch(`/api/admin/user/${userId}/role`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ role: newRole }),
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // Reload the page to show updated roles
+        window.location.reload();
+      } else {
+        alert('Error updating user role: ' + (data.error || 'Unknown error'));
+      }
+    })
+    .catch(err => {
+      console.error('Error updating user role:', err);
+      alert('Error updating user role. Please try again.');
+    });
+  }
+</script> 

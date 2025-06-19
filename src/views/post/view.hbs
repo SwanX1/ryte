@@ -2,9 +2,11 @@
   <div class="post-header">
     <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" class="post-avatar">
     <a href="/@{{post.username}}" class="post-username-link">{{post.username}}</a>
-    {{#if (eq session_user.id post.user_id)}}
+    {{#if (or (eq session_user.id post.user_id) (eq session_user.role 'moderator') (eq session_user.role 'administrator'))}}
       <div class="post-actions-buttons">
-        <button class="btn edit-post-btn" data-post-id="{{post.id}}"><img src="/assets/pencil.png"></button>
+        {{#if (eq session_user.id post.user_id)}}
+          <button class="btn edit-post-btn" data-post-id="{{post.id}}"><img src="/assets/pencil.png"></button>
+        {{/if}}
         <button class="btn delete-post-btn" data-post-id="{{post.id}}"><img src="/assets/delete.png"></button>
       </div>
     {{/if}}
@@ -54,7 +56,11 @@
     {{#if comments.length}}
       <ul id="comments-ul">
         {{#each comments}}
-          {{> comment comment=this should_show_delete_button=(eq ../session_user.id user_id)}}
+          {{> comment
+            comment=this
+            should_show_delete_button=(or (eq ../session_user.id user_id) (eq ../session_user.role 'moderator') (eq ../session_user.role 'administrator'))
+            should_show_edit_button=(eq ../session_user.id user_id)
+          }}
         {{/each}}
       </ul>
     {{else}}

@@ -19,6 +19,9 @@
         <input type="text" name="q" placeholder="Search..." required>
       </form>
       {{#if session_user}}
+        {{#if (eq session_user.role 'administrator')}}
+          <a href="/admin/users" class="btn btn-admin">Admin</a>
+        {{/if}}
         <div class="user-profile">
           <a class="profile-btn" href="/@{{session_user.username}}">
             <img src="{{session_user.avatar_url}}" alt="{{session_user.username}}'s avatar" class="avatar">

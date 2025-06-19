@@ -53,9 +53,27 @@ export class CommentController {
       const commentId = parseInt(commentIdParam);
       if (isNaN(commentId)) return res.status(400).json({ error: 'Invalid commentId' });
       const comment = await PostCommentModel.findById(commentId);
-      if (!comment || comment.user_id !== userId) return res.status(403).json({ error: 'Forbidden' });
+      if (!comment) return res.status(404).json({ error: 'Comment not found' });
+      
+      // Check if user is the comment owner or has moderator/administrator role
+      const user = await UserModel.findById(userId);
+      if (!user) return res.status(401).json({ error: 'User not found' });
+      
+      const isOwner = comment.user_id === userId;
+      const isModerator = user.role === 'moderator' || user.role === 'administrator';
+      
+      if (!isOwner && !isModerator) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+      
       const result = await PostCommentModel.delete(commentId);
-      AuditLogModel.create('comment', 'post', userId, commentId, `User ${userId} deleted comment ${commentId}`);
+      if (!result) return res.status(500).json({ error: 'Failed to delete comment' });
+      
+      const actionDescription = isOwner 
+        ? `User ${userId} deleted their own comment ${commentId}`
+        : `Moderator ${userId} deleted comment ${commentId} by user ${comment.user_id}`;
+      
+      AuditLogModel.create('delete', 'comment', userId, commentId, actionDescription);
       res.json({ success: result });
     } catch (error) {
       if (error instanceof z.ZodError) {

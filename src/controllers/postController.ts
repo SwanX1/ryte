@@ -238,12 +238,27 @@ export class PostController {
       if (isNaN(postId)) return res.status(400).json({ error: 'Invalid postId' });
       
       const post = await PostModel.findById(postId);
-      if (!post || post.user !== userId) return res.status(403).json({ error: 'Forbidden' });
+      if (!post) return res.status(404).json({ error: 'Post not found' });
+      
+      // Check if user is the post owner or has moderator/administrator role
+      const user = await UserModel.findById(userId);
+      if (!user) return res.status(401).json({ error: 'User not found' });
+      
+      const isOwner = post.user === userId;
+      const isModerator = user.role === 'moderator' || user.role === 'administrator';
+      
+      if (!isOwner && !isModerator) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
       
       const result = await PostModel.delete(postId);
       if (!result) return res.status(500).json({ error: 'Failed to delete post' });
       
-      AuditLogModel.create('delete', 'post', userId, postId, `User ${userId} deleted post ${postId}`);
+      const actionDescription = isOwner 
+        ? `User ${userId} deleted their own post ${postId}`
+        : `Moderator ${userId} deleted post ${postId} by user ${post.user}`;
+      
+      AuditLogModel.create('delete', 'post', userId, postId, actionDescription);
       res.json({ success: true });
     } catch (error) {
       console.error('Error deleting post:', error);
