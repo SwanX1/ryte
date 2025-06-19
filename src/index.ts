@@ -28,6 +28,8 @@ const server = createServer(app);
 // Initialize WebSocket server
 const socketServer = new SocketServer(server);
 
+app.enable('trust proxy');
+
 // View engine setup
 app.engine('hbs', engine({
   extname: '.hbs',
@@ -137,19 +139,14 @@ app.use((req: Request, res: Response) => {
 });
 
 // Initialize database tables
-[
-  UserModel.initTable(),
-  PostModel.initTable(),
-  UserFollowModel.initTable(),
-  PostLikeModel.initTable(),
-  PostCommentModel.initTable(),
-  AuditLogModel.initTable(),
-  ChatModel.initTable(),
-  ChatMessageModel.initTable()
-].forEach(p => p.catch(error => {
-  console.error('Failed to initialize table:', error);
-  process.exit(1);
-}));
+await UserModel.initTable();
+await PostModel.initTable();
+await UserFollowModel.initTable();
+await PostLikeModel.initTable();
+await PostCommentModel.initTable();
+await AuditLogModel.initTable();
+await ChatModel.initTable();
+await ChatMessageModel.initTable();
 
 server.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`);

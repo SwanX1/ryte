@@ -136,7 +136,7 @@
   "admin.view_logs": "View Logs",
   "admin.remove_mod": "Remove Mod",
   "admin.make_mod": "Make Mod",
-  "admin.audit_logs_for": "Audit Logs for {{username}}",
+  "admin.audit_logs_for": "Audit Logs for",
   "admin.action": "Action",
   "admin.entity_type": "Entity Type",
   "admin.entity_id": "Entity ID",
