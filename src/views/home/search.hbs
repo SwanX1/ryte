@@ -23,11 +23,8 @@
     {{#if posts.length}}
       <ul class="search-results-list">
         {{#each posts}}
-          <li class="search-results-item">
-            <a href="/post/{{this.id}}" class="search-result-link search-post-link">
-                {{this.content}}
-            </a>
-          </li>
+        {{log this}}
+          {{> post post=this}}
         {{/each}}
       </ul>
     {{else}}

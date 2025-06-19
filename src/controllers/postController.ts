@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { UserModel } from '../models/User';
-import { PostModel } from '../models/Post';
+import { PostModel, type Post } from '../models/Post';
 import { PostLikeModel } from '../models/PostLike';
 import z from 'zod';
 import { prettifyZodError } from '../util/zod';
@@ -482,3 +482,16 @@ export class PostController {
     }
   }
 } 
+
+export async function expandPosts(posts: Post[]) {
+  return await Promise.all(posts.map(async (post) => {
+    const author = await UserModel.findById(post.user);
+    const likeCount = (await PostLikeModel.getLikesForPost(post.id)).length;
+    return {
+      ...post,
+      username: author?.username || 'Unknown',
+      avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+      likeCount,
+    };
+  }))
+}

@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
 import { UserModel } from '../models/User';
-import { PostModel } from '../models/Post';
+import { PostModel, type Post } from '../models/Post';
 import { UserFollowModel } from '../models/UserFollow';
 import { PostLikeModel } from '../models/PostLike';
 import { MediaProcessor } from '../util/mediaProcessor';
 import { hashPassword, verifyPassword } from '../util/crypto';
 import { query } from '../database/connection';
+import { expandPosts } from './postController';
 
 export class ProfileController {
   static async usernameRedirect(req: Request<{ username: string }>, res: Response, next: NextFunction) {
@@ -47,21 +48,7 @@ export class ProfileController {
       title: `${user.username} - Profile`,
       layout: 'main',
       user: user,
-      posts: await Promise.all(posts.map(async (post) => {
-        const author = await UserModel.findById(post.user);
-        const likeCount = (await PostLikeModel.getLikesForPost(post.id)).length;
-        let liked = false;
-        if (sessionUserId) {
-          liked = !!(await PostLikeModel.find(sessionUserId, post.id));
-        }
-        return {
-          ...post,
-          username: author?.username || 'Unknown',
-          avatar_url: author?.avatar_url || '/assets/default_avatar.png',
-          likeCount,
-          liked,
-        };
-      })),
+      posts: await expandPosts(posts),
       followerCount: followerIds.length,
       followingCount: followingIds.length,
       isFollowing: isFollowing,
@@ -202,4 +189,4 @@ export class ProfileController {
       });
     }
   }
-} 
+}
