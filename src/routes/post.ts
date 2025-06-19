@@ -16,6 +16,6 @@ postRouter.get('/:id', PostController.getPostPage);
 
 // Edit routes
 postRouter.get('/:id/edit', PostController.postDetails);
-postRouter.put('/:id/edit/text', PostController.updateText);
+postRouter.put('/:id/edit/text', multer().none(), PostController.updateText);
 postRouter.put('/:id/edit/images', handleImageUpload, PostController.updateImages);
 postRouter.put('/:id/edit/video', handleVideoUpload, PostController.updateVideo);
