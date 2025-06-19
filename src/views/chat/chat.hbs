@@ -13,7 +13,7 @@
             {{t "chat.you"}}
           {{else}}
             {{../targetUser.username}}
-          {{/if}}:
+          {{/if}}
         </span>
         <span class="chat-text">{{message}}</span>
         <span class="chat-time">{{localDateTime created_at}}</span>
@@ -80,6 +80,7 @@
     
     // Handle Enter key press
     messageInput.addEventListener('keypress', function(e) {
+      console.log('Key pressed:', e.key);
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();

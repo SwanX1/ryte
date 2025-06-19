@@ -1950,7 +1950,8 @@ textarea {
   flex: 1;
   min-height: 40px;
   max-height: 120px;
-  resize: vertical;
+  margin-bottom: 0;
+  resize: none;
 }
 
 .chat-send {

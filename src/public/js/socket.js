@@ -9,15 +9,15 @@ class SocketManager {
   }
 
   connect(sessionId) {
-    console.log('🔌 Attempting to connect with sessionId:', sessionId);
+    console.log('Attempting to connect with sessionId:', sessionId);
     
     if (this.socket && this.isConnected) {
-      console.log('⚠️ Already connected, skipping connection attempt');
+      console.log('Already connected, skipping connection attempt');
       return;
     }
 
     if (!window.io) {
-      console.error('❌ Socket.IO client not loaded!');
+      console.error('Socket.IO client not loaded!');
       this.showNotification('Socket.IO client not available', 'error');
       return;
     }
@@ -31,10 +31,10 @@ class SocketManager {
         transports: ['websocket', 'polling'] // Try WebSocket first, fallback to polling
       });
 
-      console.log('✅ Socket.IO connection created, setting up event handlers...');
+      console.log('Socket.IO connection created, setting up event handlers...');
       this.setupEventHandlers();
     } catch (error) {
-      console.error('❌ Error creating Socket.IO connection:', error);
+      console.error('Error creating Socket.IO connection:', error);
       this.showNotification('Failed to create WebSocket connection', 'error');
     }
   }
@@ -381,25 +381,25 @@ window.socketManager = new SocketManager();
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🔌 DOM loaded, initializing WebSocket connection...');
+  console.log('DOM loaded, initializing WebSocket connection...');
   
   // Check if Socket.IO is available
   if (!window.io) {
-    console.error('❌ Socket.IO client not loaded! Check if /socket.io/socket.io.js is accessible');
+    console.error('Socket.IO client not loaded! Check if /socket.io/socket.io.js is accessible');
     console.log('Available global objects:', Object.keys(window).filter(key => key.includes('io')));
     return;
   }
   
-  console.log('✅ Socket.IO client loaded, version:', window.io.version);
+  console.log('Socket.IO client loaded, version:', window.io.version);
   
   const sessionId = window.socketManager.getSessionId();
-  console.log('🔑 Session ID retrieved:', sessionId ? 'Found' : 'Not found');
+  console.log('Session ID retrieved:', sessionId ? 'Found' : 'Not found');
   
   if (sessionId) {
-    console.log('🚀 Found session ID, connecting to WebSocket...');
+    console.log('Found session ID, connecting to WebSocket...');
     window.socketManager.connect(sessionId);
   } else {
-    console.log('⚠️ No session ID found, user might not be logged in');
+    console.log('No session ID found, user might not be logged in');
     console.log('Available cookies:', document.cookie);
   }
 }); 
