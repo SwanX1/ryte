@@ -199,6 +199,7 @@ nav {
 
 .btn-login {
   background-color: #28a745;
+  color: white;
 }
 
 .btn-login:hover {
@@ -207,6 +208,7 @@ nav {
 
 .btn-signup {
   background-color: #6c757d;
+  color: white;
 }
 
 .btn-signup:hover {
@@ -415,7 +417,7 @@ nav {
     font-weight: bold;
     color: #333;
     text-decoration: none;
-    /* You might want a hover state for this link */
+
 }
 
 
@@ -476,7 +478,7 @@ nav {
 
 .like-btn {
     padding: 8px 15px;
-    background-color: #007bff; /* Example blue */
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
@@ -609,58 +611,57 @@ nav {
 
 /* Modals */
 
-/* --- Basic Modal Styling (Hidden by default) --- */
 .modal {
-    display: none; /* Hide the modal by default */
-    position: fixed; /* Position it relative to the viewport */
-    z-index: 1000; /* Ensure it's on top of other content */
+    display: none; 
+    position: fixed;
+    z-index: 1000; 
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow-y: auto; /* Enable vertical scroll if content is too tall */
-    background-color: rgba(0,0,0,0.5); /* Black background with transparency */
-    padding: 20px; /* Add padding to prevent content from touching edges */
+    overflow-y: auto; 
+    background-color: rgba(0,0,0,0.5); 
+    padding: 20px;
     box-sizing: border-box;
 }
 
 /* Modal Content Styling */
 .modal-content {
     background-color: #fefefe;
-    margin: 20px auto; /* Add top/bottom margin for spacing */
+    margin: 20px auto; 
     padding: 20px;
     border: 1px solid #888;
     width: 90%;
-    max-width: 600px; /* Increased max-width for settings modal */
-    max-height: calc(100vh - 40px); /* Prevent modal from being taller than viewport */
+    max-width: 600px; 
+    max-height: calc(100vh - 40px); 
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     position: relative;
-    overflow-y: auto; /* Enable scroll within modal content if needed */
+    overflow-y: auto; 
 }
 
 /* When the modal has the 'active' class, make it visible */
 .modal.active {
-    display: block; /* Changed from flex to block for better scrolling */
+    display: block; 
 }
 
 .modal-close-btn {
     color: #aaa;
     position: absolute;
-    right: 15px; /* Distance from the right edge of modal-content */
-    top: 5px; /* Distance from the top edge of modal-content */
+    right: 15px; 
+    top: 5px; 
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-    line-height: 1; /* Helps vertically align the 'x' */
-    padding: 5px; /* Makes it easier to click */
+    line-height: 1; 
+    padding: 5px; 
 }
 
 .modal-close-btn:hover,
 .modal-close-btn:focus {
     color: black;
     text-decoration: none;
-    outline: none; /* Remove outline on focus for better aesthetics */
+    outline: none; 
 }
 
 .btn-open-modal {
@@ -694,78 +695,95 @@ nav {
 .search-results-heading {
     font-size: 1.8em;
     color: #333;
-    margin-bottom: 1.5rem; /* Space below the main heading */
-    border-bottom: 1px solid #eee; /* Subtle separator line */
-    padding-bottom: 1rem; /* Space between text and separator */
-    text-align: center; /* Center the main heading within the card */
+    margin-bottom: 1.5rem; 
+    border-bottom: 1px solid #a8a8a8; 
+    padding-bottom: 1rem; 
+    text-align: center; 
 }
 
-/* --- Individual Search Sections (Users, Posts) --- */
 .search-section {
-    margin-top: 1.5rem; /* Space above each section */
-    padding-top: 1rem; /* Padding at the top of the section */
+    margin-top: 1.5rem;
+    padding-top: 1rem;
 }
 
-/* Adjust margin for the first search section if it shouldn't have top margin */
 .search-results-card > .search-section:first-of-type {
-    margin-top: 0; /* No top margin for the first section directly after the main heading */
+    margin-top: 0;
     padding-top: 0;
 }
 
 .search-section-heading {
     font-size: 1.3em;
     color: #444;
-    margin-bottom: 1rem; /* Space below sub-headings */
-    border-bottom: 1px dashed #3f3f3f; /* Subtle dashed separator for sections */
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed #252525;
     padding-bottom: 0.5rem;
-    text-align: left; /* Align section headings to the left */
+    text-align: left;
 }
 
-/* --- Search Results List --- */
+/* --- Search Results List (keep existing) --- */
 .search-results-list {
-    list-style: none; /* Remove default bullet points */
-    padding: 0; /* Remove default list padding */
-    margin: 0; /* Remove default list margin */
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .search-results-item {
-    margin-bottom: 0.5rem; /* Space between list items */
+    margin-bottom: 0.5rem;
     font-size: 1em;
-    padding: 5px 0; /* Small vertical padding for each item */
-    margin-left: 10px;
-    border:#000000;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    padding: 5px 0;
+    border-bottom: 1px dotted #b1b1b1;
 }
 
 .search-results-item:last-child {
-    border-bottom: none; /* No border after the last item */
-    margin-bottom: 0; /* No margin after the last item */
+    border-bottom: none;
+    margin-bottom: 0;
 }
 
-/* --- Search Result Links --- */
+/* --- Search Result Links (General) --- */
 .search-result-link {
-    color: #5c5c5c; /* Standard link blue */
-    text-decoration: none; /* Remove default underline */
+    text-decoration: none;
     transition: color 0.2s ease, text-decoration 0.2s ease;
-    display: block; /* Make the whole link area clickable if desired */
-    padding: 3px 0; /* Adjust padding for hover area */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 3px 0;
 }
 
 .search-result-link:hover {
-    color: #000000; /* Darker blue on hover */
+    color: #0056b3;
+    text-decoration: underline;
 }
 
-/* --- No Results Message --- */
+.search-user-item:hover {
+    background-color: #f9f9f9;
+}
+
+.search-user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.search-username-text {
+    color: #333;
+    font-weight: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
 .no-results-message {
     font-style: italic;
     color: #777;
-    margin-top: 0.5rem; /* Space above "No X found" message */
-    margin-bottom: 1rem; /* Space below "No X found" message */
-    text-align: center; /* Center these messages */
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
-/* Email verification warning for create post page */
+
 .email-verification-warning {
   background-color: #fff3cd;
   border: 1px solid #ffeaa7;
