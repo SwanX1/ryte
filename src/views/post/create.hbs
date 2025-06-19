@@ -1,39 +1,50 @@
 <div class="card">
   <h2>Create Post</h2>
-  {{> error error=error}}
-  <form id="create-post-form" action="/post/create/text" method="POST" enctype="multipart/form-data">
-    <div class="post-type-tabs">
-      <button type="button" class="tab-button active" data-type="text">Text</button>
-      <button type="button" class="tab-button" data-type="images">Images</button>
-      <button type="button" class="tab-button" data-type="video">Video</button>
+  {{#if session_user.email_verified}}
+    {{> error error=error}}
+    <form id="create-post-form" action="/post/create/text" method="POST" enctype="multipart/form-data">
+      <div class="post-type-tabs">
+        <button type="button" class="tab-button active" data-type="text">Text</button>
+        <button type="button" class="tab-button" data-type="images">Images</button>
+        <button type="button" class="tab-button" data-type="video">Video</button>
+      </div>
+      
+      <div id="text-fields" class="type-fields">
+        <label for="text-caption">Caption</label>
+        <input type="text" id="text-caption" name="text-caption" placeholder="Caption" maxlength="100">
+        <label for="text-content">Text</label>
+        <textarea id="text-content" name="text-content" placeholder="Text"></textarea>
+      </div>
+      <div id="images-fields" class="type-fields type-fields-hidden">
+        <label for="images-caption">Caption</label>
+        <input type="text" id="images-caption" name="images-caption" placeholder="Caption" maxlength="100">
+        <label for="images">Upload Images (Max 10, 10MB each, will be converted to WebP)</label>
+        <input type="file" id="images" name="images" multiple accept="image/*">
+        <div id="image-preview" class="preview-container"></div>
+      </div>
+      <div id="video-fields" class="type-fields type-fields-hidden">
+        <label for="video-caption">Caption</label>
+        <input type="text" id="video-caption" name="video-caption" placeholder="Caption" maxlength="100">
+        <label for="video">Upload Video (Max 100MB, will be converted to WebM)</label>
+        <input type="file" id="video" name="video" accept="video/*">
+        <div id="video-preview" class="preview-container"></div>
+      </div>
+      <div>
+        <button type="submit" class="btn">Create Post</button>
+      </div>
+    </form>
+  {{else}}
+    <div class="email-verification-warning">
+      <h3>Email Verification Required</h3>
+      <p>You must verify your email address before creating posts.</p>
+      <div class="verification-actions">
+        <a href="/auth/verify-email" class="btn btn-primary">Verify Email</a>
+      </div>
     </div>
-    
-    <div id="text-fields" class="type-fields">
-      <label for="text-caption">Caption</label>
-      <input type="text" id="text-caption" name="text-caption" placeholder="Caption" maxlength="100">
-      <label for="text-content">Text</label>
-      <textarea id="text-content" name="text-content" placeholder="Text"></textarea>
-    </div>
-    <div id="images-fields" class="type-fields type-fields-hidden">
-      <label for="images-caption">Caption</label>
-      <input type="text" id="images-caption" name="images-caption" placeholder="Caption" maxlength="100">
-      <label for="images">Upload Images (Max 10, 10MB each, will be converted to WebP)</label>
-      <input type="file" id="images" name="images" multiple accept="image/*">
-      <div id="image-preview" class="preview-container"></div>
-    </div>
-    <div id="video-fields" class="type-fields type-fields-hidden">
-      <label for="video-caption">Caption</label>
-      <input type="text" id="video-caption" name="video-caption" placeholder="Caption" maxlength="100">
-      <label for="video">Upload Video (Max 100MB, will be converted to WebM)</label>
-      <input type="file" id="video" name="video" accept="video/*">
-      <div id="video-preview" class="preview-container"></div>
-    </div>
-    <div>
-      <button type="submit" class="btn">Create Post</button>
-    </div>
-  </form>
+  {{/if}}
 </div>
 
+{{#if session_user.email_verified}}
 <script>
   const tabButtons = document.querySelectorAll('.tab-button');
   const form = document.getElementById('create-post-form');
@@ -163,3 +174,4 @@
     }
   });
 </script>
+{{/if}}

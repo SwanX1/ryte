@@ -57,15 +57,26 @@
     {{/if}}
   </div>
   {{#if session_user}}
-    <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST">
-      <div id="comment-error-block">{{> error error=null}}</div>
-      <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required class="comment-textarea"></textarea>
-      <button type="submit" class="btn">Post Comment</button>
-    </form>
+    {{#if session_user.email_verified}}
+      <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST">
+        <div id="comment-error-block">{{> error error=null}}</div>
+        <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required class="comment-textarea"></textarea>
+        <button type="submit" class="btn">Post Comment</button>
+      </form>
+    {{else}}
+      <div class="email-verification-warning">
+        <p>Please verify your email address before commenting.</p>
+        <div class="verification-actions">
+          <a href="/auth/verify-email" class="btn btn-primary">Verify Email</a>
+        </div>
+      </div>
+    {{/if}}
   {{else}}
     <p class="login-prompt">Please <a href="/auth/login">login</a> to comment.</p>
   {{/if}}
 </div>
+
+{{#if session_user.email_verified}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('add-comment-form');
@@ -187,3 +198,4 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
+{{/if}}
