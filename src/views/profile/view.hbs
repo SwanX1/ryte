@@ -1,3 +1,39 @@
+<div class="card profile-header">
+  <div class="profile-info">
+    <img src="{{user.avatar_url}}" alt="{{user.username}}'s avatar" class="profile-avatar">
+    <div class="profile-details">
+      <h1 class="profile-username">{{user.username}}</h1>
+      <div class="profile-stats">
+        <span class="stat">
+          <span class="stat-number" id="follower-count">{{followerCount}}</span>
+          <span class="stat-label">followers</span>
+        </span>
+        <span class="stat">
+          <span class="stat-number" id="following-count">{{followingCount}}</span>
+          <span class="stat-label">following</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="profile-actions">
+    {{#if isOwnProfile}}
+      <button class="settings-btn" onclick="openSettingsModal()">Settings</button>
+    {{else}}
+      {{#if session_user}}
+        {{#if isFollowing}}
+          <button class="follow-btn" data-user-id="{{user.id}}" data-following="true">Unfollow</button>
+        {{else}}
+          <button class="follow-btn" data-user-id="{{user.id}}" data-following="false">Follow</button>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  </div>
+</div>
+
+{{#if isOwnProfile}}
+  {{> profile-settings-modal}}
+{{/if}}
+
 <div class="card">
   {{#if posts.length}}
     <h2>Posts by {{user.username}}</h2>
@@ -14,3 +50,61 @@
     {{/unless}}
   </div>
 </div>
+
+{{#if session_user}}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const followBtn = document.querySelector('.follow-btn');
+    const followerCountSpan = document.getElementById('follower-count');
+
+    followBtn.addEventListener('click', async function () {
+      const userId = followBtn.getAttribute('data-user-id');
+      const following = followBtn.getAttribute('data-following') === 'true';
+
+      followBtn.disabled = true;
+
+      try {
+        if (!following) {
+          // Follow
+          const res = await fetch(`/api/follow/${userId}`, {
+            method: 'POST',
+            credentials: 'include'
+          });
+
+          if (res.ok) {
+            followBtn.textContent = 'Unfollow';
+            followBtn.setAttribute('data-following', 'true');
+            if (followerCountSpan) {
+              followerCountSpan.textContent = parseInt(followerCountSpan.textContent) + 1;
+            }
+          } else {
+            const error = await res.json();
+            console.error('Follow error:', error);
+          }
+        } else {
+          // Unfollow
+          const res = await fetch(`/api/follow/${userId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+
+          if (res.ok) {
+            followBtn.textContent = 'Follow';
+            followBtn.setAttribute('data-following', 'false');
+            if (followerCountSpan) {
+              followerCountSpan.textContent = Math.max(0, parseInt(followerCountSpan.textContent) - 1);
+            }
+          } else {
+            const error = await res.json();
+            console.error('Unfollow error:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+      } finally {
+        followBtn.disabled = false;
+      }
+    });
+  });
+</script>
+{{/if}}

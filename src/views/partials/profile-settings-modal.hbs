@@ -1,0 +1,141 @@
+{{#> modal modal_id="profile-settings-modal"}}
+  <h2>Profile Settings</h2>
+  <div id="settings-error-block">{{> error error=null}}</div>
+  <form id="profile-settings-form" enctype="multipart/form-data">
+    <div class="settings-section">
+      <div class="form-group">
+        <label for="settings-avatar">Avatar</label>
+        <input type="file" id="settings-avatar" name="avatar" accept="image/*">
+        <div class="avatar-preview">
+          <img src="{{user.avatar_url}}" alt="Current avatar" id="current-avatar">
+        </div>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Change Password</h3>
+      <div class="form-group">
+        <label for="settings-current-password">Current Password</label>
+        <input type="password" id="settings-current-password" name="current-password">
+      </div>
+      <div class="form-group">
+        <label for="settings-new-password">New Password</label>
+        <input type="password" id="settings-new-password" name="new-password">
+      </div>
+      <div class="form-group">
+        <label for="settings-confirm-password">Confirm New Password</label>
+        <input type="password" id="settings-confirm-password" name="confirm-password">
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn">Save Changes</button>
+      <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+    </div>
+  </form>
+  
+  <div class="settings-section danger-zone">
+    <h3>Danger Zone</h3>
+    <div class="danger-zone-content">
+      <p>Once you delete your account, there is no going back. Please be certain.</p>
+      <a href="/profile/delete" class="btn btn-danger">Delete Account</a>
+    </div>
+  </div>
+{{/modal}}
+
+<script>
+  // Handle avatar preview
+  document.getElementById('settings-avatar').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('current-avatar').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Handle form submission
+  document.getElementById('profile-settings-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const errorBlock = document.getElementById('settings-error-block');
+    const newPassword = document.getElementById('settings-new-password').value;
+    const confirmPassword = document.getElementById('settings-confirm-password').value;
+    
+    // Clear previous errors
+    errorBlock.innerHTML = '';
+    errorBlock.classList.remove('error-visible');
+    errorBlock.classList.add('error-hidden');
+    
+    // Validate password confirmation
+    if (newPassword && newPassword !== confirmPassword) {
+      errorBlock.textContent = 'New passwords do not match';
+      errorBlock.classList.remove('error-hidden');
+      errorBlock.classList.add('error-visible');
+      return;
+    }
+    
+    // Validate password requirements
+    if (newPassword && newPassword.length < 6) {
+      errorBlock.textContent = 'New password must be at least 6 characters long';
+      errorBlock.classList.remove('error-hidden');
+      errorBlock.classList.add('error-visible');
+      return;
+    }
+    
+    // Prepare form data
+    const formData = new FormData();
+    
+    const avatarFile = document.getElementById('settings-avatar').files[0];
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
+    }
+    
+    if (newPassword) {
+      formData.append('current-password', document.getElementById('settings-current-password').value);
+      formData.append('new-password', newPassword);
+    }
+    
+    // Submit update
+    fetch('/api/profile/settings', {
+      method: 'PUT',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        errorBlock.textContent = data.error;
+        errorBlock.classList.remove('error-hidden');
+        errorBlock.classList.add('error-visible');
+      } else {
+        // Success - reload the page to show updated content
+        window.location.reload();
+      }
+    })
+    .catch(err => {
+      console.error('Error updating profile:', err);
+      errorBlock.textContent = 'Network error. Please try again.';
+      errorBlock.classList.remove('error-hidden');
+      errorBlock.classList.add('error-visible');
+    });
+  });
+
+  // Global functions for modal control
+  window.openSettingsModal = function() {
+    document.getElementById('profile-settings-modal').classList.add('active');
+  };
+
+  window.closeSettingsModal = function() {
+    document.getElementById('profile-settings-modal').classList.remove('active');
+    // Reset form
+    document.getElementById('profile-settings-form').reset();
+    document.getElementById('current-avatar').src = '{{user.avatar_url}}';
+    // Clear errors
+    const errorBlock = document.getElementById('settings-error-block');
+    errorBlock.innerHTML = '';
+    errorBlock.classList.remove('error-visible');
+    errorBlock.classList.add('error-hidden');
+  };
+</script> 

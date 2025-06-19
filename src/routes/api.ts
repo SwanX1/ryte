@@ -3,8 +3,43 @@ import { FollowController } from '../controllers/followController';
 import { LikeController } from '../controllers/likeController';
 import { CommentController } from '../controllers/commentController';
 import { PostController } from '../controllers/postController';
+import { ProfileController } from '../controllers/profileController';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 export const apiRouter = Router();
+
+// Configure multer for avatar uploads
+const uploadsDir = path.join(process.cwd(), 'src', 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'avatar-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const avatarUpload = multer({
+  storage: avatarStorage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only images are allowed.'));
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  }
+}).single('avatar');
 
 // Follow endpoints
 apiRouter.post('/follow/:userId', FollowController.follow);
@@ -26,3 +61,6 @@ apiRouter.put('/comment/:commentId', CommentController.update);
 
 // Post endpoints
 apiRouter.delete('/post/:id', PostController.delete);
+
+// Profile endpoints
+apiRouter.put('/profile/settings', avatarUpload, ProfileController.updateSettings);
