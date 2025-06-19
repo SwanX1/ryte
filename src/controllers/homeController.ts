@@ -11,7 +11,7 @@ export class HomeController {
     let recentPosts = [];
     if (sessionUserId) {
       const followingIds = await UserFollowModel.getFollowingIds(sessionUserId);
-      personalizedPosts = followingIds.length > 0 ? await PostModel.listByUsers([...followingIds, sessionUserId]) : [];
+      personalizedPosts = await PostModel.listByUsers([...followingIds, sessionUserId]);
       personalizedPosts = personalizedPosts.sort((a, b) => b.created_at - a.created_at);
     }
 
