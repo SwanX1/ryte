@@ -201,8 +201,9 @@ class SocketManager {
 
   handleNewPost(postData) {
     // Add new post to the top of the feed using the rendered partial
-    const feedContainer = document.querySelector('.feed-posts');
-    if (!feedContainer) return;
+    const feedContainer = document.getElementById('recentPosts');
+    const profileFeedContainer = document.getElementById('personalizedPosts');
+    if (!feedContainer && !profileFeedContainer) return;
 
     fetch(`/partials/post/${postData.id}`)
       .then(res => {
@@ -214,7 +215,18 @@ class SocketManager {
         temp.innerHTML = html;
         const postElement = temp.firstElementChild;
         if (postElement) {
-          feedContainer.insertBefore(postElement, feedContainer.firstChild);
+          // Always add to recent feed
+          if (feedContainer) {
+            feedContainer.insertBefore(postElement.cloneNode(true), feedContainer.firstChild);
+          }
+          // Only add to personalized feed if following
+          if (
+            profileFeedContainer &&
+            window.followingIds &&
+            window.followingIds.includes(postData.author.id)
+          ) {
+            profileFeedContainer.insertBefore(postElement, profileFeedContainer.firstChild);
+          }
         }
       })
       .catch(err => {
@@ -407,6 +419,21 @@ document.addEventListener('DOMContentLoaded', () => {
   
   console.log('Socket.IO client loaded, version:', window.io.version);
   
+  // Fetch following list for filtering posts
+  window.followingIds = [];
+  if (window.currentUserId) {
+    fetch(`/api/following/${window.currentUserId}`)
+      .then(res => res.json())
+      .then(data => {
+        window.followingIds = (data.following || []).map(u => u.id);
+        // Optionally include self
+        window.followingIds.push(window.currentUserId);
+      })
+      .catch(err => {
+        console.error('Failed to fetch following list:', err);
+      });
+  }
+
   const sessionId = window.socketManager.getSessionId();
   console.log('Session ID retrieved:', sessionId ? 'Found' : 'Not found');
   
