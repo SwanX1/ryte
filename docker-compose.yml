@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      target: production
+      target: development
     ports:
       - "3001:3000"
     volumes:
@@ -11,7 +11,7 @@ services:
       - ./src/views:/app/src/views
       - ./.env:/app/.env
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DB_HOST=mysql
       - DB_USER=root
       - DB_PASSWORD=root
