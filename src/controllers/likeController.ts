@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { PostLikeModel } from '../models/PostLike';
 import { AuditLogModel } from '../models/AuditLog';
+import { socketServer } from '../index';
 
 export class LikeController {
   static async like(req: Request<{ postId: string }>, res: Response) {
@@ -13,7 +14,15 @@ export class LikeController {
     if (alreadyLiked) return res.status(400).json({ error: 'Already liked' });
     const result = await PostLikeModel.create(userId, postId);
     if (!result) return res.status(500).json({ error: 'Error liking post' });
+    
+    // Get updated like count
+    const likeCount = (await PostLikeModel.getLikesForPost(postId)).length;
+    
     AuditLogModel.create('like', 'post', userId, postId, `User ${userId} liked post ${postId}`);
+    
+    // Broadcast like via WebSocket
+    await socketServer.broadcastNewLike(postId, userId, likeCount);
+    
     res.json({ success: true });
   }
 
@@ -24,7 +33,15 @@ export class LikeController {
     const postId = parseInt(postIdParam);
     if (isNaN(postId)) return res.status(400).json({ error: 'Invalid postId' });
     const result = await PostLikeModel.delete(userId, postId);
+    
+    // Get updated like count
+    const likeCount = (await PostLikeModel.getLikesForPost(postId)).length;
+    
     AuditLogModel.create('unlike', 'post', userId, postId, `User ${userId} unliked post ${postId}`);
+    
+    // Broadcast unlike via WebSocket
+    await socketServer.broadcastNewLike(postId, userId, likeCount);
+    
     res.json({ success: result });
   }
 

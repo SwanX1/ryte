@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { UserFollowModel } from '../models/UserFollow';
 import { UserModel } from '../models/User';
 import { AuditLogModel } from '../models/AuditLog';
+import { socketServer } from '../index';
 
 export class FollowController {
   static async follow(req: Request<{ userId: string }>, res: Response) {
@@ -15,7 +16,12 @@ export class FollowController {
     if (alreadyFollowing) return res.status(400).json({ error: 'Already following' });
     const result = await UserFollowModel.create(followerId, followingId);
     if (!result) return res.status(500).json({ error: 'Error following user' });
+    
     AuditLogModel.create('follow', 'user', followerId, followingId, `User ${followerId} followed user ${followingId}`);
+    
+    // Broadcast follow via WebSocket
+    await socketServer.broadcastNewFollow(followerId, followingId);
+    
     res.json({ success: true });
   }
 

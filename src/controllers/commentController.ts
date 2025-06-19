@@ -4,6 +4,7 @@ import z from 'zod';
 import { prettifyZodError } from '../util/zod';
 import { AuditLogModel } from '../models/AuditLog';
 import { UserModel } from '../models/User';
+import { socketServer } from '../index';
 
 export class CommentController {
   static async add(req: Request<{ postId: string }>, res: Response) {
@@ -33,7 +34,12 @@ export class CommentController {
       if (isNaN(postId)) return res.status(400).json({ error: 'Invalid postId' });
       const comment = await PostCommentModel.create(userId, postId, content);
       if (!comment) return res.status(400).json({ error: 'Error creating comment' });
+      
       AuditLogModel.create('comment', 'post', userId, postId, `User ${userId} commented on post ${postId}`);
+      
+      // Broadcast new comment via WebSocket
+      await socketServer.broadcastNewComment(postId, comment, user);
+      
       res.json({ comment });
     } catch (error) {
       if (error instanceof z.ZodError) {

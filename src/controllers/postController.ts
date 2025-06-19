@@ -7,6 +7,7 @@ import { prettifyZodError } from '../util/zod';
 import { AuditLogModel } from '../models/AuditLog';
 import { PostCommentModel } from '../models/PostComment';
 import { MediaProcessor } from '../util/mediaProcessor';
+import { socketServer } from '../index';
 
 export class PostController {
   static async getPostPage(req: Request<{ id: string }>, res: Response, next: NextFunction) {
@@ -86,6 +87,9 @@ export class PostController {
 
       AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created text post ${post.id}`);
 
+      // Broadcast new post via WebSocket
+      await socketServer.broadcastNewPost(post, user);
+
       return res.redirect(`/post/${post.id}`);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -144,6 +148,9 @@ export class PostController {
 
       AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created image post ${post.id} with ${files.length} images`);
 
+      // Broadcast new post via WebSocket
+      await socketServer.broadcastNewPost(post, user);
+
       return res.redirect(`/post/${post.id}`);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -201,6 +208,9 @@ export class PostController {
       }
 
       AuditLogModel.create('create', 'post', userId, post.id, `User ${userId} created video post ${post.id}`);
+
+      // Broadcast new post via WebSocket
+      await socketServer.broadcastNewPost(post, user);
 
       return res.redirect(`/post/${post.id}`);
     } catch (error) {

@@ -8,8 +8,10 @@ export class SessionStore extends Store {
   async get(sid: string, callback: (err: any, session?: SessionData | null) => void): Promise<void> {
     try {
       const results = await query(`SELECT session FROM ${TABLE_NAME} WHERE sid = ?`, [sid]);
+      
       if (results && (results as any)[0]) {
-        callback(null, JSON.parse((results as any)[0].session));
+        const sessionData = JSON.parse((results as any)[0].session);
+        callback(null, sessionData);
       } else {
         callback(null, null);
       }
@@ -20,7 +22,7 @@ export class SessionStore extends Store {
 
   async set(sid: string, session: SessionData, callback: (err?: any) => void = () => {}): Promise<void> {
     try {
-      await query(`INSERT INTO ${TABLE_NAME} (sid, session) VALUES (?, ?)`, [sid, JSON.stringify(session)]);
+      await query(`INSERT INTO ${TABLE_NAME} (sid, session) VALUES (?, ?) ON DUPLICATE KEY UPDATE session = VALUES(session)`, [sid, JSON.stringify(session)]);
       callback(null);
     } catch (err) {
       callback(err);

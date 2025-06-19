@@ -39,6 +39,7 @@ export class ChatController {
       title: `Chat with ${targetUser.username}`,
       chat,
       targetUser,
+      session_user: sessionUser,
       isUserA: chat.user_a === sessionUserId
     });
   }

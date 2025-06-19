@@ -6,49 +6,90 @@
   <h1 class="welcome">{{t "home.welcome" username=session_user.username}}</h1>
   <hr>
   <div class="feed-section-container">
-  <div id="personalized_feed" class="feed-section active">
-    {{#if personalizedPosts.length}}
-      {{#each personalizedPosts}}
-        {{> post post=this}}
-      {{/each}}
-    {{else}}
-      <div class="empty-feed">{{t "home.no_personalized_posts"}}</div>
-    {{/if}}
-  </div>
+    <div id="personalized_feed" class="feed-section active">
+      <div class="feed-posts" id="personalizedPosts">
+        {{#if personalizedPosts.length}}
+          {{#each personalizedPosts}}
+            {{> post post=this}}
+          {{/each}}
+        {{else}}
+          <div class="empty-feed">{{t "home.no_personalized_posts"}}</div>
+        {{/if}}
+      </div>
+    </div>
   </div>
 {{else}}
   <div class="card">
     <p>{{{t "home.login_or_signup"}}}</p>
   </div>
 {{/if}}
+
 <div class="feed-section-container">
-<div id="recent_feed" class="feed-section {{#unless session_user}}active{{/unless}}">
-  {{#if recentPosts.length}}
-    {{#each recentPosts}}
-      {{> post post=this}}
-    {{/each}}
-  {{else}}
-    <div class="empty-feed">{{t "home.no_posts"}}</div>
-  {{/if}}
+  <div id="recent_feed" class="feed-section {{#unless session_user}}active{{/unless}}">
+    <div class="feed-posts" id="recentPosts">
+      {{#if recentPosts.length}}
+        {{#each recentPosts}}
+          {{> post post=this}}
+        {{/each}}
+      {{else}}
+        <div class="empty-feed">{{t "home.no_posts"}}</div>
+      {{/if}}
+    </div>
+  </div>
 </div>
-</div>
+
 {{#if session_user}}
   <script>
     const tabPersonalized = document.getElementById('tab-personalized');
     const tabRecent = document.getElementById('tab-recent');
     const personalizedFeed = document.getElementById('personalized_feed');
     const recentFeed = document.getElementById('recent_feed');
+    
+    // WebSocket status indicator
+    const websocketStatus = document.getElementById('websocketStatus');
+    
     tabPersonalized.addEventListener('click', function() {
       tabPersonalized.classList.add('active');
       tabRecent.classList.remove('active');
       personalizedFeed.classList.add('active');
       recentFeed.classList.remove('active');
     });
+    
     tabRecent.addEventListener('click', function() {
       tabRecent.classList.add('active');
       tabPersonalized.classList.remove('active');
       recentFeed.classList.add('active');
       personalizedFeed.classList.remove('active');
+    });
+    
+    // WebSocket connection status updates
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.socketManager) {
+        // Wait for socket to be initialized
+        const checkSocket = setInterval(() => {
+          if (window.socketManager.socket) {
+            clearInterval(checkSocket);
+            
+            window.socketManager.socket.on('connect', () => {
+              websocketStatus.classList.add('connected');
+            });
+            
+            window.socketManager.socket.on('disconnect', () => {
+              websocketStatus.classList.remove('connected');
+            });
+            
+            // Update status if already connected
+            if (window.socketManager.isConnected) {
+              websocketStatus.classList.add('connected');
+            }
+          }
+        }, 50);
+        
+        // Timeout after 5 seconds
+        setTimeout(() => {
+          clearInterval(checkSocket);
+        }, 5000);
+      }
     });
   </script>
 {{/if}}

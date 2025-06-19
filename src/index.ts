@@ -3,6 +3,7 @@ import cors from 'cors';
 import { engine } from 'express-handlebars';
 import session from 'express-session';
 import type { Request, Response, NextFunction } from 'express';
+import { createServer } from 'http';
 import { config } from './config';
 import { viewDataMiddleware } from './middleware/viewData';
 import { UserModel } from './models/User';
@@ -17,10 +18,15 @@ import { getConnection } from './database/connection';
 import { SessionStore } from './util/sessionStore';
 import { ChatMessageModel } from './models/ChatMessage';
 import { ChatModel } from './models/Chat';
+import { SocketServer } from './util/socketServer';
 import fs from 'fs';
 import { detectLocale } from './util/locale';
 
 const app = express();
+const server = createServer(app);
+
+// Initialize WebSocket server
+const socketServer = new SocketServer(server);
 
 // View engine setup
 app.engine('hbs', engine({
@@ -62,7 +68,7 @@ app.engine('hbs', engine({
     },
     'splitLines': (str: string) => (typeof str === 'string' ? str.split('\n') : []),
     'joinLines': (arr: any[], start: number) => Array.isArray(arr) ? arr.slice(start).join('\n') : '',
-    't': function (key, options) {
+    't': function (key: string, options: any) {
       const translations = options.data.root.translations || {};
       return t(translations, key, options.hash);
     }
@@ -87,7 +93,8 @@ app.use(session({
   store: new SessionStore(),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: false,
   }
 }));
 
@@ -144,9 +151,12 @@ app.use((req: Request, res: Response) => {
   process.exit(1);
 }));
 
-app.listen(config.port, () => {
+server.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`);
 });
+
+// Export socket server for use in controllers
+export { socketServer };
 
 function getTranslations(locale: string) {
   const localesDir = path.join(__dirname, 'locales');

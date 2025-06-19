@@ -1,8 +1,11 @@
-<div class="card chat-card">
+<div class="card chat-card" data-chat-id="{{chat.chat_id}}">
   <div class="chat-header chat-header--chat">
     <h2 class="chat-title">{{t "chat.title" username=targetUser.username}}</h2>
+    <div class="connection-status" id="connectionStatus">
+      <span class="status-text">Connecting...</span>
+    </div>
   </div>
-  <div class="chat-messages">
+  <div class="chat-messages" id="chatMessages">
     {{#each messages}}
       <div class="chat-message {{#if (or (and ../isUserA is_user_a) (and (not ../isUserA) (not is_user_a)) )}}from-self{{else}}from-other{{/if}}">
         <span class="chat-author">
@@ -20,8 +23,204 @@
       <p class="chat-empty">{{t "chat.no_messages"}}</p>
     {{/unless}}
   </div>
-  <form class="chat-form" method="POST" action="/chats/{{chat.chat_id}}/send">
-    <textarea name="message" required placeholder="{{t 'chat.type_message'}}" class="chat-input"></textarea>
-    <button type="submit" class="btn btn-primary chat-send">{{t "chat.send"}}</button>
-  </form>
-</div> 
+  <div class="chat-form" id="chatForm">
+    <textarea 
+      name="message" 
+      placeholder="{{t 'chat.type_message'}}" 
+      class="chat-input" 
+      id="messageInput"
+      rows="1"
+    ></textarea>
+    <button type="button" class="btn btn-primary chat-send" id="sendButton">
+      <span class="btn-text">{{t "chat.send"}}</span>
+      <span class="loading-spinner" style="display: none;"></span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Set current user ID for WebSocket
+  window.currentUserId = {{#if session_user}}{{session_user.id}}{{else}}null{{/if}};
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Chat page loaded, currentUserId:', window.currentUserId);
+    
+    const chatId = {{chat.chat_id}};
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const chatMessages = document.getElementById('chatMessages');
+    const connectionStatus = document.getElementById('connectionStatus');
+    
+    console.log('Chat elements initialized, chatId:', chatId);
+    
+    // Update connection status
+    function updateConnectionStatus(status, message) {
+      console.log('Updating connection status:', status, message);
+      connectionStatus.className = `connection-status ${status}`;
+      connectionStatus.querySelector('.status-text').textContent = message;
+    }
+    
+    // Join chat room when WebSocket is ready
+    function joinChatWhenReady() {
+      console.log('Attempting to join chat, socketManager:', !!window.socketManager);
+      if (window.socketManager && window.socketManager.isConnected && window.socketManager.socket) {
+        console.log('Socket is ready, joining chat:', chatId);
+        window.socketManager.joinChat(chatId);
+        updateConnectionStatus('connected', 'Connected');
+      } else {
+        console.log('Socket not ready, retrying in 100ms');
+        setTimeout(joinChatWhenReady, 100);
+      }
+    }
+    
+    // Handle send button click
+    sendButton.addEventListener('click', function() {
+      sendMessage();
+    });
+    
+    // Handle Enter key press
+    messageInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    
+    // Auto-resize textarea
+    messageInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+      
+      console.log('Attempting to send message:', message);
+      
+      // Check if WebSocket is available
+      if (!window.socketManager || !window.socketManager.isConnected || !window.socketManager.socket) {
+        console.log('WebSocket not available for sending message');
+        updateConnectionStatus('disconnected', 'Not connected');
+        return;
+      }
+      
+      // Show loading state
+      const btnText = sendButton.querySelector('.btn-text');
+      const spinner = sendButton.querySelector('.loading-spinner');
+      btnText.style.display = 'none';
+      spinner.style.display = 'inline-block';
+      sendButton.disabled = true;
+      
+      // Send message via WebSocket
+      const sent = window.socketManager.sendMessage(chatId, message);
+      console.log('Message sent via WebSocket:', sent);
+      
+      if (sent) {
+        // Clear input
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        
+        // Add message to chat immediately (optimistic update)
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message from-self typing';
+        messageElement.innerHTML = `
+          <span class="chat-author">You:</span>
+          <span class="chat-text">${escapeHtml(message)}</span>
+          <span class="chat-time">Sending...</span>
+        `;
+        
+        // Remove empty message placeholder
+        const emptyMessage = chatMessages.querySelector('.chat-empty');
+        if (emptyMessage) {
+          emptyMessage.remove();
+        }
+        
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      
+      // Reset button state after a short delay
+      setTimeout(() => {
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+        sendButton.disabled = false;
+      }, 1000);
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Listen for WebSocket connection events
+    if (window.socketManager) {
+      console.log('SocketManager found, setting up event listeners');
+      
+      // Wait for socket to be initialized
+      const checkSocket = setInterval(() => {
+        console.log('Checking socket availability...');
+        if (window.socketManager.socket) {
+          console.log('Socket found, setting up event listeners');
+          clearInterval(checkSocket);
+          
+          window.socketManager.socket.on('connect', () => {
+            console.log('WebSocket connected!');
+            updateConnectionStatus('connected', 'Connected');
+            window.socketManager.joinChat(chatId);
+          });
+          
+          window.socketManager.socket.on('disconnect', () => {
+            console.log('WebSocket disconnected');
+            updateConnectionStatus('disconnected', 'Disconnected');
+          });
+          
+          window.socketManager.socket.on('connect_error', (error) => {
+            console.error('WebSocket connection error:', error);
+            updateConnectionStatus('disconnected', 'Connection Error');
+          });
+          
+          window.socketManager.socket.on('error', () => {
+            console.error('WebSocket error');
+            updateConnectionStatus('disconnected', 'Connection Error');
+          });
+          
+          // Join chat if already connected
+          if (window.socketManager.isConnected) {
+            console.log('Socket already connected, joining chat');
+            joinChatWhenReady();
+          }
+        }
+      }, 50);
+      
+      // Timeout after 5 seconds
+      setTimeout(() => {
+        clearInterval(checkSocket);
+        if (!window.socketManager.socket) {
+          console.error('Socket not available after 5 seconds');
+          updateConnectionStatus('disconnected', 'Connection Failed');
+        }
+      }, 5000);
+    } else {
+      console.error('SocketManager not found');
+      updateConnectionStatus('disconnected', 'WebSocket Not Available');
+    }
+    
+    // Handle new messages from WebSocket
+    if (window.socketManager) {
+      const originalHandleNewMessage = window.socketManager.handleNewMessage;
+      window.socketManager.handleNewMessage = function(messageData) {
+        console.log('Received new message:', messageData);
+        // Remove typing indicator if it exists
+        const typingMessage = chatMessages.querySelector('.chat-message.typing');
+        if (typingMessage) {
+          typingMessage.remove();
+        }
+        
+        // Call original handler
+        originalHandleNewMessage.call(this, messageData);
+      };
+    }
+  });
+</script> 
