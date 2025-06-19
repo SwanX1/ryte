@@ -276,17 +276,18 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           
           // Create comment HTML (you'll need to adjust this based on your comment partial)
-          const commentHtml = `
-            <li class="comment-item" data-comment-id="${data.comment.id}">
-              <div class="comment-content">
-                <span class="comment-author">${data.comment.username}:</span>
-                <span class="comment-text">${data.comment.content}</span>
-                <span class="comment-date">${new Date(data.comment.created_at).toLocaleString()}</span>
-              </div>
-            </li>
-          `;
-          
-          document.getElementById('comments-ul').insertAdjacentHTML('beforeend', commentHtml);
+          fetch(`/partials/comment/${data.comment.id}`)
+            .then(res => {
+              if (!res.ok) throw new Error('Failed to fetch comment partial');
+              return res.text();
+            })
+            .then(commentHtml => {
+              document.getElementById('comments-ul').insertAdjacentHTML('beforeend', commentHtml);
+            })
+            .catch(err => {
+              console.error('Failed to fetch comment partial:', err);
+              // fallback: show a simple error or fallback comment
+            });
           
           // Clear the form
           form.reset();
