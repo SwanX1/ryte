@@ -1818,3 +1818,11 @@ textarea {
   color: #dc3545;
   padding: 2rem;
 } 
+
+.feed-section {
+  display: none;
+}
+
+.feed-section.active {
+  display: block;
+}

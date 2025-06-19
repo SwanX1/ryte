@@ -120,4 +120,18 @@ export class PostModel {
       return null;
     }
   }
+
+  static async listByUsers(userIds: number[]): Promise<Post[]> {
+    if (!userIds.length) return [];
+    const placeholders = userIds.map(() => '?').join(',');
+    try {
+      return await query(
+        `SELECT * FROM posts WHERE user IN (${placeholders}) ORDER BY created_at DESC`,
+        userIds
+      ) as Post[] || [];
+    } catch (error) {
+      console.error('Error listing posts by users:', error);
+      return [];
+    }
+  }
 } 
