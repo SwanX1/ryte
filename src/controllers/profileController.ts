@@ -60,6 +60,8 @@ export class ProfileController {
       followingCount: followingIds.length,
       isFollowing: isFollowing,
       isOwnProfile: sessionUserId === user.id,
+      sessionUserVerified,
+      profileUserVerified,
     });
   }
 
