@@ -1,27 +1,37 @@
-<div class="card">
-  <h2>Search Results for "{{q}}"</h2>
-  <div>
-    <h3>Users</h3>
+<div class="card search-results-card">
+  <h2 class="search-results-heading">Search Results for "{{q}}"</h2>
+
+  <div class="search-section search-users-section">
+    <h3 class="search-section-heading">Users</h3>
     {{#if users.length}}
-      <ul>
+      <ul class="search-results-list">
         {{#each users}}
-          <li><a href="/profile/{{this.id}}">{{this.username}}</a></li>
+          <li class="search-results-item">
+            <a href="/profile/{{this.id}}" class="search-result-link search-user-link">
+                {{this.username}}
+            </a>
+          </li>
         {{/each}}
       </ul>
     {{else}}
-      <p>No users found.</p>
+      <p class="no-results-message">No users found.</p>
     {{/if}}
   </div>
-  <div class="search-results-section">
-    <h3>Posts</h3>
+
+  <div class="search-section search-posts-section">
+    <h3 class="search-section-heading">Posts</h3>
     {{#if posts.length}}
-      <ul>
+      <ul class="search-results-list">
         {{#each posts}}
-          <li><a href="/post/{{this.id}}">{{this.content}}</a></li>
+          <li class="search-results-item">
+            <a href="/post/{{this.id}}" class="search-result-link search-post-link">
+                {{this.content}}
+            </a>
+          </li>
         {{/each}}
       </ul>
     {{else}}
-      <p>No posts found.</p>
+      <p class="no-results-message">No posts found.</p>
     {{/if}}
   </div>
-</div> 
+</div>
