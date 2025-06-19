@@ -25,10 +25,7 @@ app.engine('hbs', engine({
   layoutsDir: path.join(__dirname, 'views/layouts'),
   partialsDir: path.join(__dirname, 'views/partials'),
   helpers: {
-    'eq': (a: any, b: any) => {
-      console.log({ a, b });
-      return a === b
-    },
+    'eq': (a: any, b: any) => a === b,
     'neq': (a: any, b: any) => a !== b,
     'or': (...args: any[]) => {
       // strip last arg, it's the method def
