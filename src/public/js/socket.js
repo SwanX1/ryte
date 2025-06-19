@@ -293,52 +293,6 @@ class SocketManager {
     }
   }
 
-  addPostToFeed(feedContainer, postData) {
-    const postElement = document.createElement('div');
-    postElement.className = 'post-card';
-    postElement.setAttribute('data-post-id', postData.id);
-
-    // Parse post content
-    const lines = postData.content.split('\n');
-    const caption = lines[0] || '';
-    const content = lines.slice(1).join('\n') || '';
-
-    let mediaContent = '';
-    if (postData.type === 'images') {
-      const imageUrls = content.split('\n').filter(url => url.trim());
-      mediaContent = imageUrls.map(url => `<img src="${url}" alt="Post image" class="post-image">`).join('');
-    } else if (postData.type === 'video') {
-      mediaContent = `<video controls class="post-video"><source src="${content}" type="video/webm"></video>`;
-    }
-
-    postElement.innerHTML = `
-      <div class="post-header">
-        <div class="post-author">
-          <img src="${postData.author.avatar_url || '/assets/default_avatar.png'}" alt="Avatar" class="avatar">
-          <span class="username">${postData.author.username}</span>
-        </div>
-        <span class="post-time">${this.formatTime(postData.created_at)}</span>
-      </div>
-      <div class="post-content">
-        <h3 class="post-caption">${this.escapeHtml(caption)}</h3>
-        ${postData.type === 'text' ? `<p class="post-text">${this.escapeHtml(content)}</p>` : ''}
-        ${mediaContent}
-      </div>
-      <div class="post-actions">
-        <button class="btn-like" data-post-id="${postData.id}">
-          <span class="like-icon">♥</span>
-          <span class="like-count">${postData.likeCount}</span>
-        </button>
-        <button class="btn-comment" data-post-id="${postData.id}">
-          💬 Comment
-        </button>
-      </div>
-    `;
-
-    // Insert at the top of the feed
-    feedContainer.insertBefore(postElement, feedContainer.firstChild);
-  }
-
   addCommentToPost(postContainer, commentData) {
     const commentsContainer = postContainer.querySelector('.post-comments');
     if (!commentsContainer) return;

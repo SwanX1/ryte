@@ -43,6 +43,7 @@
             headers: { 'Content-Type': 'application/json' },
           });
           if (res.ok) {
+            resentMsg.textContent = '{{t "auth.email_resent"}}';
             resentMsg.classList.remove('verification-resent-msg');
             resentMsg.classList.add('verification-resent-msg-visible');
           } else {
@@ -59,7 +60,6 @@
           resendBtn.disabled = false;
           resentMsg.classList.remove('verification-resent-msg-visible');
           resentMsg.classList.add('verification-resent-msg');
-          resentMsg.textContent = '{{t "auth.email_resent"}}';
         }, 3000);
       });
     }

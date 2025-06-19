@@ -236,7 +236,7 @@
     }
     
     // Submit update
-    fetch(`/post/${currentPostId}/edit`, {
+    fetch(`/post/${currentPostId}/edit/${currentPostType}`, {
       method: 'PUT',
       body: formData
     })

@@ -2046,6 +2046,11 @@ textarea {
   margin-bottom: 1rem;
 }
 
+.post-header-left {
+  display: flex;
+  align-items: center;
+}
+
 .post-author {
   display: flex;
   align-items: center;

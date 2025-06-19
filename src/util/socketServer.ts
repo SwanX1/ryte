@@ -4,9 +4,6 @@ import { SessionStore } from './sessionStore';
 import { ChatMessageModel } from '../models/ChatMessage';
 import { ChatModel } from '../models/Chat';
 import { UserModel } from '../models/User';
-import { PostModel } from '../models/Post';
-import { PostLikeModel } from '../models/PostLike';
-import { PostCommentModel } from '../models/PostComment';
 import { UserFollowModel } from '../models/UserFollow';
 import { AuditLogModel } from '../models/AuditLog';
 

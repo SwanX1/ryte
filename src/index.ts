@@ -14,7 +14,6 @@ import { UserFollowModel } from './models/UserFollow';
 import { AuditLogModel } from './models/AuditLog';
 import { PostLikeModel } from './models/PostLike';
 import { PostCommentModel } from './models/PostComment';
-import { getConnection } from './database/connection';
 import { SessionStore } from './util/sessionStore';
 import { ChatMessageModel } from './models/ChatMessage';
 import { ChatModel } from './models/Chat';
