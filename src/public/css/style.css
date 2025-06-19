@@ -36,9 +36,9 @@ nav {
 }
 
 .logo img {
-  width: 100px;
+  width: 56px;
   height: auto;
-  border-radius: 18px;
+  border-radius: 4px;
   vertical-align: middle;
 }
 
@@ -54,12 +54,23 @@ nav {
   padding-right: 50px;
   padding-left: 20px;
   position: center;
+  margin-top: 4px;
 }
 
-.btn-create {
+.btn.btn-create {
   background-color: #ffc64c;
   color: rgb(41, 41, 41);
   border-radius: 20px;
+}
+
+.btn.btn-secondary {
+  margin-right: 20px;
+}
+
+
+.btn.btn-verify {
+  background-color: rgb(255, 141, 141);
+
 }
 
 .nav-ryte h1 {
@@ -79,40 +90,39 @@ nav {
 }
 
 .segmented-control {
-    display: flex; /* Makes the buttons inside align horizontally */
-    border: 1px solid #aaa; /* Outline for the whole control */
-    border-radius: 5px; /* Rounded corners for the whole control */
-    overflow: hidden; /* Important to keep border-radius on inner items clean */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+    display: flex;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin: 0px auto;
+    width: fit-content;
 }
 
 .segmented-control .segment {
-    /* Basic button styling */
     padding: 8px 15px;
-    border: none; /* Remove default button borders */
-    background-color: #fff; /* White background for inactive segments */
+    border: none;
+    background-color: #fff;
     color: #555;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transitions */
-    /* Add a subtle right border between segments, but not on the last one */
+    transition: background-color 0.2s ease, color 0.2s ease;
     border-right: 1px solid #aaa;
 }
 
 .segmented-control .segment:last-child {
-    border-right: none; /* Remove border from the last segment */
+    border-right: none;
 }
 
 .segmented-control .segment:hover:not(.active) {
-    background-color: #f5f5f5; /* Light hover effect for inactive segments */
+    background-color: #f5f5f5;
 }
 
-/* Active Segment Styling */
 .segmented-control .segment.active {
-    background-color: #6daff7; /* Blue background for the active segment */
-    color: white; /* White text for active segment */
+    background-color: #6daff7;
+    color: white;
     font-weight: bold;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Inner shadow for active state */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .nav-left {
@@ -164,14 +174,17 @@ nav {
 .btn {
   display: inline-block;
   padding: 0.5rem 1rem;
-  border: none;
+  border: #333;
+  color: #333;
+  border-radius: 10px;
+  background-color: #d4d4d4;
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.2s;
 }
 
 .btn:hover {
-  box-shadow: 0px 0px 10px 1px #333;
+  box-shadow: 1px 2px 5px 1px #535353;
 }
 
 .btn-logout img {
@@ -671,13 +684,90 @@ nav {
 /* Email Verification */
 
 .auth-form h1 {
-  padding: 10px 0px;
+  padding-bottom: 10px;
 }
 
 .auth-form p {
   padding-bottom: 30px;
 }
 
+.btn-verify {
+  margin-bottom: 60px;
+}
+
+.search-results-heading {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 1.5rem; /* Space below the main heading */
+    border-bottom: 1px solid #eee; /* Subtle separator line */
+    padding-bottom: 1rem; /* Space between text and separator */
+    text-align: center; /* Center the main heading within the card */
+}
+
+/* --- Individual Search Sections (Users, Posts) --- */
+.search-section {
+    margin-top: 1.5rem; /* Space above each section */
+    padding-top: 1rem; /* Padding at the top of the section */
+}
+
+/* Adjust margin for the first search section if it shouldn't have top margin */
+.search-results-card > .search-section:first-of-type {
+    margin-top: 0; /* No top margin for the first section directly after the main heading */
+    padding-top: 0;
+}
+
+.search-section-heading {
+    font-size: 1.3em;
+    color: #444;
+    margin-bottom: 1rem; /* Space below sub-headings */
+    border-bottom: 1px dashed #3f3f3f; /* Subtle dashed separator for sections */
+    padding-bottom: 0.5rem;
+    text-align: left; /* Align section headings to the left */
+}
+
+/* --- Search Results List --- */
+.search-results-list {
+    list-style: none; /* Remove default bullet points */
+    padding: 0; /* Remove default list padding */
+    margin: 0; /* Remove default list margin */
+}
+
+.search-results-item {
+    margin-bottom: 0.5rem; /* Space between list items */
+    font-size: 1em;
+    padding: 5px 0; /* Small vertical padding for each item */
+    margin-left: 10px;
+    border:#000000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.search-results-item:last-child {
+    border-bottom: none; /* No border after the last item */
+    margin-bottom: 0; /* No margin after the last item */
+}
+
+/* --- Search Result Links --- */
+.search-result-link {
+    color: #5c5c5c; /* Standard link blue */
+    text-decoration: none; /* Remove default underline */
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+    display: block; /* Make the whole link area clickable if desired */
+    padding: 3px 0; /* Adjust padding for hover area */
+}
+
+.search-result-link:hover {
+    color: #000000; /* Darker blue on hover */
+}
+
+/* --- No Results Message --- */
+.no-results-message {
+    font-style: italic;
+    color: #777;
+    margin-top: 0.5rem; /* Space above "No X found" message */
+    margin-bottom: 1rem; /* Space below "No X found" message */
+    text-align: center; /* Center these messages */
+}
 /* Footer */
 footer {
   background-color: #fff;
@@ -686,9 +776,7 @@ footer {
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.btn-verify {
-  margin-bottom: 20px;
-}
+
 
 /* Common Components */
 .card {
