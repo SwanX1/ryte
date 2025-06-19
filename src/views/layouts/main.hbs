@@ -19,10 +19,12 @@
 
   {{> footer}}
   
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+  {{#if session_user}}
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
 
-  <!-- WebSocket Manager -->
-  <script src="/js/socket.js"></script>
+    <!-- WebSocket Manager -->
+    <script src="/js/socket.js"></script>
+  {{/if}}
 
 </body>
 
