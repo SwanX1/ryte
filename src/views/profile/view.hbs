@@ -25,6 +25,7 @@
         {{else}}
           <button class="follow-btn" data-user-id="{{user.id}}" data-following="false">Follow</button>
         {{/if}}
+        <a href="/chats/{{user.id}}" class="btn btn-primary dm-btn{{#unless (and sessionUserVerified profileUserVerified)}} btn-disabled{{/unless}}" {{#unless (and sessionUserVerified profileUserVerified)}}aria-disabled="true" tabindex="-1" title="Both users must be verified to use direct messages."{{/unless}}>Direct Messages</a>
       {{/if}}
     {{/if}}
   </div>

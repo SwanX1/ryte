@@ -43,6 +43,13 @@ export class ProfileController {
     if (sessionUserId && sessionUserId !== user.id) {
       isFollowing = !!(await UserFollowModel.find(sessionUserId, user.id));
     }
+
+    let sessionUserVerified = false;
+    if (sessionUserId) {
+      const sessionUser = await UserModel.findById(sessionUserId);
+      sessionUserVerified = sessionUser?.email_verified ?? false;
+    }
+    const profileUserVerified = user.email_verified;
     
     return res.render('profile/view', {
       title: `${user.username} - Profile`,

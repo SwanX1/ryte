@@ -15,6 +15,8 @@ import { PostLikeModel } from './models/PostLike';
 import { PostCommentModel } from './models/PostComment';
 import { getConnection } from './database/connection';
 import { SessionStore } from './util/sessionStore';
+import { ChatMessageModel } from './models/ChatMessage';
+import { ChatModel } from './models/Chat';
 
 const app = express();
 
@@ -39,6 +41,23 @@ app.engine('hbs', engine({
       month: 'long',
       day: 'numeric'
     }),
+    'localDateTime': (date: number) => {
+      // If it's the same day, return the time only
+      if (new Date(date).toDateString() === new Date().toDateString()) {
+        return new Date(date).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      } else {
+        new Date(date).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+    },
     'splitLines': (str: string) => (typeof str === 'string' ? str.split('\n') : []),
     'joinLines': (arr: any[], start: number) => Array.isArray(arr) ? arr.slice(start).join('\n') : ''
   }
@@ -103,7 +122,9 @@ app.use((req: Request, res: Response) => {
   UserFollowModel.initTable(),
   PostLikeModel.initTable(),
   PostCommentModel.initTable(),
-  AuditLogModel.initTable()
+  AuditLogModel.initTable(),
+  ChatModel.initTable(),
+  ChatMessageModel.initTable()
 ].forEach(p => p.catch(error => {
   console.error('Failed to initialize table:', error);
   process.exit(1);

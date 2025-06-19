@@ -8,6 +8,7 @@ import { adminRouter } from './admin';
 import { ProfileController } from '../controllers/profileController';
 import { partialsRouter } from './partials';
 import { HomeController } from '../controllers/homeController';
+import { ChatController } from '../controllers/chatController';
 
 const routes = Router();
 
@@ -20,5 +21,7 @@ routes.use('/admin', adminRouter);
 routes.use('/partials', partialsRouter);
 routes.get('/@:username', ProfileController.usernameRedirect); // Custom redirect route for /@username
 routes.get('/', HomeController.getHomePage);
+routes.get('/chats/:userId', ChatController.showChat);
+routes.post('/chats/:chatId/send', ChatController.sendMessage);
 
 export default routes;

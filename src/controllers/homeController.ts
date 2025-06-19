@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import { PostModel, type Post } from '../models/Post';
 import { UserModel } from '../models/User';
 import { UserFollowModel } from '../models/UserFollow';
-import { PostLikeModel } from '../models/PostLike';
 import { expandPosts } from './postController';
 
 export class HomeController {
