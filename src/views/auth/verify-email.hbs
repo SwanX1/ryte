@@ -1,8 +1,8 @@
 <div class="auth-container">
   <div class="auth-form">
     <div class="card">
-      <h1>Verify Your Email</h1>
-      <p>Please enter the verification code sent to your email address.</p>
+      <h1>{{t "auth.verify_email"}}</h1>
+      <p>{{t "auth.enter_code"}}</p>
       
       {{#if error}}
         <div class="error-message">{{error}}</div>
@@ -14,16 +14,16 @@
       
       <form method="POST" action="/auth/verify-email">
         <div class="form-group">
-          <label for="code">Verification Code:</label>
-          <input type="text" id="code" name="code" required placeholder="Enter verification code">
+          <label for="code">{{t "auth.verification_code"}}</label>
+          <input type="text" id="code" name="code" required placeholder="{{t 'auth.verification_code'}}">
         </div>
         
-        <button type="submit" class="btn btn-verify">Verify Email</button>
+        <button type="submit" class="btn btn-verify">{{t "auth.verify_email_button"}}</button>
       </form>
       
       <div class="auth-links">
-        <a href="/auth/resend-verification" class="btn btn-secondary">Resend Code</a>
-        <a href="/" class="btn btn-link">Back to Home</a>
+        <a href="/auth/resend-verification" class="btn btn-secondary">{{t "auth.resend_code"}}</a>
+        <a href="/" class="btn btn-link">{{t "auth.back_to_home"}}</a>
       </div>
     </div>
   </div>
@@ -45,12 +45,12 @@
             resentMsg.classList.remove('verification-resent-msg');
             resentMsg.classList.add('verification-resent-msg-visible');
           } else {
-            resentMsg.textContent = 'Failed to resend email.';
+            resentMsg.textContent = '{{t "auth.failed_resend"}}';
             resentMsg.classList.remove('verification-resent-msg');
             resentMsg.classList.add('verification-resent-msg-visible');
           }
         } catch (e) {
-          resentMsg.textContent = 'Failed to resend email.';
+          resentMsg.textContent = '{{t "auth.failed_resend"}}';
           resentMsg.classList.remove('verification-resent-msg');
           resentMsg.classList.add('verification-resent-msg-visible');
         }
@@ -58,7 +58,7 @@
           resendBtn.disabled = false;
           resentMsg.classList.remove('verification-resent-msg-visible');
           resentMsg.classList.add('verification-resent-msg');
-          resentMsg.textContent = 'Email verification resent!';
+          resentMsg.textContent = '{{t "auth.email_resent"}}';
         }, 3000);
       });
     }

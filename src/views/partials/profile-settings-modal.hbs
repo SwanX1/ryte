@@ -1,44 +1,44 @@
 {{#> modal modal_id="profile-settings-modal"}}
-  <h2>Profile Settings</h2>
+  <h2>{{t "profile.settings_title"}}</h2>
   <div id="settings-error-block">{{> error error=null}}</div>
   <form id="profile-settings-form" enctype="multipart/form-data">
     <div class="settings-section">
       <div class="form-group">
-        <label for="settings-avatar">Avatar</label>
+        <label for="settings-avatar">{{t "profile.avatar"}}</label>
         <input type="file" id="settings-avatar" name="avatar" accept="image/*">
         <div class="avatar-preview">
-          <img src="{{user.avatar_url}}" alt="Current avatar" id="current-avatar">
+          <img src="{{user.avatar_url}}" alt="{{t 'profile.current_avatar'}}" id="current-avatar">
         </div>
       </div>
     </div>
     
     <div class="settings-section">
-      <h3>Change Password</h3>
+      <h3>{{t "profile.change_password"}}</h3>
       <div class="form-group">
-        <label for="settings-current-password">Current Password</label>
+        <label for="settings-current-password">{{t "profile.current_password"}}</label>
         <input type="password" id="settings-current-password" name="current-password">
       </div>
       <div class="form-group">
-        <label for="settings-new-password">New Password</label>
+        <label for="settings-new-password">{{t "profile.new_password"}}</label>
         <input type="password" id="settings-new-password" name="new-password">
       </div>
       <div class="form-group">
-        <label for="settings-confirm-password">Confirm New Password</label>
+        <label for="settings-confirm-password">{{t "profile.confirm_new_password"}}</label>
         <input type="password" id="settings-confirm-password" name="confirm-password">
       </div>
     </div>
     
     <div class="form-actions">
-      <button type="submit" class="btn">Save Changes</button>
-      <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+      <button type="submit" class="btn">{{t "profile.save_changes"}}</button>
+      <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">{{t "profile.cancel"}}</button>
     </div>
   </form>
   
   <div class="settings-section danger-zone">
-    <h3>Danger Zone</h3>
+    <h3>{{t "profile.danger_zone"}}</h3>
     <div class="danger-zone-content">
-      <p>Once you delete your account, there is no going back. Please be certain.</p>
-      <a href="/profile/delete" class="btn btn-danger">Delete Account</a>
+      <p>{{t "profile.danger_warning"}}</p>
+      <a href="/profile/delete" class="btn btn-danger">{{t "profile.delete_account"}}</a>
     </div>
   </div>
 {{/modal}}
@@ -71,7 +71,7 @@
     
     // Validate password confirmation
     if (newPassword && newPassword !== confirmPassword) {
-      errorBlock.textContent = 'New passwords do not match';
+      errorBlock.textContent = '{{t "profile.passwords_dont_match"}}';
       errorBlock.classList.remove('error-hidden');
       errorBlock.classList.add('error-visible');
       return;
@@ -79,7 +79,7 @@
     
     // Validate password requirements
     if (newPassword && newPassword.length < 6) {
-      errorBlock.textContent = 'New password must be at least 6 characters long';
+      errorBlock.textContent = '{{t "profile.password_too_short"}}';
       errorBlock.classList.remove('error-hidden');
       errorBlock.classList.add('error-visible');
       return;
@@ -116,7 +116,7 @@
     })
     .catch(err => {
       console.error('Error updating profile:', err);
-      errorBlock.textContent = 'Network error. Please try again.';
+      errorBlock.textContent = '{{t "profile.network_error"}}';
       errorBlock.classList.remove('error-hidden');
       errorBlock.classList.add('error-visible');
     });

@@ -6,26 +6,26 @@
       <div class="profile-stats">
         <span class="stat">
           <span class="stat-number clickable" id="follower-count" onclick="openFollowersModal()">{{followerCount}}</span>
-          <span class="stat-label">followers</span>
+          <span class="stat-label">{{t "profile.followers"}}</span>
         </span>
         <span class="stat">
           <span class="stat-number clickable" id="following-count" onclick="openFollowingModal()">{{followingCount}}</span>
-          <span class="stat-label">following</span>
+          <span class="stat-label">{{t "profile.following"}}</span>
         </span>
       </div>
     </div>
   </div>
   <div class="profile-actions">
     {{#if isOwnProfile}}
-      <button class="settings-btn" onclick="openSettingsModal()">Settings</button>
+      <button class="settings-btn" onclick="openSettingsModal()">{{t "profile.settings"}}</button>
     {{else}}
       {{#if session_user}}
         {{#if isFollowing}}
-          <button class="follow-btn" data-user-id="{{user.id}}" data-following="true">Unfollow</button>
+          <button class="follow-btn" data-user-id="{{user.id}}" data-following="true">{{t "profile.unfollow"}}</button>
         {{else}}
-          <button class="follow-btn" data-user-id="{{user.id}}" data-following="false">Follow</button>
+          <button class="follow-btn" data-user-id="{{user.id}}" data-following="false">{{t "profile.follow"}}</button>
         {{/if}}
-        <a href="/chats/{{user.id}}" class="btn btn-primary dm-btn{{#unless (and sessionUserVerified profileUserVerified)}} btn-disabled{{/unless}}" {{#unless (and sessionUserVerified profileUserVerified)}}aria-disabled="true" tabindex="-1" title="Both users must be verified to use direct messages."{{/unless}}>Direct Messages</a>
+        <a href="/chats/{{user.id}}" class="btn btn-primary dm-btn{{#unless (and sessionUserVerified profileUserVerified)}} btn-disabled{{/unless}}" {{#unless (and sessionUserVerified profileUserVerified)}}aria-disabled="true" tabindex="-1" title="{{t 'profile.dm_disabled'}}"{{/unless}}>{{t "profile.direct_messages"}}</a>
       {{/if}}
     {{/if}}
   </div>
@@ -37,9 +37,9 @@
 
 <div class="card">
   {{#if posts.length}}
-    <h2>Posts by {{user.username}}</h2>
+    <h2>{{t "profile.posts_by" username=user.username}}</h2>
   {{else}}
-    <h2>{{user.username}} has no posts.</h2>
+    <h2>{{t "profile.no_posts" username=user.username}}</h2>
   {{/if}}
   <div class="posts-container">
     {{#each posts}}
@@ -47,7 +47,7 @@
     {{/each}}
 
     {{#unless posts.length}}
-      <p>No posts available.</p>
+      <p>{{t "profile.no_posts_available"}}</p>
     {{/unless}}
   </div>
 </div>
@@ -73,7 +73,7 @@
           });
 
           if (res.ok) {
-            followBtn.textContent = 'Unfollow';
+            followBtn.textContent = '{{t "profile.unfollow"}}';
             followBtn.setAttribute('data-following', 'true');
             if (followerCountSpan) {
               followerCountSpan.textContent = parseInt(followerCountSpan.textContent) + 1;
@@ -90,7 +90,7 @@
           });
 
           if (res.ok) {
-            followBtn.textContent = 'Follow';
+            followBtn.textContent = '{{t "profile.follow"}}';
             followBtn.setAttribute('data-following', 'false');
             if (followerCountSpan) {
               followerCountSpan.textContent = Math.max(0, parseInt(followerCountSpan.textContent) - 1);

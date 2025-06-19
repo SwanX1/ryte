@@ -11,7 +11,9 @@ export function viewDataMiddleware(req: Request, res: Response, next: NextFuncti
         const defaultData = {
             session_user: req.session?.userId ? await UserModel.findById(req.session.userId) : null,
             layout: 'main',
-            currentYear: new Date().getFullYear()
+            currentYear: new Date().getFullYear(),
+            translations: res.locals.translations,
+            locale: res.locals.locale
         };
 
         // If options is a function (callback), shift it to callback

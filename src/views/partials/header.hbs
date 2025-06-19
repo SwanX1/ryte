@@ -11,16 +11,16 @@
         <p><i>write right</i></p>
       </div>
       <div>
-        <a href="/post/create" class="btn btn-create">Create New Post</a>
+        <a href="/post/create" class="btn btn-create">{{t "header.create_new_post"}}</a>
       </div>
     </div>
     <div class="nav-right">
       <form action="/search" method="get" class="search-form">
-        <input type="text" name="q" placeholder="Search..." required>
+        <input type="text" name="q" placeholder="{{t 'header.search'}}" required>
       </form>
       {{#if session_user}}
         {{#if (eq session_user.role 'administrator')}}
-          <a href="/admin/users" class="btn btn-admin">Admin</a>
+          <a href="/admin/users" class="btn btn-admin">{{t "header.admin"}}</a>
         {{/if}}
         <div class="user-profile">
           <a class="profile-btn" href="/@{{session_user.username}}">
@@ -32,8 +32,8 @@
           <img src="/assets/log-out.png">
         </a>
       {{else}}
-        <a href="/auth/login" class="btn btn-login">Login</a>
-        <a href="/auth/signup" class="btn btn-signup">Sign Up</a>
+        <a href="/auth/login" class="btn btn-login">{{t "auth.login"}}</a>
+        <a href="/auth/signup" class="btn btn-signup">{{t "auth.signup"}}</a>
       {{/if}}
     </div>
   </nav>

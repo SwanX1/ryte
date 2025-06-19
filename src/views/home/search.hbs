@@ -1,8 +1,8 @@
 <div class="card search-results-card">
-  <h2 class="search-results-heading">Search Results for "{{q}}"</h2>
+  <h2 class="search-results-heading">{{t "search.results_for" q=q}}</h2>
 
   <div class="search-section search-users-section">
-    <h3 class="search-section-heading">Users</h3>
+    <h3 class="search-section-heading">{{t "search.users"}}</h3>
     {{#if users.length}}
       <ul class="search-results-list">
         {{#each users}}
@@ -12,12 +12,12 @@
         {{/each}}
       </ul>
     {{else}}
-      <p class="no-results-message">No users found.</p>
+      <p class="no-results-message">{{t "search.no_users"}}</p>
     {{/if}}
   </div>
 
   <div class="search-section search-posts-section">
-    <h3 class="search-section-heading">Posts</h3>
+    <h3 class="search-section-heading">{{t "search.posts"}}</h3>
     {{#if posts.length}}
       <ul class="search-results-list">
         {{#each posts}}
@@ -26,7 +26,7 @@
         {{/each}}
       </ul>
     {{else}}
-      <p class="no-results-message">No posts found.</p>
+      <p class="no-results-message">{{t "search.no_posts"}}</p>
     {{/if}}
   </div>
 </div>

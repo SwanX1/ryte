@@ -1,35 +1,35 @@
 {{#> modal modal_id="edit-post-modal"}}
-  <h2>Edit Post</h2>
+  <h2>{{t "post.edit"}}</h2>
   <div id="edit-error-block">{{> error error=null}}</div>
   <form id="edit-post-form" enctype="multipart/form-data">
     <div id="text-fields" class="type-fields">
-      <label for="text-caption">Caption</label>
-      <input type="text" id="text-caption" name="text-caption" placeholder="Caption" maxlength="100">
-      <label for="text-content">Text</label>
-      <textarea id="text-content" name="text-content" placeholder="Text"></textarea>
+      <label for="text-caption">{{t "post.caption"}}</label>
+      <input type="text" id="text-caption" name="text-caption" placeholder="{{t 'post.caption'}}" maxlength="100">
+      <label for="text-content">{{t "post.text_content"}}</label>
+      <textarea id="text-content" name="text-content" placeholder="{{t 'post.text_content'}}"></textarea>
     </div>
     <div id="images-fields" class="type-fields type-fields-hidden">
-      <label for="images-caption">Caption</label>
-      <input type="text" id="images-caption" name="images-caption" placeholder="Caption" maxlength="100">
-      <label for="images">Add New Images (Max 10, 10MB each, will be converted to WebP)</label>
+      <label for="images-caption">{{t "post.caption"}}</label>
+      <input type="text" id="images-caption" name="images-caption" placeholder="{{t 'post.caption'}}" maxlength="100">
+      <label for="images">{{t "post.add_new_images"}}</label>
       <input type="file" id="images" name="images" multiple accept="image/*">
       <div id="image-preview" class="preview-container"></div>
       <div id="existing-images" class="existing-media-container">
-        <h4>Current Images</h4>
+        <h4>{{t "post.current_images"}}</h4>
         <div id="existing-images-list"></div>
       </div>
     </div>
     <div id="video-fields" class="type-fields type-fields-hidden">
-      <label for="video-caption">Caption</label>
-      <input type="text" id="video-caption" name="video-caption" placeholder="Caption" maxlength="100">
-      <label for="video">Upload New Video (Max 100MB, will be converted to WebM)</label>
+      <label for="video-caption">{{t "post.caption"}}</label>
+      <input type="text" id="video-caption" name="video-caption" placeholder="{{t 'post.caption'}}" maxlength="100">
+      <label for="video">{{t "post.upload_new_video"}}</label>
       <input type="file" id="video" name="video" accept="video/*">
       <div id="video-preview" class="preview-container"></div>
       <div id="existing-video" class="existing-media-container"></div>
     </div>
     <div>
-      <button type="submit" class="btn">Update Post</button>
-      <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+      <button type="submit" class="btn">{{t "post.update"}}</button>
+      <button type="button" class="btn btn-secondary" onclick="closeEditModal()">{{t "profile.cancel"}}</button>
     </div>
   </form>
 {{/modal}}
@@ -177,7 +177,7 @@
           div.className = 'existing-media-item';
           div.innerHTML = `
             <video controls src="${videoUrl}"></video>
-            <p>Existing video (will be kept if no new video is uploaded)</p>
+            <p>{{t "post.current_video"}}</p>
           `;
           existingVideo.appendChild(div);
         }
@@ -187,7 +187,7 @@
       })
       .catch(err => {
         console.error('Error loading post data:', err);
-        alert('Error loading post data');
+        alert('{{t "post.error_loading"}}');
       });
   }
 
@@ -204,92 +204,47 @@
     currentPostType = null;
   }
 
-  // Make functions globally available
-  window.loadPostData = loadPostData;
-  window.closeEditModal = closeEditModal;
-
-  document.getElementById('edit-post-form').addEventListener('submit', function(e) {
+  // Handle form submission
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const errorBlock = document.getElementById('edit-error-block');
-    
-    // Clear previous errors
-    errorBlock.innerHTML = '';
-    errorBlock.classList.remove('error-visible');
-    errorBlock.classList.add('error-hidden');
-    
-    // Validate required fields based on current post type
-    if (currentPostType === 'text') {
-      const caption = document.getElementById('text-caption').value.trim();
-      const text = document.getElementById('text-content').value.trim();
-      if (!caption || !text) {
-        errorBlock.textContent = 'Please fill in both caption and text fields';
-        errorBlock.classList.remove('error-hidden');
-        errorBlock.classList.add('error-visible');
-        return;
-      }
-    } else if (currentPostType === 'images') {
-      const caption = document.getElementById('images-caption').value.trim();
-      if (!caption) {
-        errorBlock.textContent = 'Please provide a caption';
-        errorBlock.classList.remove('error-hidden');
-        errorBlock.classList.add('error-visible');
-        return;
-      }
-      // Check if there are any images left (existing or new)
-      const newFiles = document.getElementById('images').files;
-      if (existingImageUrls.length === 0 && newFiles.length === 0) {
-        errorBlock.textContent = 'At least one image is required';
-        errorBlock.classList.remove('error-hidden');
-        errorBlock.classList.add('error-visible');
-        return;
-      }
-    } else if (currentPostType === 'video') {
-      const caption = document.getElementById('video-caption').value.trim();
-      if (!caption) {
-        errorBlock.textContent = 'Please provide a caption';
-        errorBlock.classList.remove('error-hidden');
-        errorBlock.classList.add('error-visible');
-        return;
-      }
-    }
-    
-    // Prepare form data
     const formData = new FormData();
     
+    // Add fields based on current post type
     if (currentPostType === 'text') {
-      formData.append('caption', document.getElementById('text-caption').value.trim());
-      formData.append('content', document.getElementById('text-content').value.trim());
+      formData.append('caption', document.getElementById('text-caption').value);
+      formData.append('content', document.getElementById('text-content').value);
     } else if (currentPostType === 'images') {
-      formData.append('caption', document.getElementById('images-caption').value.trim());
+      formData.append('caption', document.getElementById('images-caption').value);
+      
       // Add new images
-      const files = document.getElementById('images').files;
-      for (let i = 0; i < files.length; i++) {
-        formData.append('images', files[i]);
+      const newImages = document.getElementById('images').files;
+      for (let i = 0; i < newImages.length; i++) {
+        formData.append('images', newImages[i]);
       }
-      // Add remaining existing images
-      existingImageUrls.forEach(url => {
-        formData.append('existingImages', url);
-      });
+      
+      // Add existing images that weren't removed
+      formData.append('existing-images', JSON.stringify(existingImageUrls));
     } else if (currentPostType === 'video') {
-      formData.append('caption', document.getElementById('video-caption').value.trim());
-      const file = document.getElementById('video').files[0];
-      if (file) {
-        formData.append('video', file);
+      formData.append('caption', document.getElementById('video-caption').value);
+      
+      // Add new video if uploaded
+      const newVideo = document.getElementById('video').files[0];
+      if (newVideo) {
+        formData.append('video', newVideo);
       }
     }
     
     // Submit update
-    fetch(`/post/${currentPostId}/edit/${currentPostType}`, {
+    fetch(`/post/${currentPostId}/edit`, {
       method: 'PUT',
       body: formData
     })
     .then(res => res.json())
     .then(data => {
       if (data.error) {
-        errorBlock.textContent = data.error;
-        errorBlock.classList.remove('error-hidden');
-        errorBlock.classList.add('error-visible');
+        const errorBlock = document.getElementById('edit-error-block');
+        errorBlock.innerHTML = `<div class="error-message">${data.error}</div>`;
       } else {
         // Success - reload the page to show updated content
         window.location.reload();
@@ -297,9 +252,11 @@
     })
     .catch(err => {
       console.error('Error updating post:', err);
-      errorBlock.textContent = 'Network error. Please try again.';
-      errorBlock.classList.remove('error-hidden');
-      errorBlock.classList.add('error-visible');
+      const errorBlock = document.getElementById('edit-error-block');
+      errorBlock.innerHTML = '<div class="error-message">{{t "post.network_error"}}</div>';
     });
   });
+
+  // Global function for modal control
+  window.closeEditModal = closeEditModal;
 </script>

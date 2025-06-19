@@ -1,6 +1,6 @@
 <div class="admin-header">
-  <h1>User Management</h1>
-  <p>Manage users and view audit logs</p>
+  <h1>{{t "admin.user_management"}}</h1>
+  <p>{{t "admin.manage_users"}}</p>
 </div>
 
 <div class="card admin-users-card">
@@ -8,14 +8,14 @@
     <table class="admin-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Avatar</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Email Verified</th>
-          <th>Joined</th>
-          <th>Actions</th>
+          <th>{{t "admin.id"}}</th>
+          <th>{{t "admin.avatar"}}</th>
+          <th>{{t "admin.username"}}</th>
+          <th>{{t "admin.email"}}</th>
+          <th>{{t "admin.role"}}</th>
+          <th>{{t "admin.email_verified"}}</th>
+          <th>{{t "admin.joined"}}</th>
+          <th>{{t "admin.actions"}}</th>
         </tr>
       </thead>
       <tbody>
@@ -34,21 +34,21 @@
             </td>
             <td>
               {{#if this.email_verified}}
-                <span class="status-badge status-verified">✓ Verified</span>
+                <span class="status-badge status-verified">{{t "admin.verified"}}</span>
               {{else}}
-                <span class="status-badge status-unverified">✗ Unverified</span>
+                <span class="status-badge status-unverified">{{t "admin.unverified"}}</span>
               {{/if}}
             </td>
             <td>{{localDate this.created_at}}</td>
             <td>
               <div class="action-buttons">
-                <button class="btn btn-sm btn-view-logs" onclick="viewUserLogs({{this.id}}, '{{this.username}}')">View Logs</button>
+                <button class="btn btn-sm btn-view-logs" onclick="viewUserLogs({{this.id}}, '{{this.username}}')">{{t "admin.view_logs"}}</button>
                 {{#unless (eq this.role 'administrator')}}
                   <button class="btn btn-sm btn-toggle-role" onclick="toggleUserRole({{this.id}}, '{{this.role}}', '{{this.username}}')">
                     {{#if (eq this.role 'moderator')}}
-                      Remove Mod
+                      {{t "admin.remove_mod"}}
                     {{else}}
-                      Make Mod
+                      {{t "admin.make_mod"}}
                     {{/if}}
                   </button>
                 {{/unless}}
@@ -63,21 +63,21 @@
 
 <!-- Audit Logs Modal -->
 {{#> modal modal_id="audit-logs-modal"}}
-  <h2>Audit Logs for <span id="logs-username"></span></h2>
+  <h2>{{t "admin.audit_logs_for" username="<span id=\"logs-username\"></span>"}}</h2>
   <div class="table-container">
     <table class="admin-table" id="audit-logs-table">
       <thead>
         <tr>
-          <th>Action</th>
-          <th>Entity Type</th>
-          <th>Entity ID</th>
-          <th>Details</th>
-          <th>Date</th>
+          <th>{{t "admin.action"}}</th>
+          <th>{{t "admin.entity_type"}}</th>
+          <th>{{t "admin.entity_id"}}</th>
+          <th>{{t "admin.details"}}</th>
+          <th>{{t "admin.date"}}</th>
         </tr>
       </thead>
       <tbody id="audit-logs-list">
         <tr>
-          <td colspan="5" class="loading">Loading audit logs...</td>
+          <td colspan="5" class="loading">{{t "admin.loading_logs"}}</td>
         </tr>
       </tbody>
     </table>
@@ -110,20 +110,20 @@
           `).join('');
           logsList.innerHTML = html;
         } else {
-          logsList.innerHTML = '<tr><td colspan="5" class="no-logs">No audit logs found for this user.</td></tr>';
+          logsList.innerHTML = '<tr><td colspan="5" class="no-logs">{{t "admin.no_logs"}}</td></tr>';
         }
       })
       .catch(err => {
         console.error('Error loading audit logs:', err);
-        logsList.innerHTML = '<tr><td colspan="5" class="error">Error loading audit logs.</td></tr>';
+        logsList.innerHTML = '<tr><td colspan="5" class="error">{{t "admin.error_loading_logs"}}</td></tr>';
       });
   }
 
   function toggleUserRole(userId, currentRole, username) {
     const newRole = currentRole === 'moderator' ? 'registered' : 'moderator';
-    const action = currentRole === 'moderator' ? 'remove moderator privileges from' : 'make moderator';
+    const action = currentRole === 'moderator' ? '{{t "admin.confirm_remove_mod" username="' + username + '"}}' : '{{t "admin.confirm_make_mod" username="' + username + '"}}';
     
-    if (!confirm(`Are you sure you want to ${action} ${username}?`)) {
+    if (!confirm(action)) {
       return;
     }
     
@@ -141,12 +141,12 @@
         // Reload the page to show updated roles
         window.location.reload();
       } else {
-        alert('Error updating user role: ' + (data.error || 'Unknown error'));
+        alert('{{t "admin.error_updating_role" error="' + (data.error || 'Unknown error') + '"}}');
       }
     })
     .catch(err => {
       console.error('Error updating user role:', err);
-      alert('Error updating user role. Please try again.');
+      alert('{{t "admin.error_updating_role_generic"}}');
     });
   }
 </script> 

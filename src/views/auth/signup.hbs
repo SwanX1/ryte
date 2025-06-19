@@ -1,24 +1,24 @@
 <div class="card">
-  <h2>Sign Up</h2>
+  <h2>{{t "auth.signup"}}</h2>
   {{> error error=error}}
   <form action="/auth/signup" method="POST">
     <div>
-      <label for="username">Username</label>
+      <label for="username">{{t "auth.username"}}</label>
       <input type="text" id="username" name="username" required>
     </div>
     <div>
-      <label for="email">Email</label>
+      <label for="email">{{t "auth.email"}}</label>
       <input type="email" id="email" name="email" required>
     </div>
     <div>
-      <label for="password">Password</label>
+      <label for="password">{{t "auth.password"}}</label>
       <input type="password" id="password" name="password" required>
     </div>
     <div>
-      <button type="submit" class="btn">Sign Up</button>
+      <button type="submit" class="btn">{{t "auth.signup"}}</button>
     </div>
   </form>
   <div>
-    <p>Already have an account? <a href="/auth/login">Login here</a></p>
+    <p>{{{t "auth.already_have_account"}}}</p>
   </div>
 </div>

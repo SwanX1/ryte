@@ -17,6 +17,8 @@ import { getConnection } from './database/connection';
 import { SessionStore } from './util/sessionStore';
 import { ChatMessageModel } from './models/ChatMessage';
 import { ChatModel } from './models/Chat';
+import fs from 'fs';
+import { detectLocale } from './util/locale';
 
 const app = express();
 
@@ -32,7 +34,7 @@ app.engine('hbs', engine({
     'or': (...args: any[]) => {
       // strip last arg, it's the method def
       args = args.slice(0, -1);
-      return args.some(arg => arg);``
+      return args.some(arg => arg);
     },
     'not': (a: any) => !a,
     'and': (...args: any[]) => args.every(arg => arg),
@@ -59,7 +61,11 @@ app.engine('hbs', engine({
       }
     },
     'splitLines': (str: string) => (typeof str === 'string' ? str.split('\n') : []),
-    'joinLines': (arr: any[], start: number) => Array.isArray(arr) ? arr.slice(start).join('\n') : ''
+    'joinLines': (arr: any[], start: number) => Array.isArray(arr) ? arr.slice(start).join('\n') : '',
+    't': function (key, options) {
+      const translations = options.data.root.translations || {};
+      return t(translations, key, options.hash);
+    }
   }
 }));
 app.set('view engine', 'hbs');
@@ -84,6 +90,14 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
+
+// Add locale/translation middleware before viewDataMiddleware
+app.use((req, res, next) => {
+  const locale = detectLocale(req.headers['accept-language']);
+  res.locals.locale = locale;
+  res.locals.translations = getTranslations(locale);
+  next();
+});
 
 // View data middleware (must be after session middleware)
 app.use(viewDataMiddleware);
@@ -133,3 +147,20 @@ app.use((req: Request, res: Response) => {
 app.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`);
 });
+
+function getTranslations(locale: string) {
+  const localesDir = path.join(__dirname, 'locales');
+  const file = path.join(localesDir, `${locale}.json`);
+  if (fs.existsSync(file)) {
+    return JSON.parse(fs.readFileSync(file, 'utf-8'));
+  }
+  return JSON.parse(fs.readFileSync(path.join(localesDir, 'en.json'), 'utf-8'));
+}
+
+function t(translations: any, key: string, options: any = {}) {
+  let template = translations[key] || key;
+  Object.keys(options).forEach((k) => {
+    template = template.replace(new RegExp(`{{${k}}}`, 'g'), options[k]);
+  });
+  return template;
+}

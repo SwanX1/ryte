@@ -1,44 +1,44 @@
 <div class="card">
-  <h2>Create Post</h2>
+  <h2>{{t "post.create"}}</h2>
   {{#if session_user.email_verified}}
     {{> error error=error}}
     <form id="create-post-form" action="/post/create/text" method="POST" enctype="multipart/form-data">
       <div class="post-type-tabs">
-        <button type="button" class="tab-button active" data-type="text">Text</button>
-        <button type="button" class="tab-button" data-type="images">Images</button>
-        <button type="button" class="tab-button" data-type="video">Video</button>
+        <button type="button" class="tab-button active" data-type="text">{{t "post.text"}}</button>
+        <button type="button" class="tab-button" data-type="images">{{t "post.images"}}</button>
+        <button type="button" class="tab-button" data-type="video">{{t "post.video"}}</button>
       </div>
       
       <div id="text-fields" class="type-fields">
-        <label for="text-caption">Caption</label>
-        <input type="text" id="text-caption" name="text-caption" placeholder="Caption" maxlength="100">
-        <label for="text-content">Text</label>
-        <textarea id="text-content" name="text-content" placeholder="Text"></textarea>
+        <label for="text-caption">{{t "post.caption"}}</label>
+        <input type="text" id="text-caption" name="text-caption" placeholder="{{t 'post.caption'}}" maxlength="100">
+        <label for="text-content">{{t "post.text_content"}}</label>
+        <textarea id="text-content" name="text-content" placeholder="{{t 'post.text_content'}}"></textarea>
       </div>
       <div id="images-fields" class="type-fields type-fields-hidden">
-        <label for="images-caption">Caption</label>
-        <input type="text" id="images-caption" name="images-caption" placeholder="Caption" maxlength="100">
-        <label for="images">Upload Images (Max 10, 10MB each, will be converted to WebP)</label>
+        <label for="images-caption">{{t "post.caption"}}</label>
+        <input type="text" id="images-caption" name="images-caption" placeholder="{{t 'post.caption'}}" maxlength="100">
+        <label for="images">{{t "post.upload_images"}}</label>
         <input type="file" id="images" name="images" multiple accept="image/*">
         <div id="image-preview" class="preview-container"></div>
       </div>
       <div id="video-fields" class="type-fields type-fields-hidden">
-        <label for="video-caption">Caption</label>
-        <input type="text" id="video-caption" name="video-caption" placeholder="Caption" maxlength="100">
-        <label for="video">Upload Video (Max 100MB, will be converted to WebM)</label>
+        <label for="video-caption">{{t "post.caption"}}</label>
+        <input type="text" id="video-caption" name="video-caption" placeholder="{{t 'post.caption'}}" maxlength="100">
+        <label for="video">{{t "post.upload_video"}}</label>
         <input type="file" id="video" name="video" accept="video/*">
         <div id="video-preview" class="preview-container"></div>
       </div>
       <div>
-        <button type="submit" class="btn">Create Post</button>
+        <button type="submit" class="btn">{{t "post.create_button"}}</button>
       </div>
     </form>
   {{else}}
     <div class="email-verification-warning">
-      <h3>Email Verification Required</h3>
-      <p>You must verify your email address before creating posts.</p>
+      <h3>{{t "post.email_verification_required"}}</h3>
+      <p>{{t "post.must_verify_email"}}</p>
       <div class="verification-actions">
-        <a href="/auth/verify-email" class="btn btn-primary">Verify Email</a>
+        <a href="/auth/verify-email" class="btn btn-primary">{{t "post.verify_email_button"}}</a>
       </div>
     </div>
   {{/if}}
@@ -152,7 +152,7 @@
       const text = document.getElementById('text-content').value.trim();
       if (!caption || !text) {
         e.preventDefault();
-        alert('Please fill in both caption and text fields');
+        alert('{{t "post.fill_caption_text"}}');
         return;
       }
     } else if (activeTab === 'images') {
@@ -160,7 +160,7 @@
       const files = document.getElementById('images').files;
       if (!caption || files.length === 0) {
         e.preventDefault();
-        alert('Please provide a caption and upload at least one image');
+        alert('{{t "post.provide_caption_image"}}');
         return;
       }
     } else if (activeTab === 'video') {
@@ -168,7 +168,7 @@
       const file = document.getElementById('video').files[0];
       if (!caption || !file) {
         e.preventDefault();
-        alert('Please provide a caption and upload a video');
+        alert('{{t "post.provide_caption_video"}}');
         return;
       }
     }

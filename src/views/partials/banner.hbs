@@ -2,9 +2,9 @@
   {{#unless session_user.email_verified}}
     <div id="email-verification-notice" class="notification-bar">
       <div class="banner-content">
-        <span class="banner-message">Your email is not verified.</span>
+        <span class="banner-message">{{t "banner.email_not_verified"}}</span>
         <div class="banner-actions">
-          <a href="/auth/verify-email" class="btn btn-sm">Verify Email</a>
+          <a href="/auth/verify-email" class="btn btn-sm">{{t "banner.verify_email"}}</a>
         </div>
       </div>
     </div>

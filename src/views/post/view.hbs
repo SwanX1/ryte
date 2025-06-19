@@ -36,14 +36,14 @@
   <div class="post-actions">
     <span class="like-count" data-post-id="{{post.id}}">{{post.likeCount}}</span>
     {{#if post.liked}}
-      <button class="like-btn" data-post-id="{{post.id}}" data-liked="true">Unlike</button>
+      <button class="like-btn" data-post-id="{{post.id}}" data-liked="true">{{t "post.unlike"}}</button>
     {{else}}
-      <button class="like-btn" data-post-id="{{post.id}}" data-liked="false">Like</button>
+      <button class="like-btn" data-post-id="{{post.id}}" data-liked="false">{{t "post.like"}}</button>
     {{/if}}
   </div>
-  <p class="post-date"><small>Posted on: {{localDate post.created_at}}
+  <p class="post-date"><small>{{t "post.posted_on" date=(localDate post.created_at)}}
     {{#if (neq post.created_at post.updated_at)}}
-      (edited)
+      {{t "post.edited"}}
     {{/if}}
   </small></p>
 </div>
@@ -51,7 +51,7 @@
 {{> post-edit-modal}}
 
 <div class="card comments-section">
-  <h3>Comments</h3>
+  <h3>{{t "post.comments"}}</h3>
   <div id="comments-list">
     {{#if comments.length}}
       <ul id="comments-ul">
@@ -64,26 +64,26 @@
         {{/each}}
       </ul>
     {{else}}
-      <p id="no-comments">No comments yet.</p>
+      <p id="no-comments">{{t "post.no_comments"}}</p>
     {{/if}}
   </div>
   {{#if session_user}}
     {{#if session_user.email_verified}}
       <form id="add-comment-form" action="/api/comment/{{post.id}}" method="POST">
         <div id="comment-error-block">{{> error error=null}}</div>
-        <textarea name="content" id="comment-content" rows="2" placeholder="Add a comment..." required class="comment-textarea"></textarea>
-        <button type="submit" class="btn">Post Comment</button>
+        <textarea name="content" id="comment-content" rows="2" placeholder="{{t 'post.add_comment'}}" required class="comment-textarea"></textarea>
+        <button type="submit" class="btn">{{t "post.post_comment"}}</button>
       </form>
     {{else}}
       <div class="email-verification-warning">
-        <p>Please verify your email address before commenting.</p>
+        <p>{{t "post.verify_email_to_comment"}}</p>
         <div class="verification-actions">
-          <a href="/auth/verify-email" class="btn btn-primary">Verify Email</a>
+          <a href="/auth/verify-email" class="btn btn-primary">{{t "post.verify_email_button"}}</a>
         </div>
       </div>
     {{/if}}
   {{else}}
-    <p class="login-prompt">Please <a href="/auth/login">login</a> to comment.</p>
+    <p class="login-prompt">{{{t "post.login_to_comment"}}}</p>
   {{/if}}
 </div>
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const deletePostBtn = document.querySelector('.delete-post-btn');
   if (deletePostBtn) {
     deletePostBtn.addEventListener('click', async function() {
-      if (!confirm('Are you sure you want to delete this post?')) return;
+      if (!confirm('{{t "post.delete_confirm"}}')) return;
       
       const postId = this.getAttribute('data-post-id');
       try {
@@ -119,10 +119,10 @@ document.addEventListener('DOMContentLoaded', function () {
           window.location.href = '/';
         } else {
           const data = await res.json().catch(() => ({}));
-          alert(data.error || 'Failed to delete post');
+          alert(data.error || '{{t "post.delete_failed"}}');
         }
       } catch (err) {
-        alert('Network error. Please try again.');
+        alert('{{t "post.network_error"}}');
       }
     });
   }
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Comment delete functionality
   document.addEventListener('click', async function(e) {
     if (e.target.classList.contains('delete-comment-btn')) {
-      if (!confirm('Are you sure you want to delete this comment?')) return;
+      if (!confirm('{{t "post.comment_delete_confirm"}}')) return;
       
       const commentId = e.target.getAttribute('data-comment-id');
       const commentItem = e.target.closest('.comment-item');
@@ -148,15 +148,15 @@ document.addEventListener('DOMContentLoaded', function () {
           if (commentsList && commentsList.children.length === 0) {
             const noComments = document.createElement('p');
             noComments.id = 'no-comments';
-            noComments.textContent = 'No comments yet.';
+            noComments.textContent = '{{t "post.no_comments"}}';
             document.getElementById('comments-list').appendChild(noComments);
           }
         } else {
           const data = await res.json().catch(() => ({}));
-          alert(data.error || 'Failed to delete comment');
+          alert(data.error || '{{t "post.comment_delete_failed"}}');
         }
       } catch (err) {
-        alert('Network error. Please try again.');
+        alert('{{t "post.network_error"}}');
       }
     }
 
@@ -183,10 +183,10 @@ document.addEventListener('DOMContentLoaded', function () {
           commentTextarea.focus();
         } else {
           const data = await res.json().catch(() => ({}));
-          alert(data.error || 'Failed to load comment');
+          alert(data.error || '{{t "post.comment_load_failed"}}');
         }
       } catch (err) {
-        alert('Network error. Please try again.');
+        alert('{{t "post.network_error"}}');
       }
     }
 
@@ -199,30 +199,27 @@ document.addEventListener('DOMContentLoaded', function () {
       const commentEditForm = commentItem.querySelector('.comment-edit-form');
       const commentText = commentItem.querySelector('.comment-text');
       
-      const content = commentTextarea.value.trim();
-      if (!content) {
-        alert('Comment cannot be empty');
-        return;
-      }
-      
       try {
         const res = await fetch(`/api/comment/${commentId}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content }),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content: commentTextarea.value }),
           credentials: 'include'
         });
         
         if (res.ok) {
-          commentText.textContent = content;
+          const data = await res.json();
+          commentText.textContent = data.comment.content;
           commentContent.style.display = 'block';
           commentEditForm.style.display = 'none';
         } else {
           const data = await res.json().catch(() => ({}));
-          alert(data.error || 'Failed to update comment');
+          alert(data.error || '{{t "post.network_error"}}');
         }
       } catch (err) {
-        alert('Network error. Please try again.');
+        alert('{{t "post.network_error"}}');
       }
     }
 
@@ -237,91 +234,72 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // Comment form submission
   if (form) {
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      if (errorDiv) {
-        errorDiv.classList.remove('error-visible');
-        errorDiv.classList.add('error-hidden');
-        errorDiv.textContent = '';
+      
+      const formData = new FormData(form);
+      const content = formData.get('content');
+      
+      if (!content.trim()) {
+        return;
       }
-      const textarea = document.getElementById('comment-content');
-      const content = textarea.value.trim();
-      if (!content) return;
-      const postId = {{post.id}};
+      
       try {
-        const res = await fetch(`/api/comment/${postId}`, {
+        const res = await fetch(form.action, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({ content }),
           credentials: 'include'
         });
+        
         if (res.ok) {
           const data = await res.json();
-          const commentId = data.comment.id;
-          // Fetch the rendered partial
-          const partialRes = await fetch(`/partials/comment/${commentId}`);
-          if (partialRes.ok) {
-            const html = await partialRes.text();
-            let ul = document.getElementById('comments-ul');
-            if (!ul) {
-              ul = document.createElement('ul');
-              ul.id = 'comments-ul';
-              document.getElementById('comments-list').innerHTML = '';
-              document.getElementById('comments-list').appendChild(ul);
-            }
-            ul.insertAdjacentHTML('afterbegin', html);
-            textarea.value = '';
-            const noComments = document.getElementById('no-comments');
-            if (noComments) noComments.remove();
+          
+          // Add the new comment to the list
+          const commentsList = document.getElementById('comments-ul');
+          const noComments = document.getElementById('no-comments');
+          
+          if (noComments) {
+            noComments.remove();
           }
+          
+          if (!commentsList) {
+            const newCommentsList = document.createElement('ul');
+            newCommentsList.id = 'comments-ul';
+            document.getElementById('comments-list').appendChild(newCommentsList);
+          }
+          
+          // Create comment HTML (you'll need to adjust this based on your comment partial)
+          const commentHtml = `
+            <li class="comment-item" data-comment-id="${data.comment.id}">
+              <div class="comment-content">
+                <span class="comment-author">${data.comment.username}:</span>
+                <span class="comment-text">${data.comment.content}</span>
+                <span class="comment-date">${new Date(data.comment.created_at).toLocaleString()}</span>
+              </div>
+            </li>
+          `;
+          
+          document.getElementById('comments-ul').insertAdjacentHTML('beforeend', commentHtml);
+          
+          // Clear the form
+          form.reset();
+          
         } else {
           const data = await res.json().catch(() => ({}));
-          if (errorDiv) {
-            errorDiv.textContent = data.error || 'Failed to add comment.';
-            errorDiv.classList.remove('error-hidden');
-            errorDiv.classList.add('error-visible');
-          }
+          const errorHtml = `<div class="error-message">${data.error || '{{t "post.network_error"}}'}</div>`;
+          errorDiv.innerHTML = errorHtml;
         }
       } catch (err) {
-        if (errorDiv) {
-          errorDiv.textContent = 'Network error. Please try again.';
-          errorDiv.classList.remove('error-hidden');
-          errorDiv.classList.add('error-visible');
-        }
+        const errorHtml = `<div class="error-message">{{t "post.network_error"}}</div>`;
+        errorDiv.innerHTML = errorHtml;
       }
     });
   }
-  const likeBtn = document.querySelector('.like-btn');
-  const likeCountSpan = document.querySelector('.like-count');
-  
-  likeBtn.addEventListener('click', async function() {
-    const postId = likeBtn.getAttribute('data-post-id');
-    const liked = likeBtn.getAttribute('data-liked') === 'true';
-    
-    likeBtn.disabled = true;
-    try {
-      if (!liked) {
-        // Like
-        const res = await fetch(`/api/like/${postId}`, { method: 'POST', credentials: 'include' });
-        if (res.ok) {
-          likeBtn.textContent = 'Unlike';
-          likeBtn.setAttribute('data-liked', 'true');
-          if (likeCountSpan) likeCountSpan.textContent = parseInt(likeCountSpan.textContent) + 1;
-        }
-      } else {
-        // Unlike
-        const res = await fetch(`/api/like/${postId}`, { method: 'DELETE', credentials: 'include' });
-        if (res.ok) {
-          likeBtn.textContent = 'Like';
-          likeBtn.setAttribute('data-liked', 'false');
-          if (likeCountSpan) likeCountSpan.textContent = Math.max(0, parseInt(likeCountSpan.textContent) - 1);
-        }
-      }
-    } finally {
-      likeBtn.disabled = false;
-    }
-  });
 });
 </script>
 {{/if}}

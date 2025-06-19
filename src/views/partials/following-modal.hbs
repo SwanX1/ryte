@@ -1,7 +1,7 @@
 {{#> modal modal_id="following-modal"}}
-  <h2>Following</h2>
+  <h2>{{t "profile.following"}}</h2>
   <div id="following-list">
-    <div class="loading">Loading following...</div>
+    <div class="loading">{{t "profile.loading_following"}}</div>
   </div>
 {{/modal}}
 
@@ -29,12 +29,12 @@
           `).join('');
           followingList.innerHTML = html;
         } else {
-          followingList.innerHTML = '<p class="no-users">Not following anyone yet.</p>';
+          followingList.innerHTML = '<p class="no-users">{{t "profile.no_following"}}</p>';
         }
       })
       .catch(err => {
         console.error('Error loading following:', err);
-        followingList.innerHTML = '<p class="error">Error loading following.</p>';
+        followingList.innerHTML = '<p class="error">{{t "profile.error_loading_following"}}</p>';
       });
   };
 </script> 

@@ -1,13 +1,13 @@
 <div class="card chat-card">
   <div class="chat-header chat-header--chat">
-    <h2 class="chat-title">Chat with {{targetUser.username}}</h2>
+    <h2 class="chat-title">{{t "chat.title" username=targetUser.username}}</h2>
   </div>
   <div class="chat-messages">
     {{#each messages}}
       <div class="chat-message {{#if (or (and ../isUserA is_user_a) (and (not ../isUserA) (not is_user_a)) )}}from-self{{else}}from-other{{/if}}">
         <span class="chat-author">
           {{#if (or (and ../isUserA is_user_a) (and (not ../isUserA) (not is_user_a)) )}}
-            You
+            {{t "chat.you"}}
           {{else}}
             {{../targetUser.username}}
           {{/if}}:
@@ -17,11 +17,11 @@
       </div>
     {{/each}}
     {{#unless messages.length}}
-      <p class="chat-empty">No messages yet.</p>
+      <p class="chat-empty">{{t "chat.no_messages"}}</p>
     {{/unless}}
   </div>
   <form class="chat-form" method="POST" action="/chats/{{chat.chat_id}}/send">
-    <textarea name="message" required placeholder="Type your message..." class="chat-input"></textarea>
-    <button type="submit" class="btn btn-primary chat-send">Send</button>
+    <textarea name="message" required placeholder="{{t 'chat.type_message'}}" class="chat-input"></textarea>
+    <button type="submit" class="btn btn-primary chat-send">{{t "chat.send"}}</button>
   </form>
 </div> 

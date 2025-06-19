@@ -6,5 +6,5 @@
   {{#with (splitLines post.content) as |lines|}}
     <div class="post-title-inline">{{lines.[0]}}</div>
   {{/with}}
-  <a href="/post/{{post.id}}" class="btn btn-view-post">View Post</a>
+  <a href="/post/{{post.id}}" class="btn btn-view-post">{{t "post.view_post"}}</a>
 </div>

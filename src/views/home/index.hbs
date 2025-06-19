@@ -1,9 +1,9 @@
 {{#if session_user}}
   <div class="segmented-control feed-tabs" style="margin-bottom: 1.5rem;">
-    <button id="tab-personalized" class="segment active">Personalized Feed</button>
-    <button id="tab-recent" class="segment">Recent Feed</button>
+    <button id="tab-personalized" class="segment active">{{t "home.personalized_feed"}}</button>
+    <button id="tab-recent" class="segment">{{t "home.recent_feed"}}</button>
   </div>
-  <h1 class="welcome">Welcome back, {{session_user.username}}!</h1>
+  <h1 class="welcome">{{t "home.welcome" username=session_user.username}}</h1>
   <hr>
   <div class="feed-section-container">
   <div id="personalized_feed" class="feed-section active">
@@ -12,13 +12,13 @@
         {{> post post=this}}
       {{/each}}
     {{else}}
-      <div class="empty-feed">No posts from users you follow yet.</div>
+      <div class="empty-feed">{{t "home.no_personalized_posts"}}</div>
     {{/if}}
   </div>
   </div>
 {{else}}
   <div class="card">
-    <p>Please <a href="/auth/login">login</a> or <a href="/auth/signup">sign up</a> to start posting.</p>
+    <p>{{{t "home.login_or_signup"}}}</p>
   </div>
 {{/if}}
 <div class="feed-section-container">
@@ -28,7 +28,7 @@
       {{> post post=this}}
     {{/each}}
   {{else}}
-    <div class="empty-feed">No posts yet.</div>
+    <div class="empty-feed">{{t "home.no_posts"}}</div>
   {{/if}}
 </div>
 </div>
