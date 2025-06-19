@@ -4,8 +4,8 @@
     <a href="/@{{post.username}}" class="post-username-link">{{post.username}}</a>
     {{#if (eq session_user.id post.user_id)}}
       <div class="post-actions-buttons">
-        <button class="edit-post-btn" data-post-id="{{post.id}}">Edit Post</button>
-        <button class="delete-post-btn" data-post-id="{{post.id}}">Delete Post</button>
+        <button class="btn edit-post-btn" data-post-id="{{post.id}}"><img src="/assets/pencil.png"></button>
+        <button class="btn delete-post-btn" data-post-id="{{post.id}}"><img src="/assets/delete.png"></button>
       </div>
     {{/if}}
   </div>

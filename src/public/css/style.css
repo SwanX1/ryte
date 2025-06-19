@@ -878,17 +878,7 @@ input, textarea {
 }
 
 /* Delete button styles */
-.delete-post-btn,
-.delete-comment-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  margin-left: 0.5rem;
-}
+
 
 .delete-post-btn:hover,
 .delete-comment-btn:hover {
@@ -896,30 +886,31 @@ input, textarea {
 }
 
 /* Edit button styles */
-.edit-post-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  margin-right: 0.5rem;
+.edit-post-btn img {
+  width: 15px;
+  height: auto;
 }
 
 .edit-post-btn:hover {
   background-color: #0056b3;
 }
 
-.edit-comment-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  margin-right: 0.5rem;
+.edit-post-btn {
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+textarea {
+  resize: none;
+}
+
+.delete-post-btn img {
+  width: 15px;
+  height: auto;
+}
+
+.btn.edit-comment-btn {
+  margin-right: 10px;
 }
 
 .edit-comment-btn:hover {
@@ -960,18 +951,28 @@ input, textarea {
   font-size: 0.875rem;
 }
 
-.btn-save-comment {
-  background-color: #28a745;
-  color: white;
+.btn-save-comment img {
+  width: 15px;
+  height: auto;
+}
+
+.btn-cancel-comment img {
+  width: 15px;
+  height: auto;
+}
+
+.edit-comment-btn img {
+  width: 15px;
+  height: auto;
+}
+
+.delete-comment-btn img {
+  width: 15px;
+  height: auto;
 }
 
 .btn-save-comment:hover {
   background-color: #218838;
-}
-
-.btn-cancel-comment {
-  background-color: #6c757d;
-  color: white;
 }
 
 .btn-cancel-comment:hover {

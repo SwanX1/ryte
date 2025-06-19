@@ -7,14 +7,14 @@
   <div class="comment-edit-form" style="display: none;">
     <textarea class="comment-edit-textarea" rows="2" maxlength="1000"></textarea>
     <div class="comment-edit-actions">
-      <button class="btn btn-save-comment">Save</button>
-      <button class="btn btn-cancel-comment">Cancel</button>
+      <button class="btn btn-save-comment"><img src="/assets/save.png"></button>
+      <button class="btn btn-cancel-comment"><img src="/assets/cancel.png"></button>
     </div>
   </div>
   {{#if (or should_show_delete_button (eq session_user.id comment.user_id))}}
     <div class="comment-actions">
-      <button class="edit-comment-btn" data-comment-id="{{comment.id}}">Edit</button>
-      <button class="delete-comment-btn" data-comment-id="{{comment.id}}">Delete</button>
+      <button class="btn edit-comment-btn" data-comment-id="{{comment.id}}"><img src="/assets/pencil.png"></button>
+      <button class="btn delete-comment-btn" data-comment-id="{{comment.id}}"><img src="/assets/delete.png"></button>
     </div>
   {{/if}}
 </li> 
