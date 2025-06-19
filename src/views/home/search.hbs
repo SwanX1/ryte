@@ -6,10 +6,8 @@
     {{#if users.length}}
       <ul class="search-results-list">
         {{#each users}}
-          <li class="search-results-item">
-            <a href="/profile/{{this.id}}" class="search-result-link search-user-link">
-                {{this.username}}
-            </a>
+          <li class="search-results-item search-user-item"> <a href="/profile/{{this.id}}" class="search-result-link search-user-link">
+                <img src="{{this.avatar_url}}" alt="{{this.username}}'s avatar" class="search-user-avatar"> <span class="search-username-text">{{this.username}}</span> </a>
           </li>
         {{/each}}
       </ul>
