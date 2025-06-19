@@ -1,0 +1,305 @@
+{{#> modal modal_id="edit-post-modal"}}
+  <h2>Edit Post</h2>
+  <div id="edit-error-block">{{> error error=null}}</div>
+  <form id="edit-post-form" enctype="multipart/form-data">
+    <div id="text-fields" class="type-fields">
+      <label for="text-caption">Caption</label>
+      <input type="text" id="text-caption" name="text-caption" placeholder="Caption" maxlength="100">
+      <label for="text-content">Text</label>
+      <textarea id="text-content" name="text-content" placeholder="Text"></textarea>
+    </div>
+    <div id="images-fields" class="type-fields type-fields-hidden">
+      <label for="images-caption">Caption</label>
+      <input type="text" id="images-caption" name="images-caption" placeholder="Caption" maxlength="100">
+      <label for="images">Add New Images (Max 10, 10MB each, will be converted to WebP)</label>
+      <input type="file" id="images" name="images" multiple accept="image/*">
+      <div id="image-preview" class="preview-container"></div>
+      <div id="existing-images" class="existing-media-container">
+        <h4>Current Images</h4>
+        <div id="existing-images-list"></div>
+      </div>
+    </div>
+    <div id="video-fields" class="type-fields type-fields-hidden">
+      <label for="video-caption">Caption</label>
+      <input type="text" id="video-caption" name="video-caption" placeholder="Caption" maxlength="100">
+      <label for="video">Upload New Video (Max 100MB, will be converted to WebM)</label>
+      <input type="file" id="video" name="video" accept="video/*">
+      <div id="video-preview" class="preview-container"></div>
+      <div id="existing-video" class="existing-media-container"></div>
+    </div>
+    <div>
+      <button type="submit" class="btn">Update Post</button>
+      <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </form>
+{{/modal}}
+
+<script>
+  let currentPostId = null;
+  let currentPostType = null;
+  let existingImageUrls = [];
+
+  const form = document.getElementById('edit-post-form');
+  const textFields = document.getElementById('text-fields');
+  const imagesFields = document.getElementById('images-fields');
+  const videoFields = document.getElementById('video-fields');
+  const imagePreview = document.getElementById('image-preview');
+  const videoPreview = document.getElementById('video-preview');
+  const existingImagesList = document.getElementById('existing-images-list');
+  const existingVideo = document.getElementById('existing-video');
+  
+  function showFields(type) {
+    // Hide all fields first
+    textFields.classList.add('type-fields-hidden');
+    imagesFields.classList.add('type-fields-hidden');
+    videoFields.classList.add('type-fields-hidden');
+    
+    // Show only the relevant field
+    if (type === 'text') {
+      textFields.classList.remove('type-fields-hidden');
+    } else if (type === 'images') {
+      imagesFields.classList.remove('type-fields-hidden');
+    } else if (type === 'video') {
+      videoFields.classList.remove('type-fields-hidden');
+    }
+  }
+
+  // Handle image preview
+  document.getElementById('images').addEventListener('change', function(e) {
+    const files = e.target.files;
+    imagePreview.innerHTML = '';
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const div = document.createElement('div');
+          div.className = 'preview-item';
+          div.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <button type="button" class="remove-file" onclick="removeNewFile(this, ${i})">×</button>
+          `;
+          imagePreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  });
+
+  // Handle video preview
+  document.getElementById('video').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    videoPreview.innerHTML = '';
+    
+    if (file && file.type.startsWith('video/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.innerHTML = `
+          <video controls src="${e.target.result}"></video>
+          <button type="button" class="remove-file" onclick="removeFile(this, 0)">×</button>
+        `;
+        videoPreview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  function removeNewFile(button, index) {
+    const input = document.getElementById('images');
+    const dt = new DataTransfer();
+    const { files } = input;
+    
+    for (let i = 0; i < files.length; i++) {
+      if (i !== index) {
+        dt.items.add(files[i]);
+      }
+    }
+    input.files = dt.files;
+    button.parentElement.remove();
+  }
+
+  function removeExistingImage(imageUrl) {
+    const index = existingImageUrls.indexOf(imageUrl);
+    if (index > -1) {
+      existingImageUrls.splice(index, 1);
+      renderExistingImages();
+    }
+  }
+
+  function renderExistingImages() {
+    existingImagesList.innerHTML = '';
+    existingImageUrls.forEach((url, index) => {
+      const div = document.createElement('div');
+      div.className = 'preview-item existing-media-item';
+      div.innerHTML = `
+        <img src="${url}" alt="Existing image">
+        <button type="button" class="remove-file" onclick="removeExistingImage('${url}')">×</button>
+      `;
+      existingImagesList.appendChild(div);
+    });
+  }
+
+  function loadPostData(postId) {
+    currentPostId = postId;
+    
+    fetch(`/post/${postId}/edit`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        
+        const post = data.post;
+        currentPostType = post.type;
+        
+        // Show the correct fields based on post type
+        showFields(post.type);
+        
+        // Populate fields based on type
+        if (post.type === 'text') {
+          document.getElementById('text-caption').value = post.caption;
+          document.getElementById('text-content').value = post.content;
+        } else if (post.type === 'images') {
+          document.getElementById('images-caption').value = post.caption;
+          // Store existing images for selective removal
+          existingImageUrls = post.content.split('\n').filter(url => url.trim() !== '');
+          renderExistingImages();
+        } else if (post.type === 'video') {
+          document.getElementById('video-caption').value = post.caption;
+          // Show existing video
+          const videoUrl = post.content;
+          existingVideo.innerHTML = '';
+          const div = document.createElement('div');
+          div.className = 'existing-media-item';
+          div.innerHTML = `
+            <video controls src="${videoUrl}"></video>
+            <p>Existing video (will be kept if no new video is uploaded)</p>
+          `;
+          existingVideo.appendChild(div);
+        }
+        
+        // Show modal
+        document.getElementById('edit-post-modal').classList.add('active');
+      })
+      .catch(err => {
+        console.error('Error loading post data:', err);
+        alert('Error loading post data');
+      });
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-post-modal').classList.remove('active');
+    // Clear form
+    form.reset();
+    imagePreview.innerHTML = '';
+    videoPreview.innerHTML = '';
+    existingImagesList.innerHTML = '';
+    existingVideo.innerHTML = '';
+    existingImageUrls = [];
+    currentPostId = null;
+    currentPostType = null;
+  }
+
+  // Make functions globally available
+  window.loadPostData = loadPostData;
+  window.closeEditModal = closeEditModal;
+
+  document.getElementById('edit-post-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const errorBlock = document.getElementById('edit-error-block');
+    
+    // Clear previous errors
+    errorBlock.innerHTML = '';
+    errorBlock.classList.remove('error-visible');
+    errorBlock.classList.add('error-hidden');
+    
+    // Validate required fields based on current post type
+    if (currentPostType === 'text') {
+      const caption = document.getElementById('text-caption').value.trim();
+      const text = document.getElementById('text-content').value.trim();
+      if (!caption || !text) {
+        errorBlock.textContent = 'Please fill in both caption and text fields';
+        errorBlock.classList.remove('error-hidden');
+        errorBlock.classList.add('error-visible');
+        return;
+      }
+    } else if (currentPostType === 'images') {
+      const caption = document.getElementById('images-caption').value.trim();
+      if (!caption) {
+        errorBlock.textContent = 'Please provide a caption';
+        errorBlock.classList.remove('error-hidden');
+        errorBlock.classList.add('error-visible');
+        return;
+      }
+      // Check if there are any images left (existing or new)
+      const newFiles = document.getElementById('images').files;
+      if (existingImageUrls.length === 0 && newFiles.length === 0) {
+        errorBlock.textContent = 'At least one image is required';
+        errorBlock.classList.remove('error-hidden');
+        errorBlock.classList.add('error-visible');
+        return;
+      }
+    } else if (currentPostType === 'video') {
+      const caption = document.getElementById('video-caption').value.trim();
+      if (!caption) {
+        errorBlock.textContent = 'Please provide a caption';
+        errorBlock.classList.remove('error-hidden');
+        errorBlock.classList.add('error-visible');
+        return;
+      }
+    }
+    
+    // Prepare form data
+    const formData = new FormData();
+    
+    if (currentPostType === 'text') {
+      formData.append('caption', document.getElementById('text-caption').value.trim());
+      formData.append('content', document.getElementById('text-content').value.trim());
+    } else if (currentPostType === 'images') {
+      formData.append('caption', document.getElementById('images-caption').value.trim());
+      // Add new images
+      const files = document.getElementById('images').files;
+      for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+      }
+      // Add remaining existing images
+      existingImageUrls.forEach(url => {
+        formData.append('existingImages', url);
+      });
+    } else if (currentPostType === 'video') {
+      formData.append('caption', document.getElementById('video-caption').value.trim());
+      const file = document.getElementById('video').files[0];
+      if (file) {
+        formData.append('video', file);
+      }
+    }
+    
+    // Submit update
+    fetch(`/post/${currentPostId}/edit/${currentPostType}`, {
+      method: 'PUT',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        errorBlock.textContent = data.error;
+        errorBlock.classList.remove('error-hidden');
+        errorBlock.classList.add('error-visible');
+      } else {
+        // Success - reload the page to show updated content
+        window.location.reload();
+      }
+    })
+    .catch(err => {
+      console.error('Error updating post:', err);
+      errorBlock.textContent = 'Network error. Please try again.';
+      errorBlock.classList.remove('error-hidden');
+      errorBlock.classList.add('error-visible');
+    });
+  });
+</script>

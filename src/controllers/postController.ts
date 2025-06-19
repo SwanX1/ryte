@@ -250,4 +250,220 @@ export class PostController {
       res.status(500).json({ error: 'An error occurred while deleting the post' });
     }
   }
+
+  static async postDetails(req: Request<{ id: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      if (isNaN(postId)) {
+        return res.status(400).json({ error: 'Invalid post ID' });
+      }
+
+      const post = await PostModel.findById(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+
+      if (post.user !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      // Parse content to extract caption and content
+      const lines = post.content.split('\n');
+      const caption = lines[0] || '';
+      const content = lines.slice(1).join('\n') || '';
+
+      res.json({
+        post: {
+          id: post.id,
+          type: post.type,
+          caption,
+          content
+        }
+      });
+    } catch (error) {
+      console.error('Error getting edit page:', error);
+      res.status(500).json({ error: 'An error occurred while loading the post' });
+    }
+  }
+
+  static async updateText(req: Request<{ id: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      if (isNaN(postId)) {
+        return res.status(400).json({ error: 'Invalid post ID' });
+      }
+
+      const post = await PostModel.findById(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+
+      if (post.user !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      const { caption, content } = req.body;
+      
+      if (!caption || !content) {
+        return res.status(400).json({ error: 'Caption and content are required' });
+      }
+
+      const validatedCaption = z.string().min(1).max(100).trim().parse(caption);
+      const validatedContent = z.string().min(1).trim().parse(content);
+      const newContent = `${validatedCaption}\n${validatedContent}`;
+
+      const updatedPost = await PostModel.update(postId, newContent);
+      if (!updatedPost) {
+        return res.status(500).json({ error: 'Error updating post' });
+      }
+
+      AuditLogModel.create('update', 'post', userId, postId, `User ${userId} updated text post ${postId}`);
+
+      res.json({ success: true, post: updatedPost });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: prettifyZodError(error) });
+      }
+      console.error('Error updating text post:', error);
+      res.status(500).json({ error: 'An error occurred while updating the post' });
+    }
+  }
+
+  static async updateImages(req: Request<{ id: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      if (isNaN(postId)) {
+        return res.status(400).json({ error: 'Invalid post ID' });
+      }
+
+      const post = await PostModel.findById(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+
+      if (post.user !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      const { caption } = req.body;
+      const files = req.files as Express.Multer.File[];
+      const existingImages = Array.isArray(req.body.existingImages) ? req.body.existingImages : 
+                           (req.body.existingImages ? [req.body.existingImages] : []);
+      
+      if (!caption) {
+        return res.status(400).json({ error: 'Caption is required' });
+      }
+
+      const validatedCaption = z.string().min(1).max(100).trim().parse(caption);
+      
+      let imageUrls: string[] = [];
+      
+      // Add existing images that weren't removed
+      imageUrls.push(...existingImages);
+      
+      // Process new images and convert to WebP
+      if (files && files.length > 0) {
+        const processedFilenames = await MediaProcessor.processFiles(files);
+        const newImageUrls = processedFilenames.map(filename => `/uploads/${filename}`);
+        imageUrls.push(...newImageUrls);
+      }
+      
+      // Ensure at least one image remains
+      if (imageUrls.length === 0) {
+        return res.status(400).json({ error: 'At least one image is required' });
+      }
+
+      const newContent = `${validatedCaption}\n${imageUrls.join('\n')}`;
+
+      const updatedPost = await PostModel.update(postId, newContent);
+      if (!updatedPost) {
+        return res.status(500).json({ error: 'Error updating post' });
+      }
+
+      AuditLogModel.create('update', 'post', userId, postId, `User ${userId} updated image post ${postId}`);
+
+      res.json({ success: true, post: updatedPost });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: prettifyZodError(error) });
+      }
+      console.error('Error updating image post:', error);
+      res.status(500).json({ error: 'An error occurred while updating the post' });
+    }
+  }
+
+  static async updateVideo(req: Request<{ id: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      if (isNaN(postId)) {
+        return res.status(400).json({ error: 'Invalid post ID' });
+      }
+
+      const post = await PostModel.findById(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+
+      if (post.user !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      const { caption } = req.body;
+      const file = req.file as Express.Multer.File;
+      
+      if (!caption) {
+        return res.status(400).json({ error: 'Caption is required' });
+      }
+
+      const validatedCaption = z.string().min(1).max(100).trim().parse(caption);
+      
+      let videoUrl: string;
+      if (file) {
+        // Process new video and convert to WebM
+        const processedFilename = await MediaProcessor.processFile(file);
+        videoUrl = `/uploads/${processedFilename}`;
+      } else {
+        // Keep existing video
+        const lines = post.content.split('\n');
+        videoUrl = lines[1] || '';
+      }
+
+      const newContent = `${validatedCaption}\n${videoUrl}`;
+
+      const updatedPost = await PostModel.update(postId, newContent);
+      if (!updatedPost) {
+        return res.status(500).json({ error: 'Error updating post' });
+      }
+
+      AuditLogModel.create('update', 'post', userId, postId, `User ${userId} updated video post ${postId}`);
+
+      res.json({ success: true, post: updatedPost });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: prettifyZodError(error) });
+      }
+      console.error('Error updating video post:', error);
+      res.status(500).json({ error: 'An error occurred while updating the post' });
+    }
+  }
 } 

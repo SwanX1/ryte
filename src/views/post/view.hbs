@@ -3,7 +3,10 @@
     <img src="{{post.avatar_url}}" alt="{{post.username}}'s avatar" class="post-avatar">
     <a href="/@{{post.username}}" class="post-username-link">{{post.username}}</a>
     {{#if (eq session_user.id post.user_id)}}
-      <button class="delete-post-btn" data-post-id="{{post.id}}">Delete Post</button>
+      <div class="post-actions-buttons">
+        <button class="edit-post-btn" data-post-id="{{post.id}}">Edit Post</button>
+        <button class="delete-post-btn" data-post-id="{{post.id}}">Delete Post</button>
+      </div>
     {{/if}}
   </div>
   {{#if (eq post.type 'images')}}
@@ -43,6 +46,8 @@
   </small></p>
 </div>
 
+{{> post-edit-modal}}
+
 <div class="card comments-section">
   <h3>Comments</h3>
   <div id="comments-list">
@@ -81,6 +86,15 @@
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('add-comment-form');
   const errorDiv = document.getElementById('comment-error-block');
+  
+  // Post edit functionality
+  const editPostBtn = document.querySelector('.edit-post-btn');
+  if (editPostBtn) {
+    editPostBtn.addEventListener('click', function() {
+      const postId = this.getAttribute('data-post-id');
+      loadPostData(postId);
+    });
+  }
   
   // Post delete functionality
   const deletePostBtn = document.querySelector('.delete-post-btn');

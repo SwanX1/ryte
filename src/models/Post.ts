@@ -102,4 +102,22 @@ export class PostModel {
       return false;
     }
   }
+
+  static async update(id: number, content: string): Promise<Post | null> {
+    try {
+      const date = Date.now();
+      const result = await query(
+        'UPDATE posts SET content = ?, updated_at = ? WHERE id = ?',
+        [content, date, id]
+      ) as any;
+      
+      if (result.affectedRows > 0) {
+        return await this.findById(id);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error updating post:', error);
+      return null;
+    }
+  }
 } 

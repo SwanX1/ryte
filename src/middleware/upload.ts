@@ -61,12 +61,20 @@ export const uploadVideo = multer({
 export const handleImageUpload = (req: any, res: any, next: any) => {
   uploadImages(req, res, (err) => {
     if (err instanceof multer.MulterError) {
+      const errorMessage = 'File upload error: ' + err.message;
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(400).json({ error: errorMessage });
+      }
       return res.status(400).render('post/create', {
-        error: 'File upload error: ' + err.message
+        error: errorMessage
       });
     } else if (err) {
+      const errorMessage = 'Invalid file type';
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(400).json({ error: errorMessage });
+      }
       return res.status(400).render('post/create', {
-        error: 'Invalid file type'
+        error: errorMessage
       });
     }
     next();
@@ -76,12 +84,20 @@ export const handleImageUpload = (req: any, res: any, next: any) => {
 export const handleVideoUpload = (req: any, res: any, next: any) => {
   uploadVideo(req, res, (err) => {
     if (err instanceof multer.MulterError) {
+      const errorMessage = 'File upload error: ' + err.message;
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(400).json({ error: errorMessage });
+      }
       return res.status(400).render('post/create', {
-        error: 'File upload error: ' + err.message
+        error: errorMessage
       });
     } else if (err) {
+      const errorMessage = 'Invalid file type';
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(400).json({ error: errorMessage });
+      }
       return res.status(400).render('post/create', {
-        error: 'Invalid file type'
+        error: errorMessage
       });
     }
     next();

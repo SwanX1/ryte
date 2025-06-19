@@ -791,15 +791,14 @@ input, textarea {
 /* Delete button styles */
 .delete-post-btn,
 .delete-comment-btn {
-  padding: 4px 8px;
   background-color: #dc3545;
   color: white;
   border: none;
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8em;
-  transition: background-color 0.2s ease;
-  margin-left: 10px;
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
 }
 
 .delete-post-btn:hover,
@@ -807,7 +806,105 @@ input, textarea {
   background-color: #c82333;
 }
 
-.delete-post-btn {
+/* Edit button styles */
+.edit-post-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+}
+
+.edit-post-btn:hover {
+  background-color: #0056b3;
+}
+
+.post-actions-buttons {
+  display: flex;
+  align-items: center;
+}
+
+/* Existing media styles */
+.existing-media-container {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+#existing-images-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.existing-media-item {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.existing-media-item img,
+.existing-media-item video {
+  max-width: 200px;
+  max-height: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.existing-media-item p {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Modal improvements */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.active {
+  display: block;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close-btn {
+  color: #aaa;
   float: right;
-  margin-top: 5px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 } 
