@@ -5,11 +5,11 @@
       <h1 class="profile-username">{{user.username}}</h1>
       <div class="profile-stats">
         <span class="stat">
-          <span class="stat-number" id="follower-count">{{followerCount}}</span>
+          <span class="stat-number clickable" id="follower-count" onclick="openFollowersModal()">{{followerCount}}</span>
           <span class="stat-label">followers</span>
         </span>
         <span class="stat">
-          <span class="stat-number" id="following-count">{{followingCount}}</span>
+          <span class="stat-number clickable" id="following-count" onclick="openFollowingModal()">{{followingCount}}</span>
           <span class="stat-label">following</span>
         </span>
       </div>
@@ -108,3 +108,6 @@
   });
 </script>
 {{/if}}
+
+{{> followers-modal}}
+{{> following-modal}}

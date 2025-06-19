@@ -1404,4 +1404,78 @@ textarea {
 .delete-account-form .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Clickable stats */
+.stat-number.clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.stat-number.clickable:hover {
+  color: #1da1f2;
+  text-decoration: underline;
+}
+
+/* User list styles for followers/following modals */
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-item:hover {
+  background-color: #f8f9fa;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-username {
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.user-username:hover {
+  color: #1da1f2;
+  text-decoration: underline;
+}
+
+.loading {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.no-users {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.error {
+  text-align: center;
+  color: #dc3545;
+  padding: 2rem;
 } 

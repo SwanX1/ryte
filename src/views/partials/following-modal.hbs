@@ -1,0 +1,40 @@
+{{#> modal modal_id="following-modal"}}
+  <h2>Following</h2>
+  <div id="following-list">
+    <div class="loading">Loading following...</div>
+  </div>
+{{/modal}}
+
+<script>
+  window.openFollowingModal = function() {
+    const modal = document.getElementById('following-modal');
+    const followingList = document.getElementById('following-list');
+    
+    // Show modal
+    modal.classList.add('active');
+    
+    // Load following data
+    const userId = {{user.id}};
+    fetch(`/api/following/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.following && data.following.length > 0) {
+          const html = data.following.map(following => `
+            <div class="user-item">
+              <img src="${following.avatar_url || '/assets/default_avatar.png'}" alt="${following.username}'s avatar" class="user-avatar">
+              <div class="user-info">
+                <a href="/profile/${following.id}" class="user-username">${following.username}</a>
+              </div>
+            </div>
+          `).join('');
+          followingList.innerHTML = html;
+        } else {
+          followingList.innerHTML = '<p class="no-users">Not following anyone yet.</p>';
+        }
+      })
+      .catch(err => {
+        console.error('Error loading following:', err);
+        followingList.innerHTML = '<p class="error">Error loading following.</p>';
+      });
+  };
+</script> 
