@@ -1,7 +1,20 @@
 <li class="comment-item" data-comment-id="{{comment.id}}">
-  <a class="comment-username-link" href="/@{{comment.username}}"><strong>{{comment.username}}</strong></a>: {{comment.content}}
-  <span class="comment-meta-inline">({{localDate comment.created_at}})</span>
+  <div class="comment-content">
+    <a class="comment-username-link" href="/@{{comment.username}}"><strong>{{comment.username}}</strong></a>: 
+    <span class="comment-text">{{comment.content}}</span>
+    <span class="comment-meta-inline">({{localDate comment.created_at}})</span>
+  </div>
+  <div class="comment-edit-form" style="display: none;">
+    <textarea class="comment-edit-textarea" rows="2" maxlength="1000"></textarea>
+    <div class="comment-edit-actions">
+      <button class="btn btn-save-comment">Save</button>
+      <button class="btn btn-cancel-comment">Cancel</button>
+    </div>
+  </div>
   {{#if (or should_show_delete_button (eq session_user.id comment.user_id))}}
-    <button class="delete-comment-btn" data-comment-id="{{comment.id}}">Delete</button>
+    <div class="comment-actions">
+      <button class="edit-comment-btn" data-comment-id="{{comment.id}}">Edit</button>
+      <button class="delete-comment-btn" data-comment-id="{{comment.id}}">Delete</button>
+    </div>
   {{/if}}
 </li> 

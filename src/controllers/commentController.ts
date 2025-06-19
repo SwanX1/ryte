@@ -92,4 +92,79 @@ export class CommentController {
       layout: 'raw'
     });
   }
+
+  static async getCommentForEdit(req: Request<{ commentId: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthenticated' });
+      }
+
+      const commentId = parseInt(req.params.commentId);
+      if (isNaN(commentId)) {
+        return res.status(400).json({ error: 'Invalid comment ID' });
+      }
+
+      const comment = await PostCommentModel.findById(commentId);
+      if (!comment) {
+        return res.status(404).json({ error: 'Comment not found' });
+      }
+
+      if (comment.user_id !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      res.json({
+        comment: {
+          id: comment.id,
+          content: comment.content
+        }
+      });
+    } catch (error) {
+      console.error('Error getting comment for edit:', error);
+      res.status(500).json({ error: 'An error occurred while loading the comment' });
+    }
+  }
+
+  static async update(req: Request<{ commentId: string }>, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthenticated' });
+      }
+
+      const commentId = parseInt(req.params.commentId);
+      if (isNaN(commentId)) {
+        return res.status(400).json({ error: 'Invalid comment ID' });
+      }
+
+      const comment = await PostCommentModel.findById(commentId);
+      if (!comment) {
+        return res.status(404).json({ error: 'Comment not found' });
+      }
+
+      if (comment.user_id !== userId) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      const { content } = z.object({
+        content: z.string().min(1).max(1000).trim()
+      }).parse(req.body);
+
+      const updatedComment = await PostCommentModel.update(commentId, content);
+      if (!updatedComment) {
+        return res.status(500).json({ error: 'Error updating comment' });
+      }
+
+      AuditLogModel.create('update', 'comment', userId, commentId, `User ${userId} updated comment ${commentId}`);
+
+      res.json({ success: true, comment: updatedComment });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: prettifyZodError(error) });
+      }
+      console.error('Error updating comment:', error);
+      res.status(500).json({ error: 'An error occurred while updating the comment' });
+    }
+  }
 } 

@@ -153,6 +153,82 @@ document.addEventListener('DOMContentLoaded', function () {
         alert('Network error. Please try again.');
       }
     }
+
+    // Comment edit functionality
+    if (e.target.classList.contains('edit-comment-btn')) {
+      const commentId = e.target.getAttribute('data-comment-id');
+      const commentItem = e.target.closest('.comment-item');
+      const commentContent = commentItem.querySelector('.comment-content');
+      const commentEditForm = commentItem.querySelector('.comment-edit-form');
+      const commentTextarea = commentItem.querySelector('.comment-edit-textarea');
+      const commentText = commentItem.querySelector('.comment-text');
+      
+      // Load comment data
+      try {
+        const res = await fetch(`/api/comment/${commentId}/edit`, {
+          credentials: 'include'
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          commentTextarea.value = data.comment.content;
+          commentContent.style.display = 'none';
+          commentEditForm.style.display = 'block';
+          commentTextarea.focus();
+        } else {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error || 'Failed to load comment');
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    }
+
+    // Save comment edit
+    if (e.target.classList.contains('btn-save-comment')) {
+      const commentItem = e.target.closest('.comment-item');
+      const commentId = commentItem.getAttribute('data-comment-id');
+      const commentTextarea = commentItem.querySelector('.comment-edit-textarea');
+      const commentContent = commentItem.querySelector('.comment-content');
+      const commentEditForm = commentItem.querySelector('.comment-edit-form');
+      const commentText = commentItem.querySelector('.comment-text');
+      
+      const content = commentTextarea.value.trim();
+      if (!content) {
+        alert('Comment cannot be empty');
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/comment/${commentId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content }),
+          credentials: 'include'
+        });
+        
+        if (res.ok) {
+          commentText.textContent = content;
+          commentContent.style.display = 'block';
+          commentEditForm.style.display = 'none';
+        } else {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error || 'Failed to update comment');
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    }
+
+    // Cancel comment edit
+    if (e.target.classList.contains('btn-cancel-comment')) {
+      const commentItem = e.target.closest('.comment-item');
+      const commentContent = commentItem.querySelector('.comment-content');
+      const commentEditForm = commentItem.querySelector('.comment-edit-form');
+      
+      commentContent.style.display = 'block';
+      commentEditForm.style.display = 'none';
+    }
   });
 
   if (form) {

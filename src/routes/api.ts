@@ -21,6 +21,8 @@ apiRouter.get('/likes/:postId', LikeController.likes);
 apiRouter.post('/comment/:postId', CommentController.add);
 apiRouter.delete('/comment/:commentId', CommentController.delete);
 apiRouter.get('/comments/:postId', CommentController.list);
+apiRouter.get('/comment/:commentId/edit', CommentController.getCommentForEdit);
+apiRouter.put('/comment/:commentId', CommentController.update);
 
 // Post endpoints
 apiRouter.delete('/post/:id', PostController.delete);

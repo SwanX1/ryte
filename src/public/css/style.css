@@ -911,9 +911,71 @@ input, textarea {
   background-color: #0056b3;
 }
 
+.edit-comment-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+}
+
+.edit-comment-btn:hover {
+  background-color: #0056b3;
+}
+
 .post-actions-buttons {
   display: flex;
   align-items: center;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.comment-edit-form {
+  margin-top: 0.5rem;
+}
+
+.comment-edit-textarea {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-edit-actions .btn {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-save-comment {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-save-comment:hover {
+  background-color: #218838;
+}
+
+.btn-cancel-comment {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-cancel-comment:hover {
+  background-color: #5a6268;
 }
 
 /* Existing media styles */
