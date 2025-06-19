@@ -64,7 +64,7 @@ export class MediaProcessor {
       });
 
       ffmpeg.stderr.on('data', (data) => {
-        console.log(`FFmpeg stderr: ${data}`);
+        // console.log(`FFmpeg stderr: ${data}`); ignore, since this also outputs warnings
       });
     });
   }
