@@ -52,6 +52,18 @@ export class PostController {
         return res.redirect('/auth/login');
       }
 
+      // Check if user's email is verified
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        return res.redirect('/auth/login');
+      }
+
+      if (!user.email_verified) {
+        return res.status(400).render('post/create', {
+          error: 'Please verify your email address before creating posts.'
+        });
+      }
+
       const { 'text-caption': caption, 'text-content': text } = req.body;
       
       if (!caption || !text) {
@@ -92,6 +104,18 @@ export class PostController {
       const userId = req.session?.userId;
       if (!userId) {
         return res.redirect('/auth/login');
+      }
+
+      // Check if user's email is verified
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        return res.redirect('/auth/login');
+      }
+
+      if (!user.email_verified) {
+        return res.status(400).render('post/create', {
+          error: 'Please verify your email address before creating posts.'
+        });
       }
 
       const { 'images-caption': caption } = req.body;
@@ -138,6 +162,18 @@ export class PostController {
       const userId = req.session?.userId;
       if (!userId) {
         return res.redirect('/auth/login');
+      }
+
+      // Check if user's email is verified
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        return res.redirect('/auth/login');
+      }
+
+      if (!user.email_verified) {
+        return res.status(400).render('post/create', {
+          error: 'Please verify your email address before creating posts.'
+        });
       }
 
       const { 'video-caption': caption } = req.body;

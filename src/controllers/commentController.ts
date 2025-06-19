@@ -10,6 +10,20 @@ export class CommentController {
     try {
       const userId = req.session?.userId;
       if (!userId) return res.status(401).json({ error: 'Unauthenticated' })
+      
+      // Check if user's email is verified
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+
+      if (!user.email_verified) {
+        return res.status(403).json({ 
+          error: 'Email verification required',
+          message: 'Please verify your email address before creating comments.'
+        });
+      }
+
       const postIdParam = req.params.postId;
       if (typeof postIdParam !== 'string') return res.status(400).json({ error: 'Invalid postId' });
       const { content } = z.object({

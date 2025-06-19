@@ -678,6 +678,57 @@ nav {
   padding-bottom: 30px;
 }
 
+/* Email verification warning for create post page */
+.email-verification-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.email-verification-warning h3 {
+  color: #856404;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.email-verification-warning p {
+  color: #856404;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.verification-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.verification-actions .btn {
+  min-width: 120px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
 /* Footer */
 footer {
   background-color: #fff;
