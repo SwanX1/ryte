@@ -25,7 +25,7 @@
         {{else}}
           <button class="follow-btn" data-user-id="{{user.id}}" data-following="false">{{t "profile.follow"}}</button>
         {{/if}}
-        <a href="/chats/{{user.id}}" class="btn btn-primary dm-btn{{#unless (and sessionUserVerified profileUserVerified)}} btn-disabled{{/unless}}" {{#unless (and sessionUserVerified profileUserVerified)}}aria-disabled="true" tabindex="-1" title="{{t 'profile.dm_disabled'}}"{{/unless}}>{{t "profile.direct_messages"}}</a>
+        <button class="dm-btn{{#unless (and sessionUserVerified profileUserVerified)}} btn-disabled{{/unless}}" {{#unless (and sessionUserVerified profileUserVerified)}}disabled{{/unless}} onclick="window.location.href='/chats/{{user.id}}'" title="{{#unless (and sessionUserVerified profileUserVerified)}}{{t 'profile.dm_disabled'}}{{/unless}}">{{t "profile.direct_messages"}}</button>
       {{/if}}
     {{/if}}
   </div>
