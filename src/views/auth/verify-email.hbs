@@ -22,7 +22,9 @@
       </form>
       
       <div class="auth-links">
-        <a href="/auth/resend-verification" class="btn btn-secondary">{{t "auth.resend_code"}}</a>
+        <form method="POST" action="/auth/resend-verification" style="display:inline;">
+          <button type="submit" class="btn btn-secondary">{{t "auth.resend_code"}}</button>
+        </form>
         <a href="/" class="btn btn-link">{{t "auth.back_to_home"}}</a>
       </div>
     </div>

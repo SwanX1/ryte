@@ -121,7 +121,7 @@
 
   function toggleUserRole(userId, currentRole, username) {
     const newRole = currentRole === 'moderator' ? 'registered' : 'moderator';
-    const action = currentRole === 'moderator' ? '{{t "admin.confirm_remove_mod" username="' + username + '"}}' : '{{t "admin.confirm_make_mod" username="' + username + '"}}';
+    const action = currentRole === 'moderator' ? '{{t "admin.confirm_remove_mod"}}' : '{{t "admin.confirm_make_mod"}}';
     
     if (!confirm(action)) {
       return;

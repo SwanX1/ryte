@@ -145,8 +145,8 @@
   "admin.loading_logs": "Loading audit logs...",
   "admin.no_logs": "No audit logs found for this user.",
   "admin.error_loading_logs": "Error loading audit logs.",
-  "admin.confirm_remove_mod": "Are you sure you want to remove moderator privileges from {{username}}?",
-  "admin.confirm_make_mod": "Are you sure you want to make {{username}} a moderator?",
+  "admin.confirm_remove_mod": "Are you sure you want to remove moderator privileges?",
+  "admin.confirm_make_mod": "Are you sure you want to make this user a moderator?",
   "admin.error_updating_role": "Error updating user role: {{error}}",
   "admin.error_updating_role_generic": "Error updating user role. Please try again.",
 
