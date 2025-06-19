@@ -148,6 +148,14 @@ await AuditLogModel.initTable();
 await ChatModel.initTable();
 await ChatMessageModel.initTable();
 
+// Create admin user if the database is empty
+const users = await UserModel.searchByUsername('');
+if (users.length === 0) {
+  const newUser = await UserModel.create('admin', 'admin@example.com', 'password', 'administrator');
+  // Artificially verify the email
+  await UserModel.artificialVerifyEmail(newUser!.id);
+}
+
 server.listen(config.port, () => {
   console.log(`Server is running on port ${config.port}`);
 });

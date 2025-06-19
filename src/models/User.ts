@@ -43,6 +43,14 @@ export class UserModel {
     }
   }
 
+  static async artificialVerifyEmail(userId: number): Promise<boolean> {
+    try {
+      const result = await query(
+        'UPDATE users SET email_verified = true, verification_code = NULL WHERE id = ?',
+        [userId]
+      ) as any;
+  }
+
   static async verifyEmail(userId: number, code: string): Promise<boolean> {
     try {
       const result = await query(
