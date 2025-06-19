@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
               return res.text();
             })
             .then(commentHtml => {
-              document.getElementById('comments-ul').insertAdjacentHTML('beforeend', commentHtml);
+              document.getElementById('comments-ul').insertAdjacentHTML('beforebegin', commentHtml);
             })
             .catch(err => {
               console.error('Failed to fetch comment partial:', err);

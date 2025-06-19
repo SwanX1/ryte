@@ -107,6 +107,7 @@ export class CommentController {
     const comment = await PostCommentModel.findById(commentId);
     if (!comment) return res.status(404).json({ error: 'Comment not found' });
     const author = await UserModel.findById(comment.user_id);
+    const { role: sessionRole } = req.session?.userId ? (await UserModel.findById(req.session?.userId)) ?? { role: '' } : { role: '' };
     res.render('partials/comment', {
       title: 'Comment',
       comment: {
@@ -114,6 +115,8 @@ export class CommentController {
         username: author?.username || 'Unknown',
         user_id: author?.id,
       },
+      should_show_edit_button: req.session?.userId === comment.user_id,
+      should_show_delete_button: req.session?.userId === comment.user_id || sessionRole === 'moderator' || sessionRole === 'administrator',
       layout: 'raw'
     });
   }
