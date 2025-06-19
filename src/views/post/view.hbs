@@ -129,38 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Like functionality
-  const likeBtn = document.querySelector('.like-btn');
-  if (likeBtn) {
-    likeBtn.addEventListener('click', async function() {
-      const postId = likeBtn.getAttribute('data-post-id');
-      const liked = likeBtn.getAttribute('data-liked') === 'true';
-      const likeCountSpan = document.querySelector(`.like-count[data-post-id='${postId}']`);
-      likeBtn.disabled = true;
-      try {
-        if (!liked) {
-          // Like
-          const res = await fetch(`/api/like/${postId}`, { method: 'POST', credentials: 'include' });
-          if (res.ok) {
-            likeBtn.textContent = 'Unlike';
-            likeBtn.setAttribute('data-liked', 'true');
-            if (likeCountSpan) likeCountSpan.textContent = parseInt(likeCountSpan.textContent) + 1;
-          }
-        } else {
-          // Unlike
-          const res = await fetch(`/api/like/${postId}`, { method: 'DELETE', credentials: 'include' });
-          if (res.ok) {
-            likeBtn.textContent = 'Like';
-            likeBtn.setAttribute('data-liked', 'false');
-            if (likeCountSpan) likeCountSpan.textContent = Math.max(0, parseInt(likeCountSpan.textContent) - 1);
-          }
-        }
-      } finally {
-        likeBtn.disabled = false;
-      }
-    });
-  }
-
   // Comment delete functionality
   document.addEventListener('click', async function(e) {
     if (e.target.classList.contains('delete-comment-btn')) {
@@ -335,5 +303,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+</script>
+{{/if}}
+
+{{#if session_user}}
+<script>
+  // Like functionality
+  const likeBtn = document.querySelector('.like-btn');
+  if (likeBtn) {
+    likeBtn.addEventListener('click', async function() {
+      const postId = likeBtn.getAttribute('data-post-id');
+      const liked = likeBtn.getAttribute('data-liked') === 'true';
+      const likeCountSpan = document.querySelector(`.like-count[data-post-id='${postId}']`);
+      likeBtn.disabled = true;
+      try {
+        if (!liked) {
+          // Like
+          const res = await fetch(`/api/like/${postId}`, { method: 'POST', credentials: 'include' });
+          if (res.ok) {
+            likeBtn.textContent = 'Unlike';
+            likeBtn.setAttribute('data-liked', 'true');
+            if (likeCountSpan) likeCountSpan.textContent = parseInt(likeCountSpan.textContent) + 1;
+          }
+        } else {
+          // Unlike
+          const res = await fetch(`/api/like/${postId}`, { method: 'DELETE', credentials: 'include' });
+          if (res.ok) {
+            likeBtn.textContent = 'Like';
+            likeBtn.setAttribute('data-liked', 'false');
+            if (likeCountSpan) likeCountSpan.textContent = Math.max(0, parseInt(likeCountSpan.textContent) - 1);
+          }
+        }
+      } finally {
+        likeBtn.disabled = false;
+      }
+    });
+  }
 </script>
 {{/if}}
