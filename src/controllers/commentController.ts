@@ -102,6 +102,7 @@ export class CommentController {
     if (!comment) return res.status(404).json({ error: 'Comment not found' });
     const author = await UserModel.findById(comment.user_id);
     res.render('partials/comment', {
+      title: 'Comment',
       comment: {
         ...comment,
         username: author?.username || 'Unknown',

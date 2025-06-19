@@ -19,6 +19,7 @@ export class HomeController {
     recentPosts = recentPosts.sort((a, b) => b.created_at - a.created_at);
     
     res.render('home/index', {
+      title: 'RYTE',
       session_user: sessionUserId ? await UserModel.findById(sessionUserId) : null,
       personalizedPosts: await expandPosts(personalizedPosts),
       recentPosts: await expandPosts(recentPosts)

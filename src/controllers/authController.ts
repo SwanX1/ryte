@@ -119,11 +119,11 @@ export class AuthController {
   }
 
   static getSignupPage(req: Request, res: Response) {
-    res.render('auth/signup', { error: null });
+    res.render('auth/signup', { title: 'Sign Up', error: null });
   }
 
   static getLoginPage(req: Request, res: Response) {
-    res.render('auth/login', { error: null });
+    res.render('auth/login', { title: 'Login', error: null });
   }
 
   static async getVerifyEmailPage(req: Request, res: Response) {
@@ -140,7 +140,7 @@ export class AuthController {
       return res.redirect('/');
     }
 
-    res.render('auth/verify-email', { error: null, success: null });
+    res.render('auth/verify-email', { title: 'Verify Email', error: null, success: null });
   }
 
   static async verifyEmail(req: Request, res: Response) {

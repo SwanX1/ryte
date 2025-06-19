@@ -33,6 +33,7 @@ export class PostController {
     }));
 
     return res.render('post/view', {
+      title: 'Post',
       post: {
         ...post,
         username: author?.username || 'Unknown',
@@ -222,6 +223,7 @@ export class PostController {
     }
 
     return res.render('post/create', {
+      title: 'Create Post',
       error: null
     });
   }

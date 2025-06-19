@@ -8,12 +8,12 @@ export class SearchController {
   static async getSearchPage(req: Request, res: Response) {
     const q = z.string().trim().parse(req.query.q); // Should not error ever, if it does, it's a bug
     if (!q.trim()) {
-      return res.render('home/search', { q, users: [], posts: [] });
+      return res.render('home/search', { title: 'Search', q, users: [], posts: [] });
     }
     const [users, posts] = await Promise.all([
       UserModel.searchByUsername(q),
       PostModel.searchByContent(q)
     ]);
-    res.render('home/search', { q, users, posts: await expandPosts(posts) });
+    res.render('home/search', { title: 'Search', q, users, posts: await expandPosts(posts) });
   }
 }
