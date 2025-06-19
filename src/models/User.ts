@@ -49,6 +49,11 @@ export class UserModel {
         'UPDATE users SET email_verified = true, verification_code = NULL WHERE id = ?',
         [userId]
       ) as any;
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      return false;
+    }
   }
 
   static async verifyEmail(userId: number, code: string): Promise<boolean> {
