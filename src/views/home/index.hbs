@@ -45,9 +45,6 @@
     const personalizedFeed = document.getElementById('personalized_feed');
     const recentFeed = document.getElementById('recent_feed');
     
-    // WebSocket status indicator
-    const websocketStatus = document.getElementById('websocketStatus');
-    
     tabPersonalized.addEventListener('click', function() {
       tabPersonalized.classList.add('active');
       tabRecent.classList.remove('active');
@@ -60,36 +57,6 @@
       tabPersonalized.classList.remove('active');
       recentFeed.classList.add('active');
       personalizedFeed.classList.remove('active');
-    });
-    
-    // WebSocket connection status updates
-    document.addEventListener('DOMContentLoaded', function() {
-      if (window.socketManager) {
-        // Wait for socket to be initialized
-        const checkSocket = setInterval(() => {
-          if (window.socketManager.socket) {
-            clearInterval(checkSocket);
-            
-            window.socketManager.socket.on('connect', () => {
-              websocketStatus.classList.add('connected');
-            });
-            
-            window.socketManager.socket.on('disconnect', () => {
-              websocketStatus.classList.remove('connected');
-            });
-            
-            // Update status if already connected
-            if (window.socketManager.isConnected) {
-              websocketStatus.classList.add('connected');
-            }
-          }
-        }, 50);
-        
-        // Timeout after 5 seconds
-        setTimeout(() => {
-          clearInterval(checkSocket);
-        }, 5000);
-      }
     });
   </script>
 {{/if}}

@@ -493,6 +493,26 @@ export class PostController {
       res.status(500).json({ error: 'An error occurred while updating the post' });
     }
   }
+
+  static async getPostPartial(req: Request<{ postId: string }>, res: Response) {
+    const postIdParam = req.params.postId;
+    if (typeof postIdParam !== 'string') return res.status(400).send('Invalid postId');
+    const postId = parseInt(postIdParam);
+    if (isNaN(postId)) return res.status(400).send('Invalid postId');
+    const post = await PostModel.findById(postId);
+    if (!post) return res.status(404).send('Post not found');
+    const author = await UserModel.findById(post.user);
+    const likeCount = (await PostLikeModel.getLikesForPost(postId)).length;
+    res.render('partials/post', {
+      layout: 'raw',
+      post: {
+        ...post,
+        username: author?.username || 'Unknown',
+        avatar_url: author?.avatar_url || '/assets/default_avatar.png',
+        likeCount,
+      }
+    });
+  }
 } 
 
 export async function expandPosts(posts: Post[]) {

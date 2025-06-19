@@ -200,11 +200,26 @@ class SocketManager {
   }
 
   handleNewPost(postData) {
-    // Add new post to the top of the feed
+    // Add new post to the top of the feed using the rendered partial
     const feedContainer = document.querySelector('.feed-posts');
-    if (feedContainer) {
-      this.addPostToFeed(feedContainer, postData);
-    }
+    if (!feedContainer) return;
+
+    fetch(`/partials/post/${postData.id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch post partial');
+        return res.text();
+      })
+      .then(html => {
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const postElement = temp.firstElementChild;
+        if (postElement) {
+          feedContainer.insertBefore(postElement, feedContainer.firstChild);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch post partial:', err);
+      });
   }
 
   handlePostLiked(likeData) {

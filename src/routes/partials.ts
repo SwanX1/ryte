@@ -5,3 +5,4 @@ import { Router } from 'express';
 export const partialsRouter = Router();
 
 partialsRouter.get('/comment/:commentId', CommentController.getCommentPartial);
+partialsRouter.get('/post/:postId', PostController.getPostPartial);
